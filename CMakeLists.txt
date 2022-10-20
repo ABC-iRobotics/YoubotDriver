@@ -27,4 +27,5 @@ endmacro(requires_soem)
 
 
 add_subdirectory(slaveinfo)
+add_subdirectory(lowlevelcontrol)
 
