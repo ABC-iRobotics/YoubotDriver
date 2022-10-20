@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.9)
-project(SOEMAPP
+project(MyYouBotDriver
     DESCRIPTION "My YouBot Driver"
     VERSION 0.0.1
-    LANGUAGES C)
+    LANGUAGES CXX)
 
 SET(3RDPARTY_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/third_parties)
 
