@@ -3,7 +3,9 @@ set(SOURCES findcica.cpp
       adapters.cpp)
 
 set(HEADERS
-      adapters.hpp)
+      adapters.hpp
+      DataObjectLockFree.hpp
+)
 
 add_executable(lowlevelcontrol ${SOURCES} ${HEADERS})
 
