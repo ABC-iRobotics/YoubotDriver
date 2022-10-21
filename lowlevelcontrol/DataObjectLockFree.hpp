@@ -37,8 +37,7 @@
 
 #pragma once
 
-#include "target.hpp"
-#include "os/oro_arch.h"
+#include <atomic>
 
 namespace youbot {
 
@@ -99,11 +98,10 @@ namespace youbot {
          */
         struct DataBuf {
             DataBuf()
-                : data(), counter(), next()
-            {
-                oro_atomic_set(&counter, 0);
-            }
-            DataType data; mutable oro_atomic_t counter; DataBuf* next;
+                : data(), next(), counter_(0) {}
+            DataType data;
+            mutable std::atomic<long> counter_;
+            DataBuf* next;
         };
 
         typedef DataBuf* volatile VolPtrType;
@@ -164,10 +162,10 @@ namespace youbot {
             // could become write_ptr ( then we would read corrupted data).
             do {
                 reading = read_ptr;            // copy buffer location
-                oro_atomic_inc(&reading->counter); // lock buffer, no more writes
+                reading->counter_++;           // lock buffer, no more writes
                 // XXX smp_mb
-                if ( reading != read_ptr )     // if read_ptr changed,
-                    oro_atomic_dec(&reading->counter); // better to start over.
+                if (reading != read_ptr)    // if read_ptr changed, better to start over.
+                  reading->counter_--;
                 else
                     break;
             } while ( true );
@@ -175,7 +173,7 @@ namespace youbot {
             // is a valid buffer to read from.
             pull = reading->data;               // takes some time
             // XXX smp_mb
-            oro_atomic_dec(&reading->counter);       // release buffer
+            reading->counter_--;
         }
 
         /**
@@ -198,7 +196,7 @@ namespace youbot {
             PtrType wrote_ptr = write_ptr;
             // if next field is occupied (by read_ptr or counter),
             // go to next and check again...
-            while ( oro_atomic_read( &write_ptr->next->counter ) != 0 || write_ptr->next == read_ptr )
+            while ( &write_ptr->next->counter_ != 0 || write_ptr->next == read_ptr )
                 {
                     write_ptr = write_ptr->next;
                     if (write_ptr == wrote_ptr)
@@ -210,6 +208,7 @@ namespace youbot {
             write_ptr = write_ptr->next; // we checked this in the while loop
         }
 
+        private:
         virtual void data_sample( const DataType& sample ) {
             // prepare the buffer.
             for (unsigned int i = 0; i < BUF_LEN-1; ++i) {

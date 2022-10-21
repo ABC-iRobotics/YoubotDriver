@@ -15,6 +15,7 @@
 #include <string.h>
 
 #include "adapters.hpp"
+#include "DataObjectLockFree.hpp"
 
 char ifbuf[1024];
 
@@ -25,6 +26,10 @@ int main(int argc, char *argv[])
   if (findYouBotEtherCatAdapter(name)) {
 	printf("\n\n\nAdapter found: %s\n", name);
   }
+
+  youbot::DataObjectLockFree<int> i;
+
+
 
   return (0);
 }
