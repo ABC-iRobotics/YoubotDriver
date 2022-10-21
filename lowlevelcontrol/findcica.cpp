@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 	printf("\n\n\nAdapter found: %s\n", name);
   }
 
-  youbot::DataObjectLockFree<int> i;
+  DataObjectLockFree<int> i;
 
 
 
