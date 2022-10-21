@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "adapters.h"
+#include "adapters.hpp"
 
 char ifbuf[1024];
 
@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
   char name[5000];
 
   if (findYouBotEtherCatAdapter(name)) {
-	printf("Adapter found: %s\n", name);
+	printf("\n\n\nAdapter found: %s\n", name);
   }
 
   return (0);

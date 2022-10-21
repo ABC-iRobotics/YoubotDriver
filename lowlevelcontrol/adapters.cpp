@@ -1,4 +1,4 @@
-#include "adapters.h"
+#include "adapters.hpp"
 #include "ethercat.h"
 #include <stdio.h>
 #include <string.h>
@@ -159,7 +159,7 @@ char* SDO2string(uint16 slave, uint16 index, uint8 subidx, uint16 dtype)
   float* sr;
   double* dr;
   char es[32];
-
+  /*
   memset(&usdo, 0, 128);
   ec_SDOread(slave, index, subidx, FALSE, &l, &usdo, EC_TIMEOUTRXM);
   if (EcatError)
@@ -247,6 +247,8 @@ char* SDO2string(uint16 slave, uint16 index, uint8 subidx, uint16 dtype)
     }
     return str;
   }
+  */
+  return NULL;
 }
 
 /** Read PDO assign structure */
@@ -707,7 +709,7 @@ bool findYouBotEtherCatAdapter(char* name) {
     ec_free_adapters(adapter);
 }
 
-bool checkIfYouBotEtherCatAdapter(bool printSDO, bool printMAP, char* ifname) {
+bool checkIfYouBotEtherCatAdapter(char* ifname, bool printSDO, bool printMAP) {
 
   char IOmap[4096];
   int cnt, i, j, nSM;
@@ -828,4 +830,10 @@ bool checkIfYouBotEtherCatAdapter(bool printSDO, bool printMAP, char* ifname) {
     ec_close();
     if (numofjointdrivers < 5)
       return false;
+    return true;
   }
+  else {
+    printf("No socket connection on %s\n\n", ifname);
+    return false;
+  }
+}

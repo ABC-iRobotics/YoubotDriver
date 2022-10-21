@@ -1,9 +1,9 @@
 
-set(SOURCES findcica.c
-      adapters.c)
+set(SOURCES findcica.cpp
+      adapters.cpp)
 
 set(HEADERS
-      adapters.h)
+      adapters.hpp)
 
 add_executable(lowlevelcontrol ${SOURCES} ${HEADERS})
 

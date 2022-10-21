@@ -6,7 +6,7 @@
 //
 bool findYouBotEtherCatAdapter(char* name);;
 
-bool checkIfYouBotEtherCatAdapter(bool printSDO, bool printMAP, char* ifname);
+bool checkIfYouBotEtherCatAdapter(char* ifname, bool printSDO=false, bool printMAP=false);
 
 void slaveinfo(bool printSDO, bool printMAP, char* ifname);
 
