@@ -694,19 +694,21 @@ void slaveinfo(char* ifname)
 //
 bool findYouBotEtherCatAdapter(char* name) {
     printf("Available adapters\n");
-    ec_adaptert* adapter = ec_find_adapters();
+    ec_adaptert* adapter0 = ec_find_adapters();
+    ec_adaptert* adapter = adapter0;
     while (adapter != NULL) {
         printf("Description : %s, Device to use for wpcap: %s\n", adapter->desc, adapter->name);
 
         if (checkIfYouBotEtherCatAdapter(adapter->name)) {
             printf("   Expected YouBot Arm!!\n");
             strcpy(name, adapter->name);
+            ec_free_adapters(adapter0);
             return true;
         }
-
         adapter = adapter->next;
     }
-    ec_free_adapters(adapter);
+    ec_free_adapters(adapter0);
+    return false;
 }
 
 bool checkIfYouBotEtherCatAdapter(char* ifname, bool printSDO, bool printMAP) {
