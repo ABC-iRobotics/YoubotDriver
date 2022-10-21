@@ -159,7 +159,7 @@ char* SDO2string(uint16 slave, uint16 index, uint8 subidx, uint16 dtype)
   float* sr;
   double* dr;
   char es[32];
-  /*
+  
   memset(&usdo, 0, 128);
   ec_SDOread(slave, index, subidx, FALSE, &l, &usdo, EC_TIMEOUTRXM);
   if (EcatError)
@@ -191,7 +191,7 @@ char* SDO2string(uint16 slave, uint16 index, uint8 subidx, uint16 dtype)
       break;
     case ECT_INTEGER64:
       i64 = (int64*)&usdo[0];
-      sprintf(str, "0x%16.16"PRIx64" / %"PRId64, *i64, *i64);
+      sprintf(str, "0x%16.16 / %", *i64, *i64);
       break;
     case ECT_UNSIGNED8:
       u8 = (uint8*)&usdo[0];
@@ -208,7 +208,7 @@ char* SDO2string(uint16 slave, uint16 index, uint8 subidx, uint16 dtype)
       break;
     case ECT_UNSIGNED64:
       u64 = (uint64*)&usdo[0];
-      sprintf(str, "0x%16.16"PRIx64" / %"PRIu64, *u64, *u64);
+      sprintf(str, "0x%jx / %jx", *u64, *u64);
       break;
     case ECT_REAL32:
       sr = (float*)&usdo[0];
@@ -247,7 +247,6 @@ char* SDO2string(uint16 slave, uint16 index, uint8 subidx, uint16 dtype)
     }
     return str;
   }
-  */
   return NULL;
 }
 
