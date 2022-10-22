@@ -253,18 +253,6 @@ void YouBotGripper::getConfigurationParameter(YouBotSlaveMailboxMsg& parameter) 
   // Bouml preserved body end 000DE971
 }
 
-void YouBotGripper::getData(const GripperData& data) const {
-  // Bouml preserved body begin 0005FB71
-    LOG(info) << "Nothing to do";
-  // Bouml preserved body end 0005FB71
-}
-
-void YouBotGripper::setData(const GripperData& data) {
-  // Bouml preserved body begin 0005FAF1
-    LOG(info) << "Nothing to do";
-  // Bouml preserved body end 0005FAF1
-}
-
 void YouBotGripper::getData(OneDOFGripperData& data) const {
   // Bouml preserved body begin 000483F1
     LOG(info) << "Nothing to do";

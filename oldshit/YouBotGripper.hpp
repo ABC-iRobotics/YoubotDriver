@@ -64,8 +64,6 @@
 #include "EthercatMasterWithoutThread.hpp"
 #include "YouBotSlaveMsg.hpp"
 #include "YouBotSlaveMailboxMsg.hpp"
-#include "Gripper.hpp"
-#include "GripperData.hpp"
 #include "GripperParameter.hpp"
 #include "OneDOFGripper.hpp"
 #include "OneDOFGripperData.hpp"
@@ -100,10 +98,6 @@ class YouBotGripper : public OneDOFGripper {
 
 
   protected:
-    virtual void getData(const GripperData& data) const;
-
-    virtual void setData(const GripperData& data);
-
     virtual void getData(OneDOFGripperData& data) const;
 
     virtual void setData(const OneDOFGripperData& data);

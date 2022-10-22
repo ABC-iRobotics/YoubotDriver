@@ -1,7 +1,6 @@
 #ifndef YOUBOT_ONEDOFGRIPPER_H
 #define YOUBOT_ONEDOFGRIPPER_H
 
-#include "GripperData.hpp"
 #include "GripperParameter.hpp"
 #include "OneDOFGripperData.hpp"
 

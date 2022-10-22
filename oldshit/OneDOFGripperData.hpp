@@ -52,13 +52,12 @@
  *
  ****************************************************************/
 #include "Units.hpp"
-#include "GripperData.hpp"
 namespace youbot {
 
 ///////////////////////////////////////////////////////////////////////////////
 /// abstract class of data for gripper with one degree of freedom
 ///////////////////////////////////////////////////////////////////////////////
-class OneDOFGripperData : public GripperData {
+class OneDOFGripperData {
 };
 ///////////////////////////////////////////////////////////////////////////////
 /// Setpoint length of the bar spacing for a one DOF gripper

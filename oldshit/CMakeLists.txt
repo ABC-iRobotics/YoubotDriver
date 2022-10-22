@@ -41,7 +41,6 @@ set(HEADERS
     Logger.hpp
     Time.hpp
     Units.hpp
-    GripperData.hpp
     GripperParameter.hpp
     DataTrace.hpp
     EtherCatMaster.hpp
