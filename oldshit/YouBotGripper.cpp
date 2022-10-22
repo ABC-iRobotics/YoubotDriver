@@ -69,18 +69,6 @@ YouBotGripper::~YouBotGripper() {
   // Bouml preserved body end 0005F071
 }
 
-void YouBotGripper::getConfigurationParameter(GripperParameter& parameter) const {
-  // Bouml preserved body begin 0005FBF1
-    throw std::runtime_error("Please use YouBotGripperParameter");
-  // Bouml preserved body end 0005FBF1
-}
-
-void YouBotGripper::setConfigurationParameter(const GripperParameter& parameter) {
-  // Bouml preserved body begin 0005FA71
-    throw std::runtime_error("Please use YouBotGripperParameter");
-  // Bouml preserved body end 0005FA71
-}
-
 void YouBotGripper::getConfigurationParameter(GripperFirmwareVersion& parameter) const {
   // Bouml preserved body begin 000BEF71
 

@@ -41,7 +41,6 @@ set(HEADERS
     Logger.hpp
     Time.hpp
     Units.hpp
-    GripperParameter.hpp
     DataTrace.hpp
     EtherCatMaster.hpp
     EtherCatMasterInterface.hpp
@@ -56,7 +55,6 @@ set(HEADERS
     YouBotGripperParameter.hpp
     YouBotManipulator.hpp
     OneDOFGripperData.hpp
-    OneDOFGripper.hpp
     JointTrajectory.hpp
     FourSwedishWheelOmniBaseKinematic.hpp
     FourSwedishWheelOmniBaseKinematicConfiguration.hpp

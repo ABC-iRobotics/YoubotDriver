@@ -57,8 +57,6 @@
 #include "Units.hpp"
 #include "Time.hpp"
 #include "Exceptions.hpp"
-//#include "JointParameter.hpp"
-#include "GripperParameter.hpp"
 #include "TMCLProtocolDefinitions.hpp"
 #include "YouBotSlaveMsg.hpp"
 #include "YouBotSlaveMailboxMsg.hpp"
@@ -67,7 +65,7 @@ namespace youbot {
 ///////////////////////////////////////////////////////////////////////////////
 /// abstract youBot gripper parameter
 ///////////////////////////////////////////////////////////////////////////////
-class YouBotGripperParameter : public GripperParameter {
+class YouBotGripperParameter {
 friend class YouBotGripper;
 friend class YouBotGripperBar;
   protected:

@@ -64,7 +64,6 @@
 #include "EthercatMasterWithoutThread.hpp"
 #include "YouBotSlaveMsg.hpp"
 #include "YouBotSlaveMailboxMsg.hpp"
-#include "GripperParameter.hpp"
 #include "OneDOFGripperData.hpp"
 #include "YouBotGripperParameter.hpp"
 #include "YouBotGripperBar.hpp"
@@ -80,13 +79,6 @@ class YouBotGripper {
     YouBotGripper(const unsigned int jointNo, const std::string& configFilePath = "../config/");
 
     virtual ~YouBotGripper();
-
-
-  protected:
-    virtual void getConfigurationParameter(GripperParameter& parameter) const;
-
-    virtual void setConfigurationParameter(const GripperParameter& parameter);
-
 
   public:
     virtual void getConfigurationParameter(GripperFirmwareVersion& parameter) const;
