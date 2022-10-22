@@ -22,7 +22,6 @@ set(SOURCES
     JointTrajectory.cpp
     FourSwedishWheelOmniBaseKinematic.cpp
     FourSwedishWheelOmniBaseKinematicConfiguration.cpp
-    WheeledBaseKinematic.cpp
     findcica.cpp
 	  )
 
@@ -57,7 +56,6 @@ set(HEADERS
     JointTrajectory.hpp
     FourSwedishWheelOmniBaseKinematic.hpp
     FourSwedishWheelOmniBaseKinematicConfiguration.hpp
-    WheeledBaseKinematic.hpp
 )
 
 add_executable(oldshit ${SOURCES} ${HEADERS})

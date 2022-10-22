@@ -56,14 +56,13 @@
 #include "Logger.hpp"
 #include "Units.hpp"
 #include "Exceptions.hpp"
-#include "WheeledBaseKinematic.hpp" 
 #include "FourSwedishWheelOmniBaseKinematicConfiguration.hpp"
 namespace youbot {
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Implementation of a base kinematic with four swedish wheels. The youBot base kinematic.
 ///////////////////////////////////////////////////////////////////////////////
-class FourSwedishWheelOmniBaseKinematic : public WheeledBaseKinematic {
+class FourSwedishWheelOmniBaseKinematic {
   public:
     FourSwedishWheelOmniBaseKinematic();
 
