@@ -81,6 +81,7 @@ target_compile_definitions(oldshit PUBLIC
   _USE_MATH_DEFINES
   _CRT_SECURE_NO_WARNINGS
   __PRETTY_FUNCTION__=__FUNCSIG__ #only on Windows
+  _ALLOW_KEYWORD_MACROS #macroised inline...
   )
 # __STDC_WANT_SECURE_LIB__ __STDC_CONSTANT_MACROS)
 
