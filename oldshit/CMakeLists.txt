@@ -7,7 +7,6 @@ set(SOURCES
 	  YouBotJointParameterPasswordProtected.cpp
     ConfigFile.cpp
     Logger.cpp
-    PidController.cpp
     DataTrace.cpp
     EtherCatMaster.cpp
     EtherCatMasterWithoutThread.cpp
@@ -24,6 +23,7 @@ set(SOURCES
     FourSwedishWheelOmniBaseKinematic.cpp
     FourSwedishWheelOmniBaseKinematicConfiguration.cpp
     WheeledBaseKinematic.cpp
+    findcica.cpp
 	  )
 
 set(HEADERS
@@ -32,7 +32,6 @@ set(HEADERS
 	  JointData.hpp
 	  YouBotSlaveMailboxMsg.hpp
 	  YouBotJointStorage.hpp
-	  TMCLProtocolDefinitions.hpp
 	  YouBotJointParameterReadOnly.hpp
 	  YouBotJoint.hpp
 	  Joint.hpp
@@ -40,7 +39,6 @@ set(HEADERS
     ConfigFile.hpp
     Exceptions.hpp
     Logger.hpp
-    PidController.hpp
     Time.hpp
     Units.hpp
     Gripper.hpp
@@ -69,8 +67,6 @@ set(HEADERS
 
 add_executable(oldshit ${SOURCES} ${HEADERS})
 
-message(WARNING ${BOOST_DETECTED_TOOLSET})
-
 target_link_libraries(oldshit soem lowlevelcontrol Boost::thread Boost::date_time
   Boost::filesystem Boost::system Boost::regex)
 
@@ -79,8 +75,8 @@ target_include_directories(oldshit PUBLIC ${CMAKE_SOURCE_DIR}/lowlevelcontrol ${
 set_target_properties(oldshit PROPERTIES LINKER_LANGUAGE CXX)
 
 target_compile_definitions(oldshit PUBLIC
-  __STDC_LIMIT_MACROS
-  __STDC_WANT_SECURE_LIB__=1
+  #__STDC_LIMIT_MACROS
+  #__STDC_WANT_SECURE_LIB__=1
   _USE_MATH_DEFINES
   _CRT_SECURE_NO_WARNINGS
   __PRETTY_FUNCTION__=__FUNCSIG__ #only on Windows

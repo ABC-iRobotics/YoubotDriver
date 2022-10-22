@@ -96,13 +96,28 @@ void PidController::setGains(double P, double I, double D, double I1, double I2)
   i_min_ = I2;
 }
 
+PidController& PidController::operator =(const PidController& p)
+{
+  if (this == &p)
+    return *this;
 
+  p_gain_ = p.p_gain_;
+  i_gain_ = p.i_gain_;
+  d_gain_ = p.d_gain_;
+  i_max_ = p.i_max_;
+  i_min_ = p.i_min_;
+
+  p_error_last_ = p_error_ = i_error_ = d_error_ = cmd_ = 0.0;
+  return *this;
+}
+
+/*
 double PidController::updatePid(double error, boost::posix_time::time_duration dt)
 {
   double p_term, d_term, i_term;
   p_error_ = error; //this is pError = pState-pTarget
-  double deltatime = (double)dt.total_microseconds()/1000.0; //in milli seconds
-  
+  double deltatime = (double)dt.total_microseconds() / 1000.0; //in milli seconds
+
 
   if (deltatime == 0.0 || isnan(error) || isinf(error))
     return 0.0;
@@ -111,7 +126,7 @@ double PidController::updatePid(double error, boost::posix_time::time_duration d
   p_term = p_gain_ * p_error_;
 
   // Calculate the integral error
-  
+
   i_error_ = last_i_error + deltatime * p_error_;
   last_i_error = deltatime * p_error_;
 
@@ -122,12 +137,12 @@ double PidController::updatePid(double error, boost::posix_time::time_duration d
   if (i_term > i_max_)
   {
     i_term = i_max_;
-    i_error_=i_term/i_gain_;
+    i_error_ = i_term / i_gain_;
   }
   else if (i_term < i_min_)
   {
     i_term = i_min_;
-    i_error_=i_term/i_gain_;
+    i_error_ = i_term / i_gain_;
   }
 
   // Calculate the derivative error
@@ -139,13 +154,13 @@ double PidController::updatePid(double error, boost::posix_time::time_duration d
   // Calculate derivative contribution to command
   d_term = d_gain_ * d_error_;
   cmd_ = -p_term - i_term - d_term;
-  
- // printf(" p_error_ %lf  i_error_ %lf  p_term %lf i_term %lf  dt %lf out %lf\n", p_error_, i_error_, p_term, i_term, deltatime, cmd_);
+
+  // printf(" p_error_ %lf  i_error_ %lf  p_term %lf i_term %lf  dt %lf out %lf\n", p_error_, i_error_, p_term, i_term, deltatime, cmd_);
 
   return cmd_;
 }
 
-
+/*
 double PidController::updatePid(double error, double error_dot, boost::posix_time::time_duration dt)
 {
   double p_term, d_term, i_term;
@@ -188,7 +203,7 @@ double PidController::updatePid(double error, double error_dot, boost::posix_tim
 
   return cmd_;
 }
-
+*/
 
 
 void PidController::setCurrentCmd(double cmd)

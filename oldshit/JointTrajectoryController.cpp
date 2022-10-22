@@ -320,7 +320,8 @@ namespace youbot {
     pose_error = ((actualpose / encoderTicksPerRound) * gearRatio * (2.0 * M_PI)) - targetPosition;
     velocity_error = ((actualvel/ 60.0) * gearRatio * 2.0 * M_PI) - targetVelocity ;
 
-    velsetpoint = pid.updatePid(pose_error, velocity_error, dt);
+    std::chrono::microseconds dur2(dt.total_microseconds());
+    velsetpoint = pid.updatePid(pose_error, velocity_error, dur2);
 
     velocity.value = (int32) round((velsetpoint / (gearRatio * 2.0 * M_PI)) * 60.0);
 
