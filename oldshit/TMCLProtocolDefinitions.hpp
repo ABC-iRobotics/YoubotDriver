@@ -153,7 +153,7 @@ enum MailboxErrorFlags {
 
 
 enum YouBotMailboxStatusFlags {
-    NO_ERROR = 100,
+    NO_ERROR_ = 100,
     INVALID_COMMAND = 2,
     WRONG_TYPE = 3,
     INVALID_VALUE = 4,
