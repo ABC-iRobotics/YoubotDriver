@@ -59,11 +59,6 @@ namespace youbot {
   severity_level Logger::logginLevel = info;
 
   Logger::Logger(const std::string &funcName, const int &lineNo, const std::string &fileName, severity_level level) {
-#ifndef USE_ROS_LOGGING
-    if (toROS) {
-      toConsole = true;
-    }
-#endif
     
     this->level = level;
     if (toConsole || toFile) {

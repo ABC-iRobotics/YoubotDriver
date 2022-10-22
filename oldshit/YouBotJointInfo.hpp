@@ -78,10 +78,6 @@ class YouBotJointInfo {
 
     double torqueConstant;
 
-    long bevorUpperLimit;
-
-    long bevorLowerLimit;
-
 };
 
 } // namespace youbot
