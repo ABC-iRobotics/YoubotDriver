@@ -1,6 +1,6 @@
 #ifndef YOUBOT_ONEDOFGRIPPER_H
 #define YOUBOT_ONEDOFGRIPPER_H
-#include "Gripper.hpp"
+
 #include "GripperData.hpp"
 #include "GripperParameter.hpp"
 #include "OneDOFGripperData.hpp"
@@ -60,7 +60,7 @@ namespace youbot {
 ///////////////////////////////////////////////////////////////////////////////
 /// abstract gripper with one degree of freedom
 ///////////////////////////////////////////////////////////////////////////////
-class OneDOFGripper : public Gripper {
+class OneDOFGripper {
   public:
     virtual void setConfigurationParameter(const GripperParameter& parameter) = 0;
 

@@ -63,7 +63,6 @@
 #include "EthercatMasterWithoutThread.hpp"
 #include "YouBotSlaveMsg.hpp"
 #include "YouBotSlaveMailboxMsg.hpp"
-#include "Gripper.hpp"
 #include "GripperData.hpp"
 #include "GripperParameter.hpp"
 #include "OneDOFGripper.hpp"

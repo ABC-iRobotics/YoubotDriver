@@ -41,7 +41,6 @@ set(HEADERS
     Logger.hpp
     Time.hpp
     Units.hpp
-    Gripper.hpp
     GripperData.hpp
     GripperParameter.hpp
     DataTrace.hpp
