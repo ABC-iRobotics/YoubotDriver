@@ -30,6 +30,7 @@ endmacro(requires_soem)
 add_subdirectory(slaveinfo)
 add_subdirectory(lowlevelcontrol)
 
+set(Boost_USE_STATIC_LIBS true)
 FIND_PACKAGE(Boost COMPONENTS thread date_time filesystem system regex REQUIRED)
 IF (Boost_FOUND)
   MESSAGE(STATUS "SUCCESSFUL: Boost found")

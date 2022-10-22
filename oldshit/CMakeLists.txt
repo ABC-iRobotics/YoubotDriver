@@ -69,7 +69,10 @@ set(HEADERS
 
 add_executable(oldshit ${SOURCES} ${HEADERS})
 
-target_link_libraries(oldshit soem lowlevelcontrol ${Boost_LIBRARIES})
+message(WARNING ${BOOST_DETECTED_TOOLSET})
+
+target_link_libraries(oldshit soem lowlevelcontrol Boost::thread Boost::date_time
+  Boost::filesystem Boost::system Boost::regex)
 
 target_include_directories(oldshit PUBLIC ${CMAKE_SOURCE_DIR}/lowlevelcontrol ${Boost_INCLUDE_DIRS})
 
@@ -83,8 +86,12 @@ target_compile_definitions(oldshit PUBLIC
   __PRETTY_FUNCTION__=__FUNCSIG__ #only on Windows
   _ALLOW_KEYWORD_MACROS #macroised inline...
   )
-# __STDC_WANT_SECURE_LIB__ __STDC_CONSTANT_MACROS)
 
+IF(MSVC)
+    ADD_DEFINITIONS("/EHsc")
+ENDIF(MSVC)
+# __STDC_WANT_SECURE_LIB__ __STDC_CONSTANT_MACROS)
+#TODO: set toolset and MT
 #later:
 #if !defined(__PRETTY_FUNCTION__) && !defined(__GNUC__)
 #define __PRETTY_FUNCTION__ __FUNCSIG__
