@@ -53,12 +53,12 @@
  ****************************************************************/
 #include <vector>
 #include <sstream>
-#include "generic/Logger.hpp"
-#include "generic/Units.hpp"
-#include "generic/Time.hpp"
-#include "generic/Exceptions.hpp"
-#include "JointParameter.hpp"
-#include "ProtocolDefinitions.hpp"
+#include "Logger.hpp"
+#include "Units.hpp"
+#include "Time.hpp"
+#include "Exceptions.hpp"
+//#include "JointParameter.hpp"
+#include "TMCLProtocolDefinitions.hpp"
 #include "YouBotSlaveMsg.hpp"
 #include "YouBotSlaveMailboxMsg.hpp"
 #include "YouBotJointStorage.hpp"

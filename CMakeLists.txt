@@ -30,3 +30,13 @@ endmacro(requires_soem)
 add_subdirectory(slaveinfo)
 add_subdirectory(lowlevelcontrol)
 
+FIND_PACKAGE(Boost COMPONENTS thread date_time filesystem system regex REQUIRED)
+IF (Boost_FOUND)
+  MESSAGE(STATUS "SUCCESSFUL: Boost found")
+ELSE (Boost_FOUND)
+  MESSAGE(STATUS "ERROR: Boost not found")
+ENDIF (Boost_FOUND)
+
+
+add_subdirectory(oldshit)
+

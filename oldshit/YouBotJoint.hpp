@@ -56,10 +56,10 @@
 #include <cmath>
 #include <boost/thread.hpp>
 #include <boost/scoped_ptr.hpp>
-#include "generic/Logger.hpp"
-#include "generic/Units.hpp"
-#include "generic/Time.hpp"
-#include "generic/Exceptions.hpp"
+#include "Logger.hpp"
+#include "Units.hpp"
+#include "Time.hpp"
+#include "Exceptions.hpp"
 #include "Joint.hpp"
 #include "JointData.hpp"
 #include "YouBotJointStorage.hpp"

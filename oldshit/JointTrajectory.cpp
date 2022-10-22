@@ -1,6 +1,3 @@
-#ifndef YOUBOT_JOINT_H
-#define YOUBOT_JOINT_H
-
 /****************************************************************
  *
  * Copyright (c) 2011
@@ -51,22 +48,8 @@
  * License LGPL and BSD license along with this program.
  *
  ****************************************************************/
-#include <vector>
-#include "generic/Units.hpp"
-#include "JointData.hpp"
-
+#include "JointTrajectory.hpp"
 namespace youbot {
 
-///////////////////////////////////////////////////////////////////////////////
-/// abstract joint
-///////////////////////////////////////////////////////////////////////////////
-class Joint {
-  public:
-    virtual void setData(const JointDataSetpoint& data) = 0;
-
-    virtual void getData(JointData& data) = 0;
-
-};
 
 } // namespace youbot
-#endif

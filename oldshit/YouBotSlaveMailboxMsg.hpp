@@ -53,38 +53,40 @@
 #define	_YOUBOT_SLAVE_MAILBOX_MESSAGE_H
 
 #include <ethercattype.h>
+#include <string>
+#include <time.h>
 #include "DataObjectLockFree.hpp"
 
 namespace youbot {
 
-/// Output part from the EtherCAT mailbox message of the youBot slaves
-PACKED_BEGIN
-struct mailboxOutputBuffer {
-  uint8 moduleAddress; //0 = Drive  1 = Gripper
-  uint8 commandNumber;
-  uint8 typeNumber;
-  uint8 motorNumber; //always zero
-  uint32 value; //MSB first!
+  /// Output part from the EtherCAT mailbox message of the youBot slaves
+  PACKED_BEGIN
+  struct mailboxOutputBuffer PACKED {
+    uint8 moduleAddress; //0 = Drive  1 = Gripper
+    uint8 commandNumber;
+    uint8 typeNumber;
+    uint8 motorNumber; //always zero
+    uint32 value; //MSB first!
 
-  mailboxOutputBuffer() : moduleAddress(0), commandNumber(0), typeNumber(0), motorNumber(0), value(0) {};
-} PACKED;
-PACKED_END
+    mailboxOutputBuffer() : moduleAddress(0), commandNumber(0), typeNumber(0), motorNumber(0), value(0) {};
+  };
+  PACKED_END
 
-/// Input part from the EtherCAT mailbox message of the youBot slaves
-PACKED_BEGIN
-struct mailboxInputBuffer {
-  uint8 replyAddress;
-  uint8 moduleAddress;
-  uint8 status; //(e.g. 100 means “no error”)
-  uint8 commandNumber;
-  uint32 value; //MSB first!
+  /// Input part from the EtherCAT mailbox message of the youBot slaves
+  PACKED_BEGIN
+  struct mailboxInputBuffer PACKED {
+    uint8 replyAddress;
+    uint8 moduleAddress;
+    uint8 status; //(e.g. 100 means “no error”)
+    uint8 commandNumber;
+    uint32 value; //MSB first!
 
-  mailboxInputBuffer() : replyAddress(0), moduleAddress(0), status(0), commandNumber(0), value(0) {};
-} PACKED;
-PACKED_END
-///////////////////////////////////////////////////////////////////////////////
-/// EtherCAT mailbox message of the youBot slaves 
-///////////////////////////////////////////////////////////////////////////////
+    mailboxInputBuffer() : replyAddress(0), moduleAddress(0), status(0), commandNumber(0), value(0) {};
+  };
+  PACKED_END
+  ///////////////////////////////////////////////////////////////////////////////
+  /// EtherCAT mailbox message of the youBot slaves 
+  ///////////////////////////////////////////////////////////////////////////////
 
  class YouBotSlaveMailboxMsg {
   public:
@@ -147,12 +149,10 @@ PACKED_END
     }
 
     // Constructor
-
     YouBotSlaveMailboxMsgThreadSafe(unsigned int slaveNo) {
       slaveNumber.Set(slaveNo);
     }
     // Copy-Constructor
-
     YouBotSlaveMailboxMsgThreadSafe(const YouBotSlaveMailboxMsgThreadSafe& copy) {
       mailboxOutputBuffer tempStctOutput;
       mailboxInputBuffer tempStctInput;
