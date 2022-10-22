@@ -34,7 +34,6 @@ set(HEADERS
 	  YouBotJointStorage.hpp
 	  YouBotJointParameterReadOnly.hpp
 	  YouBotJoint.hpp
-	  Joint.hpp
 	  YouBotJointParameterPasswordProtected.hpp
     ConfigFile.hpp
     Exceptions.hpp

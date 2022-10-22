@@ -419,12 +419,6 @@ void YouBotJoint::setData(const JointDataSetpoint& data) {
   // Bouml preserved body end 000413F1
 }
 
-void YouBotJoint::getData(JointData& data) {
-  // Bouml preserved body begin 00041471
-    LOG(info) << "Nothing to do";
-  // Bouml preserved body end 00041471
-}
-
 ///commands a position or angle to one joint
 ///@param data the to command position
 void YouBotJoint::setData(const JointAngleSetpoint& data) {

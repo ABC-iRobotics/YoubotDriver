@@ -60,7 +60,6 @@
 #include "Units.hpp"
 #include "Time.hpp"
 #include "Exceptions.hpp"
-#include "Joint.hpp"
 #include "JointData.hpp"
 #include "YouBotJointStorage.hpp"
 #include "TMCLProtocolDefinitions.hpp"
@@ -81,7 +80,7 @@ namespace youbot {
 /// youBot joint for the base and the manipulator.
 /// Every motor, encoder, transmition combination of the youBot base or manipulator is a YouBotJoint
 ///////////////////////////////////////////////////////////////////////////////
-class YouBotJoint : public Joint {
+class YouBotJoint {
   public:
     YouBotJoint(const unsigned int jointNo, const std::string& configFilePath = "../config/");
 
@@ -150,9 +149,6 @@ class YouBotJoint : public Joint {
 
   protected:
     virtual void setData(const JointDataSetpoint& data);
-
-    virtual void getData(JointData& data);
-
 
   public:
     ///commands a position or angle to one joint
