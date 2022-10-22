@@ -52,16 +52,14 @@
 #ifndef YOUBOT_TIME_HPP
 #define YOUBOT_TIME_HPP
 
-#include <boost/thread.hpp>
-#include "boost/date_time/posix_time/posix_time.hpp"
+#include <thread>
+#include <chrono>
 
 namespace youbot {
 
-#define SLEEP_MILLISEC(millisec) boost::this_thread::sleep(boost::posix_time::milliseconds((millisec)));
-#define SLEEP_MICROSEC(microsec) boost::this_thread::sleep(boost::posix_time::microseconds((microsec)));
-
-#define SLEEP_SEC(sec) boost::this_thread::sleep(boost::posix_time::seconds((sec)));
-
+#define SLEEP_MILLISEC(millisec) std::this_thread::sleep_for(std::chrono::milliseconds(millisec));
+#define SLEEP_MICROSEC(microsec) std::this_thread::sleep_for(std::chrono::microseconds(millisec));
+#define SLEEP_SEC(sec) std::this_thread::sleep_for(std::chrono::seconds(millisec));
 
 } // namespace youbot
 #endif //YOUBOT_TIME_HPP

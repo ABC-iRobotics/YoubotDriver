@@ -35,9 +35,7 @@ set(HEADERS
 	  YouBotJoint.hpp
 	  YouBotJointParameterPasswordProtected.hpp
     ConfigFile.hpp
-    Exceptions.hpp
     Logger.hpp
-    Time.hpp
     Units.hpp
     DataTrace.hpp
     EtherCatMaster.hpp

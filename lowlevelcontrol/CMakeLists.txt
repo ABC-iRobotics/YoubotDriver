@@ -9,6 +9,8 @@ set(HEADERS
       DataObjectLockFree.hpp
       TMCLProtocolDefinitions.hpp
       PidController.hpp
+      Exceptions.hpp
+      Time.hpp
 )
 
 add_library(lowlevelcontrol STATIC ${SOURCES} ${HEADERS})

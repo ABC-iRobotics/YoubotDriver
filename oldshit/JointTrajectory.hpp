@@ -53,6 +53,8 @@
  ****************************************************************/
 #include "Units.hpp"
 #include "Time.hpp"
+#include <boost/thread.hpp>
+#include "boost/date_time/posix_time/posix_time.hpp"
 #include "JointData.hpp"
 namespace youbot {
 
