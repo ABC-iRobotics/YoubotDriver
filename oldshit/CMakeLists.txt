@@ -30,7 +30,7 @@ set(HEADERS
 	  YouBotJointParameter.hpp
 	  JointData.hpp
 	  YouBotSlaveMailboxMsg.hpp
-	  YouBotJointStorage.hpp
+	  YouBotJointInfo.hpp
 	  YouBotJointParameterReadOnly.hpp
 	  YouBotJoint.hpp
 	  YouBotJointParameterPasswordProtected.hpp

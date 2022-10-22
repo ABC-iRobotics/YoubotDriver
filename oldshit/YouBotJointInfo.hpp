@@ -1,5 +1,5 @@
-#ifndef YOUBOT_YOUBOTJOINTSTORAGE_H
-#define YOUBOT_YOUBOTJOINTSTORAGE_H
+#ifndef YOUBOT_YOUBOTJOINTINFO_H
+#define YOUBOT_YOUBOTJOINTINFO_H
 
 /****************************************************************
  *
@@ -56,7 +56,7 @@ namespace youbot {
 ///////////////////////////////////////////////////////////////////////////////
 /// Stores YouBotJoint informations which are needed in the driver
 ///////////////////////////////////////////////////////////////////////////////
-class YouBotJointStorage {
+class YouBotJointInfo {
   public:
     unsigned int encoderTicksPerRound;
 

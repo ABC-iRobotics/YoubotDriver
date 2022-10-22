@@ -64,7 +64,7 @@
 #include "TMCLProtocolDefinitions.hpp"
 #include "YouBotSlaveMsg.hpp"
 #include "YouBotSlaveMailboxMsg.hpp"
-#include "YouBotJointStorage.hpp"
+#include "YouBotJointInfo.hpp"
 namespace youbot {
 
 enum CalibrationDirection {
@@ -88,9 +88,9 @@ friend class YouBotJoint;
 
 
   protected:
-    virtual void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const = 0;
+    virtual void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const = 0;
 
-    virtual void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) = 0;
+    virtual void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) = 0;
 
     virtual std::string getName() const = 0;
 
@@ -117,9 +117,9 @@ friend class YouBotJoint;
 
 
   protected:
-    virtual void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const = 0;
+    virtual void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const = 0;
 
-    virtual void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) = 0;
+    virtual void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) = 0;
 
     virtual std::string getName() const = 0;
 
@@ -148,9 +148,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {};
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {};
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {};
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {};
 
     std::string getName() const {return this->name;};
 
@@ -181,9 +181,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -214,9 +214,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {};
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {};
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {};
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {};
 
     std::string getName() const {return this->name;};
 
@@ -251,9 +251,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -286,9 +286,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {};
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {};
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {};
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {};
 
     std::string getName() const {return this->name;};
 
@@ -319,9 +319,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {};
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {};
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {};
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {};
 
     std::string getName() const {return this->name;};
 
@@ -352,9 +352,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {};
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {};
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {};
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {};
 
     std::string getName() const {return this->name;};
 
@@ -385,9 +385,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {};
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {};
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {};
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {};
 
     std::string getName() const {return this->name;};
 
@@ -422,9 +422,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {};
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {};
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {};
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {};
 
     std::string getName() const {return this->name;};
 
@@ -459,9 +459,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {};
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {};
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {};
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {};
 
     std::string getName() const {return this->name;};
 
@@ -492,9 +492,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -529,9 +529,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -566,9 +566,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -599,9 +599,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -637,9 +637,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -674,9 +674,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -711,9 +711,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -748,9 +748,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -785,9 +785,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -822,9 +822,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -859,9 +859,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -896,9 +896,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -933,9 +933,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -970,9 +970,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -1007,9 +1007,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -1044,9 +1044,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -1081,9 +1081,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -1118,9 +1118,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -1155,9 +1155,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -1192,9 +1192,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -1229,9 +1229,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -1266,9 +1266,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -1303,9 +1303,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -1340,9 +1340,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -1377,9 +1377,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -1414,9 +1414,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -1451,9 +1451,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -1488,9 +1488,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -1525,9 +1525,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 
@@ -1559,9 +1559,9 @@ friend class YouBotJoint;
 
 
   private:
-    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const;
+    void getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const;
 
-    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage);
+    void setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage);
 
     std::string getName() const {return this->name;};
 

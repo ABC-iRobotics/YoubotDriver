@@ -61,7 +61,7 @@
 #include "Time.hpp"
 #include "Exceptions.hpp"
 #include "TMCLProtocolDefinitions.hpp"
-#include "YouBotJointStorage.hpp"
+#include "YouBotJointInfo.hpp"
 #include "YouBotSlaveMsg.hpp"
 
 namespace youbot {
@@ -71,7 +71,7 @@ namespace youbot {
 ///////////////////////////////////////////////////////////////////////////////
 class JointLimitMonitor {
   public:
-    JointLimitMonitor(const YouBotJointStorage& jointParameters, const quantity<angular_acceleration>& jointAcceleration);
+    JointLimitMonitor(const YouBotJointInfo& jointParameters, const quantity<angular_acceleration>& jointAcceleration);
 
     virtual ~JointLimitMonitor();
 
@@ -93,7 +93,7 @@ class JointLimitMonitor {
 
     int calculateBrakingVelocity(const int actualPosition);
 
-    YouBotJointStorage storage;
+    YouBotJointInfo storage;
 
     double acceleration;
 

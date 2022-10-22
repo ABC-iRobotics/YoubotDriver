@@ -61,7 +61,7 @@
 #include "Time.hpp"
 #include "Exceptions.hpp"
 #include "JointData.hpp"
-#include "YouBotJointStorage.hpp"
+#include "YouBotJointInfo.hpp"
 #include "TMCLProtocolDefinitions.hpp"
 #include "YouBotJointParameter.hpp"
 #include "YouBotJointParameterPasswordProtected.hpp"
@@ -286,7 +286,7 @@ class YouBotJoint {
 
     unsigned int mailboxMsgRetries;
 
-    YouBotJointStorage storage;
+    YouBotJointInfo storage;
 
     YouBotSlaveMsg messageBuffer;
 

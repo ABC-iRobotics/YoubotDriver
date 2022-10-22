@@ -51,7 +51,7 @@
 #include "JointLimitMonitor.hpp"
 namespace youbot {
 
-JointLimitMonitor::JointLimitMonitor(const YouBotJointStorage& jointParameters, const quantity<angular_acceleration>& jointAcceleration) {
+JointLimitMonitor::JointLimitMonitor(const YouBotJointInfo& jointParameters, const quantity<angular_acceleration>& jointAcceleration) {
   // Bouml preserved body begin 000FAB71
 	this->storage = jointParameters;
 	this->acceleration = jointAcceleration.value();  // rad/s^2

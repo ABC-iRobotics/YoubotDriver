@@ -135,7 +135,7 @@ void InitializeJoint::toString(std::string& value) {
   // Bouml preserved body end 0009C971
 }
 
-void InitializeJoint::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void InitializeJoint::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 00095371
     message.stctOutput.commandNumber = msgType;
     message.stctOutput.moduleAddress = DRIVE;
@@ -144,7 +144,7 @@ void InitializeJoint::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCo
   // Bouml preserved body end 00095371
 }
 
-void InitializeJoint::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void InitializeJoint::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 000953F1
     this->value = message.stctInput.value;
   // Bouml preserved body end 000953F1
@@ -220,7 +220,7 @@ void FirmwareVersion::toString(std::string& value) {
   // Bouml preserved body end 0009C571
 }
 
-void FirmwareVersion::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void FirmwareVersion::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 00098F71
     message.stctOutput.commandNumber = FIRMWARE_VERSION;
     message.stctOutput.moduleAddress = DRIVE;
@@ -229,7 +229,7 @@ void FirmwareVersion::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCo
   // Bouml preserved body end 00098F71
 }
 
-void FirmwareVersion::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void FirmwareVersion::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 00098FF1
   // Bouml preserved body end 00098FF1
 }
@@ -496,7 +496,7 @@ void MaximumPositioningVelocity::toString(std::string& value) {
   // Bouml preserved body end 0009C4F1
 }
 
-void MaximumPositioningVelocity::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void MaximumPositioningVelocity::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 0005A0F1
 
     message.stctOutput.commandNumber = msgType;
@@ -507,7 +507,7 @@ void MaximumPositioningVelocity::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& mess
   // Bouml preserved body end 0005A0F1
 }
 
-void MaximumPositioningVelocity::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void MaximumPositioningVelocity::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 0005A071
     double motorRPM = (int32)message.stctInput.value;
     this->value =  ((motorRPM / 60.0) * storage.gearRatio * 2.0 * M_PI) * radian_per_second;
@@ -555,7 +555,7 @@ void MotorAcceleration::toString(std::string& value) {
   // Bouml preserved body end 0009CCF1
 }
 
-void MotorAcceleration::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void MotorAcceleration::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 0006ABF1
 
     message.stctOutput.commandNumber = msgType;
@@ -566,7 +566,7 @@ void MotorAcceleration::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCL
   // Bouml preserved body end 0006ABF1
 }
 
-void MotorAcceleration::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void MotorAcceleration::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 0006AC71
     double motorRPMperSec = (int32)message.stctInput.value;
     this->value =  ((motorRPMperSec / 60.0) * storage.gearRatio * 2.0 * M_PI) * radian_per_second/second;
@@ -605,7 +605,7 @@ void RampGeneratorSpeedAndPositionControl::toString(std::string& value) {
   // Bouml preserved body end 0009D471
 }
 
-void RampGeneratorSpeedAndPositionControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void RampGeneratorSpeedAndPositionControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 0006C7F1
 
     message.stctOutput.commandNumber = msgType;
@@ -616,7 +616,7 @@ void RampGeneratorSpeedAndPositionControl::getYouBotMailboxMsg(YouBotSlaveMailbo
   // Bouml preserved body end 0006C7F1
 }
 
-void RampGeneratorSpeedAndPositionControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void RampGeneratorSpeedAndPositionControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 0006C871
     this->value = message.stctInput.value;
   // Bouml preserved body end 0006C871
@@ -663,7 +663,7 @@ void PositionControlSwitchingThreshold::toString(std::string& value) {
   // Bouml preserved body end 0009CD71
 }
 
-void PositionControlSwitchingThreshold::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void PositionControlSwitchingThreshold::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 0006FBF1
 
     message.stctOutput.commandNumber = msgType;
@@ -674,7 +674,7 @@ void PositionControlSwitchingThreshold::getYouBotMailboxMsg(YouBotSlaveMailboxMs
   // Bouml preserved body end 0006FBF1
 }
 
-void PositionControlSwitchingThreshold::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void PositionControlSwitchingThreshold::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 0006FC71
     double motorRPM = (int32)message.stctInput.value;
     this->value =  ((motorRPM / 60.0) * storage.gearRatio * 2.0 * M_PI) * radian_per_second;
@@ -722,7 +722,7 @@ void SpeedControlSwitchingThreshold::toString(std::string& value) {
   // Bouml preserved body end 0009CB71
 }
 
-void SpeedControlSwitchingThreshold::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void SpeedControlSwitchingThreshold::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 0006A3F1
 
     message.stctOutput.commandNumber = msgType;
@@ -733,7 +733,7 @@ void SpeedControlSwitchingThreshold::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& 
   // Bouml preserved body end 0006A3F1
 }
 
-void SpeedControlSwitchingThreshold::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void SpeedControlSwitchingThreshold::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 0006A471
     double motorRPM = (int32)message.stctInput.value;
     this->value =  ((motorRPM / 60.0) * storage.gearRatio * 2.0 * M_PI) * radian_per_second;
@@ -781,7 +781,7 @@ void VelocityThresholdForHallFX::toString(std::string& value) {
   // Bouml preserved body end 001081F1
 }
 
-void VelocityThresholdForHallFX::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void VelocityThresholdForHallFX::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 00108271
 
     message.stctOutput.commandNumber = msgType;
@@ -792,7 +792,7 @@ void VelocityThresholdForHallFX::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& mess
   // Bouml preserved body end 00108271
 }
 
-void VelocityThresholdForHallFX::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void VelocityThresholdForHallFX::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 001082F1
     double motorRPM = (int32)message.stctInput.value;
     this->value =  ((motorRPM / 60.0) * storage.gearRatio * 2.0 * M_PI) * radian_per_second;
@@ -840,7 +840,7 @@ void PParameterFirstParametersPositionControl::toString(std::string& value) {
   // Bouml preserved body end 0009CDF1
 }
 
-void PParameterFirstParametersPositionControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void PParameterFirstParametersPositionControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 0005CBF1
 
     message.stctOutput.commandNumber = msgType;
@@ -851,7 +851,7 @@ void PParameterFirstParametersPositionControl::getYouBotMailboxMsg(YouBotSlaveMa
   // Bouml preserved body end 0005CBF1
 }
 
-void PParameterFirstParametersPositionControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void PParameterFirstParametersPositionControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 0005CC71
     this->value = (int32)message.stctInput.value;
   // Bouml preserved body end 0005CC71
@@ -898,7 +898,7 @@ void IParameterFirstParametersPositionControl::toString(std::string& value) {
   // Bouml preserved body end 0009CE71
 }
 
-void IParameterFirstParametersPositionControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void IParameterFirstParametersPositionControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 00069BF1
 
     message.stctOutput.commandNumber = msgType;
@@ -909,7 +909,7 @@ void IParameterFirstParametersPositionControl::getYouBotMailboxMsg(YouBotSlaveMa
   // Bouml preserved body end 00069BF1
 }
 
-void IParameterFirstParametersPositionControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void IParameterFirstParametersPositionControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 00069C71
     this->value = (int32)message.stctInput.value;
   // Bouml preserved body end 00069C71
@@ -956,7 +956,7 @@ void DParameterFirstParametersPositionControl::toString(std::string& value) {
   // Bouml preserved body end 0009CEF1
 }
 
-void DParameterFirstParametersPositionControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void DParameterFirstParametersPositionControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 00069FF1
 
     message.stctOutput.commandNumber = msgType;
@@ -967,7 +967,7 @@ void DParameterFirstParametersPositionControl::getYouBotMailboxMsg(YouBotSlaveMa
   // Bouml preserved body end 00069FF1
 }
 
-void DParameterFirstParametersPositionControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void DParameterFirstParametersPositionControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 0006A071
     this->value = (int32)message.stctInput.value; 
   // Bouml preserved body end 0006A071
@@ -1014,7 +1014,7 @@ void IClippingParameterFirstParametersPositionControl::toString(std::string& val
   // Bouml preserved body end 0009D071
 }
 
-void IClippingParameterFirstParametersPositionControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void IClippingParameterFirstParametersPositionControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 0006B3F1
 
     message.stctOutput.commandNumber = msgType;
@@ -1025,7 +1025,7 @@ void IClippingParameterFirstParametersPositionControl::getYouBotMailboxMsg(YouBo
   // Bouml preserved body end 0006B3F1
 }
 
-void IClippingParameterFirstParametersPositionControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void IClippingParameterFirstParametersPositionControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 0006B471
     this->value = (int32)message.stctInput.value; 
   // Bouml preserved body end 0006B471
@@ -1072,7 +1072,7 @@ void PParameterFirstParametersSpeedControl::toString(std::string& value) {
   // Bouml preserved body end 0009D271
 }
 
-void PParameterFirstParametersSpeedControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void PParameterFirstParametersSpeedControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 0006B7F1
 
     message.stctOutput.commandNumber = msgType;
@@ -1083,7 +1083,7 @@ void PParameterFirstParametersSpeedControl::getYouBotMailboxMsg(YouBotSlaveMailb
   // Bouml preserved body end 0006B7F1
 }
 
-void PParameterFirstParametersSpeedControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void PParameterFirstParametersSpeedControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 0006B871
     this->value = (int32)message.stctInput.value; 
   // Bouml preserved body end 0006B871
@@ -1130,7 +1130,7 @@ void IParameterFirstParametersSpeedControl::toString(std::string& value) {
   // Bouml preserved body end 0009D2F1
 }
 
-void IParameterFirstParametersSpeedControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void IParameterFirstParametersSpeedControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 0006BBF1
 
     message.stctOutput.commandNumber = msgType;
@@ -1141,7 +1141,7 @@ void IParameterFirstParametersSpeedControl::getYouBotMailboxMsg(YouBotSlaveMailb
   // Bouml preserved body end 0006BBF1
 }
 
-void IParameterFirstParametersSpeedControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void IParameterFirstParametersSpeedControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 0006BC71
     this->value = (int32)message.stctInput.value; 
   // Bouml preserved body end 0006BC71
@@ -1188,7 +1188,7 @@ void DParameterFirstParametersSpeedControl::toString(std::string& value) {
   // Bouml preserved body end 0009D371
 }
 
-void DParameterFirstParametersSpeedControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void DParameterFirstParametersSpeedControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 0006BFF1
 
     message.stctOutput.commandNumber = msgType;
@@ -1199,7 +1199,7 @@ void DParameterFirstParametersSpeedControl::getYouBotMailboxMsg(YouBotSlaveMailb
   // Bouml preserved body end 0006BFF1
 }
 
-void DParameterFirstParametersSpeedControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void DParameterFirstParametersSpeedControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 0006C071
     this->value = (int32)message.stctInput.value; 
   // Bouml preserved body end 0006C071
@@ -1246,7 +1246,7 @@ void IClippingParameterFirstParametersSpeedControl::toString(std::string& value)
   // Bouml preserved body end 0009D3F1
 }
 
-void IClippingParameterFirstParametersSpeedControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void IClippingParameterFirstParametersSpeedControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 0006C3F1
 
     message.stctOutput.commandNumber = msgType;
@@ -1257,7 +1257,7 @@ void IClippingParameterFirstParametersSpeedControl::getYouBotMailboxMsg(YouBotSl
   // Bouml preserved body end 0006C3F1
 }
 
-void IClippingParameterFirstParametersSpeedControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void IClippingParameterFirstParametersSpeedControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 0006C471
     this->value = (int32)message.stctInput.value; 
   // Bouml preserved body end 0006C471
@@ -1304,7 +1304,7 @@ void PParameterSecondParametersPositionControl::toString(std::string& value) {
   // Bouml preserved body end 0009DD71
 }
 
-void PParameterSecondParametersPositionControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void PParameterSecondParametersPositionControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 0006CFF1
 
     message.stctOutput.commandNumber = msgType;
@@ -1315,7 +1315,7 @@ void PParameterSecondParametersPositionControl::getYouBotMailboxMsg(YouBotSlaveM
   // Bouml preserved body end 0006CFF1
 }
 
-void PParameterSecondParametersPositionControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void PParameterSecondParametersPositionControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 0006D071
     this->value = (int32)message.stctInput.value;
   // Bouml preserved body end 0006D071
@@ -1362,7 +1362,7 @@ void IParameterSecondParametersPositionControl::toString(std::string& value) {
   // Bouml preserved body end 0009DDF1
 }
 
-void IParameterSecondParametersPositionControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void IParameterSecondParametersPositionControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 0006D3F1
 
     message.stctOutput.commandNumber = msgType;
@@ -1373,7 +1373,7 @@ void IParameterSecondParametersPositionControl::getYouBotMailboxMsg(YouBotSlaveM
   // Bouml preserved body end 0006D3F1
 }
 
-void IParameterSecondParametersPositionControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void IParameterSecondParametersPositionControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 0006D471
     this->value = (int32)message.stctInput.value;
   // Bouml preserved body end 0006D471
@@ -1420,7 +1420,7 @@ void DParameterSecondParametersPositionControl::toString(std::string& value) {
   // Bouml preserved body end 0009DE71
 }
 
-void DParameterSecondParametersPositionControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void DParameterSecondParametersPositionControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 0006D7F1
 
     message.stctOutput.commandNumber = msgType;
@@ -1431,7 +1431,7 @@ void DParameterSecondParametersPositionControl::getYouBotMailboxMsg(YouBotSlaveM
   // Bouml preserved body end 0006D7F1
 }
 
-void DParameterSecondParametersPositionControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void DParameterSecondParametersPositionControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 0006D871
     this->value = (int32)message.stctInput.value;
   // Bouml preserved body end 0006D871
@@ -1478,7 +1478,7 @@ void IClippingParameterSecondParametersPositionControl::toString(std::string& va
   // Bouml preserved body end 0009DEF1
 }
 
-void IClippingParameterSecondParametersPositionControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void IClippingParameterSecondParametersPositionControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 0006DBF1
 
     message.stctOutput.commandNumber = msgType;
@@ -1489,7 +1489,7 @@ void IClippingParameterSecondParametersPositionControl::getYouBotMailboxMsg(YouB
   // Bouml preserved body end 0006DBF1
 }
 
-void IClippingParameterSecondParametersPositionControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void IClippingParameterSecondParametersPositionControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 0006DC71
     this->value = (int32)message.stctInput.value;
   // Bouml preserved body end 0006DC71
@@ -1536,7 +1536,7 @@ void PParameterSecondParametersSpeedControl::toString(std::string& value) {
   // Bouml preserved body end 0009DF71
 }
 
-void PParameterSecondParametersSpeedControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void PParameterSecondParametersSpeedControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 0006DFF1
 
     message.stctOutput.commandNumber = msgType;
@@ -1547,7 +1547,7 @@ void PParameterSecondParametersSpeedControl::getYouBotMailboxMsg(YouBotSlaveMail
   // Bouml preserved body end 0006DFF1
 }
 
-void PParameterSecondParametersSpeedControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void PParameterSecondParametersSpeedControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 0006E071
     this->value = (int32)message.stctInput.value;
   // Bouml preserved body end 0006E071
@@ -1594,7 +1594,7 @@ void IParameterSecondParametersSpeedControl::toString(std::string& value) {
   // Bouml preserved body end 0009DFF1
 }
 
-void IParameterSecondParametersSpeedControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void IParameterSecondParametersSpeedControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 0006E3F1
 
     message.stctOutput.commandNumber = msgType;
@@ -1605,7 +1605,7 @@ void IParameterSecondParametersSpeedControl::getYouBotMailboxMsg(YouBotSlaveMail
   // Bouml preserved body end 0006E3F1
 }
 
-void IParameterSecondParametersSpeedControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void IParameterSecondParametersSpeedControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 0006E471
     this->value = (int32)message.stctInput.value;
   // Bouml preserved body end 0006E471
@@ -1652,7 +1652,7 @@ void DParameterSecondParametersSpeedControl::toString(std::string& value) {
   // Bouml preserved body end 0009E071
 }
 
-void DParameterSecondParametersSpeedControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void DParameterSecondParametersSpeedControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 0006E7F1
 
     message.stctOutput.commandNumber = msgType;
@@ -1663,7 +1663,7 @@ void DParameterSecondParametersSpeedControl::getYouBotMailboxMsg(YouBotSlaveMail
   // Bouml preserved body end 0006E7F1
 }
 
-void DParameterSecondParametersSpeedControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void DParameterSecondParametersSpeedControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 0006E871
     this->value = (int32)message.stctInput.value;
   // Bouml preserved body end 0006E871
@@ -1710,7 +1710,7 @@ void IClippingParameterSecondParametersSpeedControl::toString(std::string& value
   // Bouml preserved body end 0009E0F1
 }
 
-void IClippingParameterSecondParametersSpeedControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void IClippingParameterSecondParametersSpeedControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 0006EBF1
 
     message.stctOutput.commandNumber = msgType;
@@ -1721,7 +1721,7 @@ void IClippingParameterSecondParametersSpeedControl::getYouBotMailboxMsg(YouBotS
   // Bouml preserved body end 0006EBF1
 }
 
-void IClippingParameterSecondParametersSpeedControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void IClippingParameterSecondParametersSpeedControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 0006EC71
     this->value = (int32)message.stctInput.value;
   // Bouml preserved body end 0006EC71
@@ -1768,7 +1768,7 @@ void PParameterCurrentControl::toString(std::string& value) {
   // Bouml preserved body end 0009DA71
 }
 
-void PParameterCurrentControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void PParameterCurrentControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 00080571
 
     message.stctOutput.commandNumber = msgType;
@@ -1779,7 +1779,7 @@ void PParameterCurrentControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& messag
   // Bouml preserved body end 00080571
 }
 
-void PParameterCurrentControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void PParameterCurrentControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 000805F1
     this->value = (int32)message.stctInput.value;
   // Bouml preserved body end 000805F1
@@ -1826,7 +1826,7 @@ void IParameterCurrentControl::toString(std::string& value) {
   // Bouml preserved body end 0009DAF1
 }
 
-void IParameterCurrentControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void IParameterCurrentControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 00080971
 
     message.stctOutput.commandNumber = msgType;
@@ -1837,7 +1837,7 @@ void IParameterCurrentControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& messag
   // Bouml preserved body end 00080971
 }
 
-void IParameterCurrentControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void IParameterCurrentControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 000809F1
     this->value = (int32)message.stctInput.value;
   // Bouml preserved body end 000809F1
@@ -1884,7 +1884,7 @@ void DParameterCurrentControl::toString(std::string& value) {
   // Bouml preserved body end 0009DB71
 }
 
-void DParameterCurrentControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void DParameterCurrentControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 00080D71
 
     message.stctOutput.commandNumber = msgType;
@@ -1895,7 +1895,7 @@ void DParameterCurrentControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& messag
   // Bouml preserved body end 00080D71
 }
 
-void DParameterCurrentControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void DParameterCurrentControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 00080DF1
     this->value = (int32)message.stctInput.value;
   // Bouml preserved body end 00080DF1
@@ -1942,7 +1942,7 @@ void IClippingParameterCurrentControl::toString(std::string& value) {
   // Bouml preserved body end 0009DBF1
 }
 
-void IClippingParameterCurrentControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void IClippingParameterCurrentControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 00081171
 
     message.stctOutput.commandNumber = msgType;
@@ -1953,7 +1953,7 @@ void IClippingParameterCurrentControl::getYouBotMailboxMsg(YouBotSlaveMailboxMsg
   // Bouml preserved body end 00081171
 }
 
-void IClippingParameterCurrentControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void IClippingParameterCurrentControl::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 000811F1
     this->value = (int32)message.stctInput.value;
   // Bouml preserved body end 000811F1
@@ -2000,7 +2000,7 @@ void MaximumVelocityToSetPosition::toString(std::string& value) {
   // Bouml preserved body end 0009CAF1
 }
 
-void MaximumVelocityToSetPosition::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void MaximumVelocityToSetPosition::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 00079171
 
     message.stctOutput.commandNumber = msgType;
@@ -2011,7 +2011,7 @@ void MaximumVelocityToSetPosition::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& me
   // Bouml preserved body end 00079171
 }
 
-void MaximumVelocityToSetPosition::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void MaximumVelocityToSetPosition::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 000791F1
     double motorRPM = (int32)message.stctInput.value;
     this->value =  ((motorRPM / 60.0) * storage.gearRatio * 2.0 * M_PI) * radian_per_second;
@@ -2059,7 +2059,7 @@ void PositionTargetReachedDistance::toString(std::string& value) {
   // Bouml preserved body end 0009CC71
 }
 
-void PositionTargetReachedDistance::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void PositionTargetReachedDistance::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 00079D71
 
     message.stctOutput.commandNumber = msgType;
@@ -2070,7 +2070,7 @@ void PositionTargetReachedDistance::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& m
   // Bouml preserved body end 00079D71
 }
 
-void PositionTargetReachedDistance::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void PositionTargetReachedDistance::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 00079DF1
     this->value = (int32)message.stctInput.value;
   // Bouml preserved body end 00079DF1
@@ -2107,7 +2107,7 @@ void ClearI2tExceededFlag::toString(std::string& value) {
   // Bouml preserved body end 000A17F1
 }
 
-void ClearI2tExceededFlag::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void ClearI2tExceededFlag::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 000A1871
     message.stctOutput.commandNumber = msgType;
     message.stctOutput.moduleAddress = DRIVE;
@@ -2116,7 +2116,7 @@ void ClearI2tExceededFlag::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, T
   // Bouml preserved body end 000A1871
 }
 
-void ClearI2tExceededFlag::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void ClearI2tExceededFlag::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 000A18F1
     if (message.stctOutput.commandNumber == message.stctInput.commandNumber && message.stctInput.status == NO_ERROR_) {
       this->value = message.stctInput.value;
@@ -2156,7 +2156,7 @@ void ClearMotorControllerTimeoutFlag::toString(std::string& value) {
   // Bouml preserved body end 0009FCF1
 }
 
-void ClearMotorControllerTimeoutFlag::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointStorage& storage) const {
+void ClearMotorControllerTimeoutFlag::getYouBotMailboxMsg(YouBotSlaveMailboxMsg& message, TMCLCommandNumber msgType, const YouBotJointInfo& storage) const {
   // Bouml preserved body begin 0009FD71
     message.stctOutput.commandNumber = msgType;
     message.stctOutput.moduleAddress = DRIVE;
@@ -2165,7 +2165,7 @@ void ClearMotorControllerTimeoutFlag::getYouBotMailboxMsg(YouBotSlaveMailboxMsg&
   // Bouml preserved body end 0009FD71
 }
 
-void ClearMotorControllerTimeoutFlag::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointStorage& storage) {
+void ClearMotorControllerTimeoutFlag::setYouBotMailboxMsg(const YouBotSlaveMailboxMsg& message, const YouBotJointInfo& storage) {
   // Bouml preserved body begin 0009FDF1
     if (message.stctOutput.commandNumber == message.stctInput.commandNumber && message.stctInput.status == NO_ERROR_) {
       this->value = message.stctInput.value; 
