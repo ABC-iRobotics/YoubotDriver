@@ -65,7 +65,6 @@
 #include "YouBotSlaveMsg.hpp"
 #include "YouBotSlaveMailboxMsg.hpp"
 #include "GripperParameter.hpp"
-#include "OneDOFGripper.hpp"
 #include "OneDOFGripperData.hpp"
 #include "YouBotGripperParameter.hpp"
 #include "YouBotGripperBar.hpp"
@@ -76,7 +75,7 @@ namespace youbot {
 ///////////////////////////////////////////////////////////////////////////////
 /// The youBot gripper with one degree of freedom
 ///////////////////////////////////////////////////////////////////////////////
-class YouBotGripper : public OneDOFGripper {
+class YouBotGripper {
   public:
     YouBotGripper(const unsigned int jointNo, const std::string& configFilePath = "../config/");
 
