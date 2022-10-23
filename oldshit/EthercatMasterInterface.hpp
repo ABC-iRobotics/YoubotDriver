@@ -76,7 +76,6 @@ friend class YouBotGripperBar;
 
     virtual ~EthercatMasterInterface() {};
 
-
   public:
     virtual bool isThreadActive() = 0;
 
@@ -86,7 +85,6 @@ friend class YouBotGripperBar;
     /// checks if an error has occurred in the soem driver
     /// returns a true if an error has occurred
     bool isErrorInSoemDriver();
-
 
     virtual void AutomaticSendOn(const bool enableAutomaticSend) = 0;
 

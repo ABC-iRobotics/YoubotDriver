@@ -141,17 +141,13 @@ void EthercatMasterWithThread::AutomaticReceiveOn(const bool enableAutomaticRece
   // Bouml preserved body begin 0008FB71
     this->automaticReceiveOn = enableAutomaticReceive;
 
-
     if (this->automaticReceiveOn == false) {
-      
-
       for (unsigned int i = 0; i < slaveMessages.size(); i++) {
         slaveMessages[i].stctInput.Get(automaticReceiveOffBufferVector[i].stctInput);
         slaveMessages[i].stctOutput.Get(automaticReceiveOffBufferVector[i].stctOutput);
         slaveMessages[i].jointNumber.Get(automaticReceiveOffBufferVector[i].jointNumber);
       }
     }
-
     return;
   // Bouml preserved body end 0008FB71
 }
@@ -318,7 +314,6 @@ bool EthercatMasterWithThread::getMailboxMsgBuffer(YouBotSlaveMailboxMsg& mailbo
 ///this method is executed in a separate thread
 void EthercatMasterWithThread::updateSensorActorValues() {
   // Bouml preserved body begin 0003F771
-
     long timeToWait = 0;
     boost::posix_time::ptime startTime = boost::posix_time::microsec_clock::local_time();
     boost::posix_time::time_duration pastTime;
@@ -327,7 +322,6 @@ void EthercatMasterWithThread::updateSensorActorValues() {
     boost::posix_time::time_duration timeSum = startTime - startTime;
     SlaveMessageOutput trajectoryContollerOutput;
     YouBotSlaveMailboxMsg tempMsg;
-
 
     while (!stopThread) {
 
@@ -340,24 +334,7 @@ void EthercatMasterWithThread::updateSensorActorValues() {
         boost::this_thread::sleep(boost::posix_time::microseconds(timeToWait));
       }
 
-      // realperiode = boost::posix_time::microsec_clock::local_time() - startTime;
       startTime = boost::posix_time::microsec_clock::local_time();
-
-      /*
-            counter++;
-            timeSum  = timeSum + realperiode;
-
-            if(counter == 1000){
-
-              double dtotaltime = (double)timeSum.total_microseconds()/counter;
-              printf("TotalTime %7.0lf us\n", dtotaltime);
-              counter = 0;
-              timeSum = startTime - startTime;
-            }
-       */
-
-
-
 
       //send and receive data from ethercat
       if (ec_send_processdata() == 0) {
@@ -383,9 +360,7 @@ void EthercatMasterWithThread::updateSensorActorValues() {
       if (ec_iserror())
         LOG(warning) << "there is an error in the soem driver";
 
-
       for (unsigned int i = 0; i < nrOfSlaves; i++) {
-
         //send data
         if(automaticSendOn == true)
           slaveMessages[i].stctOutput.Get(*(ethercatOutputBufferVector[i]));
@@ -393,7 +368,6 @@ void EthercatMasterWithThread::updateSensorActorValues() {
         //receive data
         if(automaticReceiveOn == true)
           slaveMessages[i].stctInput.Set(*(ethercatInputBufferVector[i]));
-
 
         // Limit checker
         if (jointLimitMonitors[i] != NULL) {

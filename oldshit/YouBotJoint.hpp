@@ -146,10 +146,6 @@ class YouBotJoint {
     /// Restores the joint parameter from the EEPROM.
     void restoreConfigurationParameter(YouBotJointParameter& parameter);
 
-
-  protected:
-    virtual void setData(const JointDataSetpoint& data);
-
   public:
     ///commands a position or angle to one joint
     ///@param data the to command position
