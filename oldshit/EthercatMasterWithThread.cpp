@@ -66,36 +66,16 @@ namespace youbot {
 EthercatMasterWithThread::EthercatMasterWithThread(const std::string& configFile, const std::string& configFilePath) :
   EthercatMasterInterface(configFile, configFilePath) {
   // Bouml preserved body begin 00041171
-
-    this->ethercatConnectionEstablished = false;
-    ethernetDevice = "eth0";
     timeTillNextEthercatUpdate = 1000; //usec
-    mailboxTimeout = 4000; //micro sec
-    ethercatTimeout = 500; //micro sec
     communicationErrors = 0;
     maxCommunicationErrors = 100;
     stopThread = false;
     this->automaticSendOn = true;
     this->automaticReceiveOn = true;
-    configfile = NULL;
-
-    //initialize to zero
-    for (unsigned int i = 0; i < 4096; i++) {
-      IOmap_[i] = 0;
-    }
-    //read ethercat parameters form config file
-    configfile = new ConfigFile(this->configFileName, this->configFilepath);
-
-    // configfile.setSection("EtherCAT");
-    configfile->readInto(ethernetDevice, "EtherCAT", "EthernetDevice");
     configfile->readInto(timeTillNextEthercatUpdate, "EtherCAT", "EtherCATUpdateRate_[usec]");
-    configfile->readInto(ethercatTimeout, "EtherCAT", "EtherCATTimeout_[usec]");
-    configfile->readInto(mailboxTimeout, "EtherCAT", "MailboxTimeout_[usec]");
     configfile->readInto(maxCommunicationErrors, "EtherCAT", "MaximumNumberOfEtherCATErrors");
 
     this->initializeEthercat();
-
-
   // Bouml preserved body end 00041171
 }
 

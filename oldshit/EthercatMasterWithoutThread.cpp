@@ -66,24 +66,6 @@ EthercatMasterWithoutThread::EthercatMasterWithoutThread(const std::string& conf
   EthercatMasterInterface(configFile, configFilePath) {
   // Bouml preserved body begin 000D1AF1
 
-		this->ethercatConnectionEstablished = false;
-    ethernetDevice = "eth0";
-    mailboxTimeout = 4000; //micro sec
-    ethercatTimeout = 500; //micro sec
-    configfile = NULL;
-
-    //initialize to zero
-    for (unsigned int i = 0; i < 4096; i++) {
-      IOmap_[i] = 0;
-    }
-    //read ethercat parameters form config file
-    configfile = new ConfigFile(this->configFileName, this->configFilepath);
-
-    // configfile.setSection("EtherCAT");
-    configfile->readInto(ethernetDevice, "EtherCAT", "EthernetDevice");
-    configfile->readInto(ethercatTimeout, "EtherCAT", "EtherCATTimeout_[usec]");
-    configfile->readInto(mailboxTimeout, "EtherCAT", "MailboxTimeout_[usec]");
-
     this->initializeEthercat();
 
   // Bouml preserved body end 000D1AF1

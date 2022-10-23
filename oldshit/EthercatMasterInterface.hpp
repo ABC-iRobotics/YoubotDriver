@@ -72,8 +72,7 @@ friend class YouBotJoint;
 friend class YouBotGripper;
 friend class YouBotGripperBar;
   protected:
-    EthercatMasterInterface(const std::string& configFile, const std::string& configFilePath) : configFileName(configFile),
-      configFilepath(configFilePath) {};
+    EthercatMasterInterface(const std::string& configFile, const std::string& configFilePath);;
 
     virtual ~EthercatMasterInterface() {};
 
