@@ -149,6 +149,7 @@ protected:
   unsigned int ethercatTimeout;
   unsigned int mailboxTimeout;
   ConfigFile* configfile;
+  std::vector<int> identified_slaves;
 
   ///closes the ethercat connection
   bool closeEthercat();
@@ -163,6 +164,7 @@ protected:
 
   void parseYouBotErrorFlags(const YouBotSlaveMsg& messageBuffer);
 
+  void initialize();
 };
 
 } // namespace youbot

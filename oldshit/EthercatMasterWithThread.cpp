@@ -75,89 +75,11 @@ EthercatMasterWithThread::EthercatMasterWithThread(const std::string& configFile
     configfile->readInto(timeTillNextEthercatUpdate, "EtherCAT", "EtherCATUpdateRate_[usec]");
     configfile->readInto(maxCommunicationErrors, "EtherCAT", "MaximumNumberOfEtherCATErrors");
 
-    /* initialise SOEM, bind socket to ifname */
-    if (ec_init(ethernetDevice.c_str())) {
-      LOG(info) << "Initializing EtherCAT on " << ethernetDevice << " with communication thread";
-      /* find and auto-config slaves */
-      if (ec_config(TRUE, &IOmap_) > 0) {
-
-        LOG(trace) << ec_slavecount << " EtherCAT slaves found and configured.";
-
-          /* wait for all slaves to reach SAFE_OP state */
-        ec_statecheck(0, EC_STATE_SAFE_OP, EC_TIMEOUTSTATE);
-        if (ec_slave[0].state != EC_STATE_SAFE_OP) {
-          LOG(warning) << "Not all EtherCAT slaves reached safe operational state.";
-          ec_readstate();
-          //If not all slaves operational find out which one
-          for (int i = 1; i <= ec_slavecount; i++) {
-            if (ec_slave[i].state != EC_STATE_SAFE_OP) {
-              LOG(info) << "Slave " << i << " State=" << ec_slave[i].state << " StatusCode=" << ec_slave[i].ALstatuscode << " : " << ec_ALstatuscode2string(ec_slave[i].ALstatuscode);
-
-            }
-          }
-        }
-
-        //Read the state of all slaves
-        //ec_readstate();
-
-        LOG(trace) << "Request operational state for all EtherCAT slaves";
-
-        ec_slave[0].state = EC_STATE_OPERATIONAL;
-        // request OP state for all slaves
-        /* send one valid process data to make outputs in slaves happy*/
-        ec_send_processdata();
-        ec_receive_processdata(EC_TIMEOUTRET);
-        /* request OP state for all slaves */
-        ec_writestate(0);
-        // wait for all slaves to reach OP state
-
-        ec_statecheck(0, EC_STATE_OPERATIONAL, EC_TIMEOUTSTATE);
-        if (ec_slave[0].state == EC_STATE_OPERATIONAL) {
-          LOG(trace) << "Operational state reached for all EtherCAT slaves.";
-        }
-        else {
-          throw std::runtime_error("Not all EtherCAT slaves reached operational state.");
-
-        }
-      }
-      else {
-        throw std::runtime_error("No EtherCAT slaves found!");
-      }
-    }
-    else {
-      throw std::runtime_error("No socket connection on " + ethernetDevice + "\nExcecute as root");
-    }
-
-    std::string baseJointControllerName = "TMCM-174";
-    std::string baseJointControllerNameAlternative = "TMCM-1632";
-    std::string manipulatorJointControllerName = "TMCM-174";
-    std::string ManipulatorJointControllerNameAlternative = "TMCM-1610";
-    std::string actualSlaveName;
-    nrOfSlaves = 0;
-    YouBotSlaveMsg emptySlaveMsg;
+    initialize();
+    
     YouBotSlaveMsgThreadSafe emptySlaveMsgThreadSafe;
-
-    configfile->readInto(baseJointControllerName, "BaseJointControllerName");
-    configfile->readInto(baseJointControllerNameAlternative, "BaseJointControllerNameAlternative");
-    configfile->readInto(manipulatorJointControllerName, "ManipulatorJointControllerName");
-    configfile->readInto(ManipulatorJointControllerNameAlternative, "ManipulatorJointControllerNameAlternative");
-
-    //reserve memory for all slave with a input/output buffer
-    for (int cnt = 1; cnt <= ec_slavecount; cnt++) {
-      LOG(trace) << "Slave: " << cnt << " Name: " << ec_slave[cnt].name << " Output size: " << ec_slave[cnt].Obits
-        << "bits Input size: " << ec_slave[cnt].Ibits << "bits State: " << ec_slave[cnt].state
-        << " delay: " << ec_slave[cnt].pdelay; //<< " has dclock: " << (bool)ec_slave[cnt].hasdc;
-
-      ethercatSlaveInfo.push_back(ec_slave[cnt]);
-
-      actualSlaveName = ec_slave[cnt].name;
-      if ((actualSlaveName == baseJointControllerName || actualSlaveName == baseJointControllerNameAlternative ||
-        actualSlaveName == manipulatorJointControllerName || actualSlaveName == ManipulatorJointControllerNameAlternative
-        ) && ec_slave[cnt].Obits > 0 && ec_slave[cnt].Ibits > 0) {
-        nrOfSlaves++;
-        ethercatOutputBufferVector.push_back((SlaveMessageOutput*)(ec_slave[cnt].outputs));
-        ethercatInputBufferVector.push_back((SlaveMessageInput*)(ec_slave[cnt].inputs));
-        YouBotSlaveMailboxMsgThreadSafe emptyMailboxSlaveMsg(cnt);
+    for (auto it: identified_slaves) {
+        YouBotSlaveMailboxMsgThreadSafe emptyMailboxSlaveMsg(it);
         mailboxMessages.push_back(emptyMailboxSlaveMsg);
         pendingMailboxMsgsReply.push_back(false);
         trajectoryControllers.push_back(NULL);
@@ -166,18 +88,9 @@ EthercatMasterWithThread::EthercatMasterWithThread(const std::string& configFile
         outstandingMailboxMsgFlag.push_back(false);
         newInputMailboxMsgFlag.push_back(false);
         dataTraces.push_back(NULL);
-      }
-    }
-    automaticReceiveOffBufferVector.reserve(slaveMessages.size());
-
-    if (nrOfSlaves > 0) {
-      LOG(info) << nrOfSlaves << " EtherCAT slaves found";
-    }
-    else {
-      throw std::runtime_error("No EtherCAT slave could be found");
-      return;
     }
 
+    automaticReceiveOffBufferVector.reserve(nrOfSlaves);
     stopThread = false;
     threads.create_thread(boost::bind(&EthercatMasterWithThread::updateSensorActorValues, this));
 
