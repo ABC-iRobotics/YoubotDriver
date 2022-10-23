@@ -105,7 +105,7 @@ friend class YouBotGripperBar;
     /// returns a true if everything it OK and returns false if something fail
     virtual bool receiveProcessData() = 0;
 
-    virtual bool isEtherCATConnectionEstablished() = 0;
+    bool isEtherCATConnectionEstablished();
 
     virtual void registerJointLimitMonitor(JointLimitMonitor* object, const unsigned int JointNumber) = 0;
 
@@ -161,6 +161,9 @@ protected:
   ///receives mailbox messages and stores them in the buffer
   ///@param mailboxMsg ethercat mailbox message
   bool receiveMailboxMessage(YouBotSlaveMailboxMsg& mailboxMsg);
+
+  void parseYouBotErrorFlags(const YouBotSlaveMsg& messageBuffer);
+
 };
 
 } // namespace youbot

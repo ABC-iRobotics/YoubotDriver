@@ -89,3 +89,108 @@ bool youbot::EthercatMasterInterface::receiveMailboxMessage(YouBotSlaveMailboxMs
   return false;
   // Bouml preserved body end 00052FF1
 }
+
+void youbot::EthercatMasterInterface::parseYouBotErrorFlags(const YouBotSlaveMsg& messageBuffer) {
+  // Bouml preserved body begin 000A9E71
+  std::stringstream errorMessageStream;
+  errorMessageStream << " ";
+  std::string errorMessage;
+  errorMessage = errorMessageStream.str();
+
+
+  if (messageBuffer.stctInput.errorFlags & OVER_CURRENT) {
+    LOG(error) << errorMessage << "got over current";
+    //    throw JointErrorException(errorMessage + "got over current");
+  }
+
+  if (messageBuffer.stctInput.errorFlags & UNDER_VOLTAGE) {
+    LOG(error) << errorMessage << "got under voltage";
+    //    throw JointErrorException(errorMessage + "got under voltage");
+  }
+
+  if (messageBuffer.stctInput.errorFlags & OVER_VOLTAGE) {
+    LOG(error) << errorMessage << "got over voltage";
+    //   throw JointErrorException(errorMessage + "got over voltage");
+  }
+
+  if (messageBuffer.stctInput.errorFlags & OVER_TEMPERATURE) {
+    LOG(error) << errorMessage << "got over temperature";
+    //   throw JointErrorException(errorMessage + "got over temperature");
+  }
+
+  if (messageBuffer.stctInput.errorFlags & MOTOR_HALTED) {
+    //   LOG(info) << errorMessage << "is halted";
+    //   throw JointErrorException(errorMessage + "is halted");
+  }
+
+  if (messageBuffer.stctInput.errorFlags & HALL_SENSOR_ERROR) {
+    LOG(error) << errorMessage << "got hall sensor problem";
+    //   throw JointErrorException(errorMessage + "got hall sensor problem");
+  }
+
+  //    if (messageBuffer.stctInput.errorFlags & ENCODER_ERROR) {
+  //      LOG(error) << errorMessage << "got encoder problem";
+  //      //   throw JointErrorException(errorMessage + "got encoder problem");
+  //    }
+  //
+  //     if (messageBuffer.stctInput.errorFlags & INITIALIZATION_ERROR) {
+  //      LOG(error) << errorMessage << "got inizialization problem";
+  //      //   throw JointErrorException(errorMessage + "got motor winding problem");
+  //    }
+
+  //    if (messageBuffer.stctInput.errorFlags & PWM_MODE_ACTIVE) {
+  //  LOG(error) << errorMessage << "has PWM mode active";
+  //   throw JointErrorException(errorMessage + "the cycle time is violated");
+  //    }
+
+  if (messageBuffer.stctInput.errorFlags & VELOCITY_MODE) {
+    //   LOG(info) << errorMessage << "has velocity mode active";
+    //   throw JointErrorException(errorMessage + "need to initialize the sinus commutation");
+  }
+
+  if (messageBuffer.stctInput.errorFlags & POSITION_MODE) {
+    //   LOG(info) << errorMessage << "has position mode active";
+    //   throw JointErrorException(errorMessage + "need to initialize the sinus commutation");
+  }
+
+  if (messageBuffer.stctInput.errorFlags & TORQUE_MODE) {
+    //   LOG(info) << errorMessage << "has torque mode active";
+    //   throw JointErrorException(errorMessage + "need to initialize the sinus commutation");
+  }
+
+  //    if (messageBuffer.stctInput.errorFlags & EMERGENCY_STOP) {
+  //      LOG(info) << errorMessage << "has emergency stop active";
+  //      //   throw JointErrorException(errorMessage + "need to initialize the sinus commutation");
+  //    }
+  //
+  //    if (messageBuffer.stctInput.errorFlags & FREERUNNING) {
+  //   //   LOG(info) << errorMessage << "has freerunning active";
+  //      //   throw JointErrorException(errorMessage + "need to initialize the sinus commutation");
+  //    }
+
+  if (messageBuffer.stctInput.errorFlags & POSITION_REACHED) {
+    //    LOG(info) << errorMessage << "has position reached";
+    //   throw JointErrorException(errorMessage + "need to initialize the sinus commutation");
+  }
+
+  if (messageBuffer.stctInput.errorFlags & INITIALIZED) {
+    //  LOG(info) << errorMessage << "is initialized";
+    //   throw JointErrorException(errorMessage + "need to initialize the sinus commutation");
+  }
+
+  if (messageBuffer.stctInput.errorFlags & TIMEOUT) {
+    LOG(error) << errorMessage << "has a timeout";
+    //   throw JointErrorException(errorMessage + "need to initialize the sinus commutation");
+  }
+
+  if (messageBuffer.stctInput.errorFlags & I2T_EXCEEDED) {
+    LOG(error) << errorMessage << "exceeded I2t";
+    //   throw JointErrorException(errorMessage + "need to initialize the sinus commutation");
+  }
+
+  // Bouml preserved body end 000A9E71
+}
+
+bool youbot::EthercatMasterInterface::isEtherCATConnectionEstablished() {
+  return this->ethercatConnectionEstablished;
+}

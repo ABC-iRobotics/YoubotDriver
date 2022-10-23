@@ -107,8 +107,6 @@ friend class YouBotGripperBar;
     /// returns a true if everything it OK and returns false if something fail
     bool receiveProcessData();
 
-    bool isEtherCATConnectionEstablished();
-
     void registerJointLimitMonitor(JointLimitMonitor* object, const unsigned int JointNumber);
 
   private:
@@ -134,8 +132,6 @@ friend class YouBotGripperBar;
     ///@param msgBuffer ethercat mailbox message
     ///@param jointNumber joint number of the receiver joint
     bool getMailboxMsgBuffer(YouBotSlaveMailboxMsg& mailboxMsg, const unsigned int jointNumber);
-
-    void parseYouBotErrorFlags(const YouBotSlaveMsg& messageBuffer);
 
     std::vector<YouBotSlaveMsg> processDataBuffer;
 

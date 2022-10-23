@@ -113,8 +113,6 @@ friend class YouBotGripperBar;
 
     unsigned int getNumberOfThreadCyclesPerSecond();
 
-    bool isEtherCATConnectionEstablished();
-
     void registerJointLimitMonitor(JointLimitMonitor* object, const unsigned int JointNumber);
 
     void registerDataTrace(void* object, const unsigned int JointNumber);
@@ -148,8 +146,6 @@ friend class YouBotGripperBar;
     ///sends and receives ethercat messages and mailbox messages to and from the motor controllers
     ///this method is executed in a separate thread
     void updateSensorActorValues();
-
-    void parseYouBotErrorFlags(const YouBotSlaveMsg& messageBuffer);
 
     ec_mbxbuft mailboxBuffer;
 
