@@ -57,8 +57,6 @@
 #include <stdexcept>
 #include <iostream>
 #include "EthercatMasterInterface.hpp"
-#include "EthercatMasterWithoutThread.hpp"
-#include "EthercatMasterWithThread.hpp"
 namespace youbot {
 
 ///////////////////////////////////////////////////////////////////////////////

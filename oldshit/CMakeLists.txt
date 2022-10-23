@@ -23,6 +23,7 @@ set(SOURCES
     FourSwedishWheelOmniBaseKinematic.cpp
     FourSwedishWheelOmniBaseKinematicConfiguration.cpp
     findcica.cpp
+    EthercatMasterInterface.cpp
 	  )
 
 set(HEADERS

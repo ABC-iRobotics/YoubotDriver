@@ -103,13 +103,6 @@ bool EthercatMasterWithoutThread::isThreadActive() {
   // Bouml preserved body end 000E6B71
 }
 
-///return the quantity of ethercat slave which have an input/output buffer
-unsigned int EthercatMasterWithoutThread::getNumberOfSlaves() const {
-  // Bouml preserved body begin 000D1D71
-    return this->nrOfSlaves;
-  // Bouml preserved body end 000D1D71
-}
-
 void EthercatMasterWithoutThread::AutomaticSendOn(const bool enableAutomaticSend) {
   // Bouml preserved body begin 000D1DF1
     LOG(trace) << "automatic send is not possible if the EtherCAT master has no thread";
@@ -123,18 +116,6 @@ void EthercatMasterWithoutThread::AutomaticReceiveOn(const bool enableAutomaticR
     LOG(trace) << "automatic receive is not possible if the EtherCAT master has no thread";
     return;
   // Bouml preserved body end 000D1E71
-}
-
-///provides all ethercat slave informations from the SOEM driver
-///@param ethercatSlaveInfos ethercat slave informations
-void EthercatMasterWithoutThread::getEthercatDiagnosticInformation(std::vector<ec_slavet>& ethercatSlaveInfos) {
-  // Bouml preserved body begin 000D1EF1
-    ethercatSlaveInfos = this->ethercatSlaveInfo;
-    for (unsigned int i = 0; i < ethercatSlaveInfos.size(); i++) {
-      ethercatSlaveInfos[i].inputs = NULL;
-      ethercatSlaveInfos[i].outputs = NULL;
-    }
-  // Bouml preserved body end 000D1EF1
 }
 
 ///sends ethercat messages to the motor controllers
@@ -177,15 +158,6 @@ bool EthercatMasterWithoutThread::receiveProcessData() {
   // Bouml preserved body end 000D5D71
 }
 
-/// checks if an error has occurred in the soem driver
-/// returns a true if an error has occurred
-bool EthercatMasterWithoutThread::isErrorInSoemDriver() {
-  // Bouml preserved body begin 000D5DF1
-   
-    return ec_iserror();
-
-  // Bouml preserved body end 000D5DF1
-}
 
 bool EthercatMasterWithoutThread::isEtherCATConnectionEstablished() {
   // Bouml preserved body begin 000F77F1

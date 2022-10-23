@@ -115,13 +115,6 @@ bool EthercatMasterWithThread::isThreadActive() {
   // Bouml preserved body end 000E6AF1
 }
 
-///return the quantity of ethercat slave which have an input/output buffer
-unsigned int EthercatMasterWithThread::getNumberOfSlaves() const {
-  // Bouml preserved body begin 00044A71
-    return this->nrOfSlaves;
-  // Bouml preserved body end 00044A71
-}
-
 void EthercatMasterWithThread::AutomaticSendOn(const bool enableAutomaticSend) {
   // Bouml preserved body begin 000775F1
     this->automaticSendOn = enableAutomaticSend;
@@ -163,18 +156,6 @@ void EthercatMasterWithThread::AutomaticReceiveOn(const bool enableAutomaticRece
   // Bouml preserved body end 0008FB71
 }
 
-///provides all ethercat slave informations from the SOEM driver
-///@param ethercatSlaveInfos ethercat slave informations
-void EthercatMasterWithThread::getEthercatDiagnosticInformation(std::vector<ec_slavet>& ethercatSlaveInfos) {
-  // Bouml preserved body begin 00061EF1
-    ethercatSlaveInfos = this->ethercatSlaveInfo;
-    for (unsigned int i = 0; i < ethercatSlaveInfos.size(); i++) {
-      ethercatSlaveInfos[i].inputs = NULL;
-      ethercatSlaveInfos[i].outputs = NULL;
-    }
-  // Bouml preserved body end 00061EF1
-}
-
 ///sends ethercat messages to the motor controllers
 /// returns a true if everything it OK and returns false if something fail
 bool EthercatMasterWithThread::sendProcessData() {
@@ -191,16 +172,6 @@ bool EthercatMasterWithThread::receiveProcessData() {
     throw std::runtime_error("When using the EthercatMaster with thread there is not need to receive process data manual");
     return false;
   // Bouml preserved body end 000E6971
-}
-
-/// checks if an error has occurred in the soem driver
-/// returns a true if an error has occurred
-bool EthercatMasterWithThread::isErrorInSoemDriver() {
-  // Bouml preserved body begin 000E69F1
-
-    return ec_iserror();
-
-  // Bouml preserved body end 000E69F1
 }
 
 void EthercatMasterWithThread::registerJointTrajectoryController(JointTrajectoryController* object, const unsigned int JointNumber) {
