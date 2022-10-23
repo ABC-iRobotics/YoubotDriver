@@ -150,6 +150,17 @@ protected:
   unsigned int ethercatTimeout;
   unsigned int mailboxTimeout;
   ConfigFile* configfile;
+
+  ///closes the ethercat connection
+  bool closeEthercat();
+
+  ///sends the mailbox Messages which have been stored in the buffer
+///@param mailboxMsg ethercat mailbox message
+  bool sendMailboxMessage(const YouBotSlaveMailboxMsg& mailboxMsg);
+
+  ///receives mailbox messages and stores them in the buffer
+  ///@param mailboxMsg ethercat mailbox message
+  bool receiveMailboxMessage(YouBotSlaveMailboxMsg& mailboxMsg);
 };
 
 } // namespace youbot

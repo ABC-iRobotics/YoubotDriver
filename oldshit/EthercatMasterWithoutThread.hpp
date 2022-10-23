@@ -128,9 +128,6 @@ friend class YouBotGripperBar;
     ///establishes the ethercat connection
     void initializeEthercat();
 
-    ///closes the ethercat connection
-    bool closeEthercat();
-
     ///stores a ethercat message to the buffer
     ///@param msgBuffer ethercat message
     ///@param jointNumber joint number of the sender joint
@@ -151,22 +148,11 @@ friend class YouBotGripperBar;
     ///@param jointNumber joint number of the receiver joint
     bool getMailboxMsgBuffer(YouBotSlaveMailboxMsg& mailboxMsg, const unsigned int jointNumber);
 
-    ///sends the mailbox Messages which have been stored in the buffer
-    ///@param mailboxMsg ethercat mailbox message
-    bool sendMailboxMessage(const YouBotSlaveMailboxMsg& mailboxMsg);
-
-    ///receives mailbox messages and stores them in the buffer
-    ///@param mailboxMsg ethercat mailbox message
-    bool receiveMailboxMessage(YouBotSlaveMailboxMsg& mailboxMsg);
-
     void parseYouBotErrorFlags(const YouBotSlaveMsg& messageBuffer);
-
 
     std::vector<YouBotSlaveMsg> processDataBuffer;
 
     std::vector<YouBotSlaveMailboxMsg> firstMailboxBufferVector;
-
-
 };
 
 } // namespace youbot

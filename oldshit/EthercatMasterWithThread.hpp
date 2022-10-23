@@ -133,13 +133,9 @@ friend class YouBotGripperBar;
 
     void deleteDataTraceRegistration(const unsigned int JointNumber);
 
-
   private:
     ///establishes the ethercat connection
     void initializeEthercat();
-
-    ///closes the ethercat connection
-    bool closeEthercat();
 
     ///stores a ethercat message to the buffer
     ///@param msgBuffer ethercat message
@@ -161,26 +157,15 @@ friend class YouBotGripperBar;
     ///@param jointNumber joint number of the receiver joint
     bool getMailboxMsgBuffer(YouBotSlaveMailboxMsg& mailboxMsg, const unsigned int jointNumber);
 
-    ///sends the mailbox Messages which have been stored in the buffer
-    ///@param mailboxMsg ethercat mailbox message
-    bool sendMailboxMessage(const YouBotSlaveMailboxMsg& mailboxMsg);
-
-    ///receives mailbox messages and stores them in the buffer
-    ///@param mailboxMsg ethercat mailbox message
-    bool receiveMailboxMessage(YouBotSlaveMailboxMsg& mailboxMsg);
-
     ///sends and receives ethercat messages and mailbox messages to and from the motor controllers
     ///this method is executed in a separate thread
     void updateSensorActorValues();
 
     void parseYouBotErrorFlags(const YouBotSlaveMsg& messageBuffer);
 
-
-
     ec_mbxbuft mailboxBuffer;
 
     std::vector<YouBotSlaveMsgThreadSafe> slaveMessages;
-
 
     //in microseconds
     unsigned int timeTillNextEthercatUpdate;
@@ -188,8 +173,6 @@ friend class YouBotGripperBar;
     boost::thread_group threads;
 
     volatile bool stopThread;
-
-
 
     std::vector<YouBotSlaveMsg> automaticSendOffBufferVector;
 
@@ -203,11 +186,9 @@ friend class YouBotGripperBar;
 
     std::vector<bool> pendingMailboxMsgsReply;
 
-
     bool automaticSendOn;
 
     bool automaticReceiveOn;
-
 
     long int communicationErrors;
 
@@ -224,7 +205,6 @@ friend class YouBotGripperBar;
     std::vector<void*> dataTraces;
 
     boost::mutex dataTracesMutex;
-
 };
 
 } // namespace youbot
