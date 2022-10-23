@@ -120,9 +120,6 @@ friend class YouBotGripperBar;
     void deleteDataTraceRegistration(const unsigned int JointNumber);
 
   private:
-    ///establishes the ethercat connection
-    void initializeEthercat();
-
     ///stores a ethercat message to the buffer
     ///@param msgBuffer ethercat message
     ///@param jointNumber joint number of the sender joint
