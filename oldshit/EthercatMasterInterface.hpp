@@ -54,6 +54,7 @@
 #include "YouBotSlaveMsg.hpp"
 #include "YouBotSlaveMailboxMsg.hpp"
 #include "JointLimitMonitor.hpp"
+#include "ConfigFile.hpp"
 extern "C"{
 #include <nicdrv.h>
 #include <ethercattype.h>
@@ -71,7 +72,8 @@ friend class YouBotJoint;
 friend class YouBotGripper;
 friend class YouBotGripperBar;
   protected:
-    EthercatMasterInterface() {};
+    EthercatMasterInterface(const std::string& configFile, const std::string& configFilePath) : configFileName(configFile),
+      configFilepath(configFilePath) {};
 
     virtual ~EthercatMasterInterface() {};
 
@@ -128,6 +130,26 @@ friend class YouBotGripperBar;
     ///@param jointNumber joint number of the receiver joint
     virtual bool getMailboxMsgBuffer(YouBotSlaveMailboxMsg& mailboxMsg, const unsigned int jointNumber) = 0;
 
+protected:
+  std::string ethernetDevice;
+
+  char IOmap_[4096];
+
+
+  const std::string configFileName;
+
+  const std::string configFilepath;
+
+  std::vector<ec_slavet> ethercatSlaveInfo;
+  bool ethercatConnectionEstablished;
+  ec_mbxbuft mailboxBufferSend;
+  ec_mbxbuft mailboxBufferReceive;
+  std::vector<SlaveMessageOutput*> ethercatOutputBufferVector;
+  std::vector<SlaveMessageInput*> ethercatInputBufferVector;
+  unsigned int nrOfSlaves;
+  unsigned int ethercatTimeout;
+  unsigned int mailboxTimeout;
+  ConfigFile* configfile;
 };
 
 } // namespace youbot

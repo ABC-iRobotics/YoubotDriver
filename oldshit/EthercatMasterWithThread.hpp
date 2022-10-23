@@ -64,7 +64,6 @@
 #include "Units.hpp"
 #include "Time.hpp"
 #include "Exceptions.hpp"
-#include "ConfigFile.hpp"
 #include "TMCLProtocolDefinitions.hpp"
 #include "YouBotSlaveMsg.hpp"
 #include "YouBotSlaveMailboxMsg.hpp"
@@ -176,23 +175,12 @@ friend class YouBotGripperBar;
 
     void parseYouBotErrorFlags(const YouBotSlaveMsg& messageBuffer);
 
-    std::string ethernetDevice;
 
-    char IOmap_[4096];
 
     ec_mbxbuft mailboxBuffer;
 
-    unsigned int nrOfSlaves;
-
-    std::vector<SlaveMessageOutput*> ethercatOutputBufferVector;
-
-    std::vector<SlaveMessageInput*> ethercatInputBufferVector;
-
     std::vector<YouBotSlaveMsgThreadSafe> slaveMessages;
 
-    std::vector<ec_slavet> ethercatSlaveInfo;
-
-    unsigned int ethercatTimeout;
 
     //in microseconds
     unsigned int timeTillNextEthercatUpdate;
@@ -201,9 +189,7 @@ friend class YouBotGripperBar;
 
     volatile bool stopThread;
 
-    ec_mbxbuft mailboxBufferSend;
 
-    ec_mbxbuft mailboxBufferReceive;
 
     std::vector<YouBotSlaveMsg> automaticSendOffBufferVector;
 
@@ -211,25 +197,17 @@ friend class YouBotGripperBar;
 
     std::vector<YouBotSlaveMailboxMsgThreadSafe> mailboxMessages;
 
-    unsigned int mailboxTimeout;
-
     std::vector<bool> newInputMailboxMsgFlag;
 
     std::vector<bool> outstandingMailboxMsgFlag;
 
     std::vector<bool> pendingMailboxMsgsReply;
 
-    ConfigFile* configfile;
-
-    static std::string configFileName;
-
-    static std::string configFilepath;
 
     bool automaticSendOn;
 
     bool automaticReceiveOn;
 
-    bool ethercatConnectionEstablished;
 
     long int communicationErrors;
 

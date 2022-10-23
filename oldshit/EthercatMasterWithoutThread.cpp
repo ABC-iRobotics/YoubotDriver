@@ -62,7 +62,8 @@ extern "C" {
 
 namespace youbot {
 
-EthercatMasterWithoutThread::EthercatMasterWithoutThread(const std::string& configFile, const std::string& configFilePath) {
+EthercatMasterWithoutThread::EthercatMasterWithoutThread(const std::string& configFile, const std::string& configFilePath) :
+  EthercatMasterInterface(configFile, configFilePath) {
   // Bouml preserved body begin 000D1AF1
 
 		this->ethercatConnectionEstablished = false;
@@ -70,8 +71,6 @@ EthercatMasterWithoutThread::EthercatMasterWithoutThread(const std::string& conf
     mailboxTimeout = 4000; //micro sec
     ethercatTimeout = 500; //micro sec
     configfile = NULL;
-    this->configFileName = configFile;
-    this->configFilepath = configFilePath;
 
     //initialize to zero
     for (unsigned int i = 0; i < 4096; i++) {
@@ -538,10 +537,4 @@ void EthercatMasterWithoutThread::parseYouBotErrorFlags(const YouBotSlaveMsg& me
 
   // Bouml preserved body end 000D24F1
 }
-
-std::string EthercatMasterWithoutThread::configFileName;
-
-std::string EthercatMasterWithoutThread::configFilepath;
-
-
 } // namespace youbot

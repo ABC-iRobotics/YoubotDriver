@@ -161,37 +161,11 @@ friend class YouBotGripperBar;
 
     void parseYouBotErrorFlags(const YouBotSlaveMsg& messageBuffer);
 
-    std::string ethernetDevice;
 
     std::vector<YouBotSlaveMsg> processDataBuffer;
 
-    unsigned int nrOfSlaves;
-
-    std::vector<SlaveMessageOutput*> ethercatOutputBufferVector;
-
-    std::vector<SlaveMessageInput*> ethercatInputBufferVector;
-
     std::vector<YouBotSlaveMailboxMsg> firstMailboxBufferVector;
 
-    ec_mbxbuft mailboxBufferSend;
-
-    unsigned int mailboxTimeout;
-
-    ec_mbxbuft mailboxBufferReceive;
-
-    ConfigFile* configfile;
-
-    std::vector<ec_slavet> ethercatSlaveInfo;
-
-    char IOmap_[4096];
-
-    unsigned int ethercatTimeout;
-
-    static std::string configFileName;
-
-    static std::string configFilepath;
-
-    bool ethercatConnectionEstablished;
 
 };
 

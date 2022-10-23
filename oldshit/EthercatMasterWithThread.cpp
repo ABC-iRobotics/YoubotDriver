@@ -63,7 +63,8 @@ extern "C" {
 
 namespace youbot {
 
-EthercatMasterWithThread::EthercatMasterWithThread(const std::string& configFile, const std::string& configFilePath) {
+EthercatMasterWithThread::EthercatMasterWithThread(const std::string& configFile, const std::string& configFilePath) :
+  EthercatMasterInterface(configFile, configFilePath) {
   // Bouml preserved body begin 00041171
 
     this->ethercatConnectionEstablished = false;
@@ -76,8 +77,6 @@ EthercatMasterWithThread::EthercatMasterWithThread(const std::string& configFile
     stopThread = false;
     this->automaticSendOn = true;
     this->automaticReceiveOn = true;
-    this->configFileName = configFile;
-    this->configFilepath = configFilePath;
     configfile = NULL;
 
     //initialize to zero
@@ -791,10 +790,6 @@ void EthercatMasterWithThread::parseYouBotErrorFlags(const YouBotSlaveMsg& messa
 
   // Bouml preserved body end 000A9E71
 }
-
-std::string EthercatMasterWithThread::configFileName;
-
-std::string EthercatMasterWithThread::configFilepath;
 
 
 } // namespace youbot
