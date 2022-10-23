@@ -92,20 +92,12 @@ friend class YouBotGripperBar;
 
     ~EthercatMasterWithoutThread();
 
-
   public:
     bool isThreadActive();
-
-    ///return the quantity of ethercat slave which have an input/output buffer
-    unsigned int getNumberOfSlaves() const;
 
     void AutomaticSendOn(const bool enableAutomaticSend);
 
     void AutomaticReceiveOn(const bool enableAutomaticReceive);
-
-    ///provides all ethercat slave informations from the SOEM driver
-    ///@param ethercatSlaveInfos ethercat slave informations
-    void getEthercatDiagnosticInformation(std::vector<ec_slavet>& ethercatSlaveInfos);
 
     ///sends ethercat messages to the motor controllers
     /// returns a true if everything it OK and returns false if something fail
@@ -115,14 +107,9 @@ friend class YouBotGripperBar;
     /// returns a true if everything it OK and returns false if something fail
     bool receiveProcessData();
 
-    /// checks if an error has occurred in the soem driver
-    /// returns a true if an error has occurred
-    bool isErrorInSoemDriver();
-
     bool isEtherCATConnectionEstablished();
 
     void registerJointLimitMonitor(JointLimitMonitor* object, const unsigned int JointNumber);
-
 
   private:
     ///establishes the ethercat connection
