@@ -27,34 +27,17 @@ int main2(int argc, char *argv[])
 	printf("\n\n\nAdapter found: %s\n", name);
   }
 
-  DataObjectLockFree<int> i;
-
-
-
   return (0);
 }
 
 #include "YouBotManipulator.hpp"
 
 int main(int argc, char* argv[])
-{
-  boost::posix_time::time_duration dur = boost::posix_time::seconds(100);// boost::posix_time::duration_from_string("4.000001");
-
-  auto n = dur.total_microseconds();
-
-  std::chrono::microseconds dur2(n);
-
-
-  std::chrono::milliseconds dur3(10);
-
-  auto us = std::chrono::duration_cast<std::chrono::microseconds>(dur3);
-
-  printf("%jd %jd\n",n,us.count());
-
+{ 
   try {
-	youbot::YouBotManipulator arm("youbot-manipulator",
-	  "D:/Tresors/WORK/PROJECT - Ruzics Barna KUKA/myYouBotDriver/config");
-
+	youbot::YouBotManipulator arm("config",
+	  //"D:/Tresors/WORK/PROJECT - Ruzics Barna KUKA/myYouBotDriver/config");
+	  "C:/Users/kutij/Desktop/myYouBotDriver/src/config");
 
   }
   catch (std::exception& e) {
