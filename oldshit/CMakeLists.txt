@@ -24,6 +24,7 @@ set(SOURCES
     FourSwedishWheelOmniBaseKinematic.cpp
     FourSwedishWheelOmniBaseKinematicConfiguration.cpp
     WheeledBaseKinematic.cpp
+    findcica.cpp
 	  )
 
 set(HEADERS
