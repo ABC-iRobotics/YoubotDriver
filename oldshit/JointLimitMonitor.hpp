@@ -52,15 +52,8 @@
  *
  ****************************************************************/
 
-#include <vector>
-#include <sstream>
-#include <cmath>
-#include <boost/thread.hpp>
-#include "Logger.hpp"
 #include "Units.hpp"
 #include "Time.hpp"
-#include "Exceptions.hpp"
-#include "TMCLProtocolDefinitions.hpp"
 #include "YouBotJointInfo.hpp"
 #include "YouBotSlaveMsg.hpp"
 

@@ -1,4 +1,6 @@
 #include "EthercatMasterInterface.hpp"
+#include "TMCLProtocolDefinitions.hpp"
+#include "Logger.hpp"
 extern "C" {
 #include "ethercattype.h"
 #include "nicdrv.h"

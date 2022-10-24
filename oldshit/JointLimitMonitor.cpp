@@ -49,6 +49,11 @@
  *
  ****************************************************************/
 #include "JointLimitMonitor.hpp"
+#include "Exceptions.hpp"
+#include "TMCLProtocolDefinitions.hpp"
+#include <vector>
+#include <sstream>
+#include <cmath>
 namespace youbot {
 
 JointLimitMonitor::JointLimitMonitor(const YouBotJointInfo& jointParameters, const quantity<angular_acceleration>& jointAcceleration) {
