@@ -39,5 +39,6 @@ ELSE (Boost_FOUND)
 ENDIF (Boost_FOUND)
 
 
+add_subdirectory(fromscratch)
 add_subdirectory(oldshit)
 
