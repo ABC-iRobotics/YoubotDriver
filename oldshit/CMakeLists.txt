@@ -6,11 +6,10 @@ set(SOURCES
 	  YouBotJoint.cpp
 	  YouBotJointParameterPasswordProtected.cpp
     ConfigFile.cpp
-    Logger.cpp
     DataTrace.cpp
-    EtherCatMaster.cpp
-    EtherCatMasterWithoutThread.cpp
-    EtherCatMasterWithThread.cpp
+    EthercatMaster.cpp
+    EthercatMasterWithoutThread.cpp
+    EthercatMasterWithThread.cpp
     GripperDataTrace.cpp
     JointLimitMonitor.cpp
     JointTrajectoryController.cpp
@@ -36,13 +35,12 @@ set(HEADERS
 	  YouBotJoint.hpp
 	  YouBotJointParameterPasswordProtected.hpp
     ConfigFile.hpp
-    Logger.hpp
     Units.hpp
     DataTrace.hpp
-    EtherCatMaster.hpp
-    EtherCatMasterInterface.hpp
-    EtherCatMasterWithoutThread.hpp
-    EtherCatMasterWithThread.hpp
+    EthercatMaster.hpp
+    EthercatMasterInterface.hpp
+    EthercatMasterWithoutThread.hpp
+    EthercatMasterWithThread.hpp
     GripperDataTrace.hpp
     JointLimitMonitor.hpp
     JointTrajectoryController.hpp

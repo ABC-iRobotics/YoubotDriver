@@ -2,6 +2,7 @@
 set(SOURCES
       adapters.cpp
       PidController.cpp
+	  Logger.cpp
 	  )
 
 set(HEADERS
@@ -11,6 +12,7 @@ set(HEADERS
       PidController.hpp
       Exceptions.hpp
       Time.hpp
+	  Logger.hpp
 )
 
 add_library(lowlevelcontrol STATIC ${SOURCES} ${HEADERS})
