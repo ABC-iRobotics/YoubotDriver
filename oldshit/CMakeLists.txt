@@ -5,6 +5,7 @@ set(SOURCES
 	  YouBotJointParameterReadOnly.cpp
 	  YouBotJoint.cpp
 	  YouBotJointParameterPasswordProtected.cpp
+      TMCLProtocolDefinitions.hpp
     ConfigFile.cpp
     DataTrace.cpp
     EthercatMaster.cpp

@@ -17,7 +17,7 @@
 #include "adapters.hpp"
 #include "DataObjectLockFree.hpp"
 #include "Logger.hpp"
-#include "TMCLProtocolDefinitions.hpp"
+
 extern "C" {
 #include "ethercattype.h"
 #include "nicdrv.h"

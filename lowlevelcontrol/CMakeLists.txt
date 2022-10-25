@@ -8,7 +8,6 @@ set(SOURCES
 set(HEADERS
       adapters.hpp
       DataObjectLockFree.hpp
-      TMCLProtocolDefinitions.hpp
       PidController.hpp
       Exceptions.hpp
       Time.hpp

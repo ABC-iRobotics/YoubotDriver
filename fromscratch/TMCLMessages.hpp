@@ -7,12 +7,7 @@
 extern "C" {
 #include "ethercattype.h"
 #include "nicdrv.h"
-#include "ethercatbase.h"
 #include "ethercatmain.h"
-#include "ethercatconfig.h"
-#include "ethercatcoe.h"
-#include "ethercatdc.h"
-#include "ethercatprint.h"
 }
 
 class EthercatRequest {
