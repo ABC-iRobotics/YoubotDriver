@@ -14,29 +14,6 @@ extern "C" {
 
 #include <stdio.h>
 
-//Opcodes of all TMCL commands that can be used in direct mode
-typedef enum TMCLCommandNumber {
-  ROR = 1,  //Rotate right
-  ROL = 2,  //Rotate left
-  MST = 3,  //Motor stop
-  MVP = 4,  //Move to position
-  SAP = 5,  //Set axis parameter
-  GAP = 6,  //Get axis parameter
-  STAP = 7, //Store axis parameter into EEPROM
-  RSAP = 8, //Restore axis parameter from EEPROM
-  SGP = 9,  //Set global parameter
-  GGP = 10, //Get global parameter
-  STGP = 11, //Store global parameter into EEPROM
-  RSGP = 12, //Restore global parameter from EEPROM
-  RFS = 13,
-  SIO = 14,
-  GIO = 15,
-  SCO = 30,
-  GCO = 31,
-  CCO = 32,
-  FIRMWARE_VERSION = 136
-} CommandNumber;
-
 #define USER_VARIABLE_BANK 2
 
 //Opcodes of TMCL control functions (to be used to run or abort a TMCL program in the module)
@@ -67,11 +44,6 @@ enum YouBotJointControllerMode {
   SET_POSITION_TO_REFERENCE = 4,
   CURRENT_MODE = 6,
   INITIALIZE = 7
-};
-
-enum TMCLModuleAddress {
-  DRIVE = 0,
-  GRIPPER = 1
 };
 
 /*
@@ -109,17 +81,6 @@ enum MailboxErrorFlags {
   TIMEOUT = 0x10000,
   I2T_EXCEEDED = 0x20000
 
-};
-
-
-enum YouBotMailboxStatusFlags {
-  NO_ERROR_ = 100,
-  INVALID_COMMAND = 2,
-  WRONG_TYPE = 3,
-  INVALID_VALUE = 4,
-  CONFIGURATION_EEPROM_LOCKED = 5,
-  COMMAND_NOT_AVAILABLE = 6,
-  REPLY_WRITE_PROTECTED = 8
 };
 
 enum ParameterType {
@@ -170,15 +131,23 @@ bool EthercatRequest::IsReceiveSuccessful() const {
   return status >= Status::RECEIVED;
 }
 
-FirmWareRequest::FirmWareRequest(unsigned int slaveNumber) : EthercatRequest(slaveNumber) {
-  mailboxToSlave[0] = DRIVE; //module
-  mailboxToSlave[1] = FIRMWARE_VERSION; //command
-  mailboxToSlave[2] = 0; //type number 0/234
-  mailboxToSlave[3] = 0; //motor or bank number
-  mailboxToSlave[4] = 0;
-  mailboxToSlave[5] = 0;
-  mailboxToSlave[6] = 0;
-  mailboxToSlave[7] = 0;
+void TMCLRequest::SetValue(const uint32& value) {
+  mailboxToSlave[4] = value >> 24;
+  mailboxToSlave[5] = value >> 16;
+  mailboxToSlave[6] = value >> 8;
+  mailboxToSlave[7] = value & 0xff;
+}
+
+uint32 TMCLRequest::GetReplyValue() const {
+  return (mailboxFromSlave[4] << 24 | mailboxFromSlave[5] << 16 | mailboxFromSlave[6] << 8 | mailboxFromSlave[7]);
+}
+
+FirmWareRequest::FirmWareRequest(unsigned int slaveNumber) : TMCLRequest(slaveNumber) {
+  _toModuleAddress = DRIVE;
+  _toCommandNumber = FIRMWARE_VERSION;
+  _toTypeNumber = 0;
+  _toMotorNumber = 0;
+  SetValue(0);
 }
 
 void FirmWareRequest::GetOutput(long& controllernum, long& firmwarenum) const {
