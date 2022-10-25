@@ -30,6 +30,7 @@ extern "C" {
 }
 
 #include "TMCLMessages.hpp"
+#include "Time.hpp"
 
 using namespace youbot;
 
@@ -165,14 +166,36 @@ int main(int argc, char *argv[])
   
   long controllertype, firmwareversion;
   req3.GetOutput(controllertype, firmwareversion);
-  printf("c: %d, f: %d\n", controllertype, firmwareversion);
+  //printf("c: %d, f: %d\n", controllertype, firmwareversion);
   req4.GetOutput(controllertype, firmwareversion);
-  printf("c: %d, f: %d\n", controllertype, firmwareversion);
+  //printf("c: %d, f: %d\n", controllertype, firmwareversion);
 
+  for (unsigned long i = 0; i < 1e4; i++)
+  {
+    GetPosition param2(2);
 
+    if (param2.SendToSlave(mailboxTimeout)) {
+      for (int i = 0; i < 100; i++) {
+        if (param2.ReceiveFromSlave(mailboxTimeout))
+          break;
+        else
+          ;// SLEEP_MICROSEC(1);
+      }
+      if (param2.IsReceiveSuccessful()) {
 
+        uint8 status;
+        param2.IsOK(status);
+        printf("status: %d\n", status);
 
-
+        printf("Pos value: %d\n", param2.GetValue());
+      }
+      else
+      printf("unsuccessful rec\n");
+    }
+    else
+      printf("unsuccessful send\n");
+  }
+  
 
 
 

@@ -157,3 +157,29 @@ void FirmWareRequest::GetOutput(long& controllernum, long& firmwarenum) const {
   controllernum = strtol((char*)mailboxFromSlave, &ptr, 10);
   firmwarenum = strtol(ptr + 1, &ptr2, 10);
 }
+
+
+
+template<uint8 command, uint8 module>
+class TMCL_1_0 : public TMCLRequest {
+public:
+  TMCL_1_0(unsigned int slaveNumber, int32 value) : TMCLRequest(slaveNumber) {
+    _toModuleAddress = module;
+    _toCommandNumber = command;
+    _toTypeNumber = 0;
+    _toMotorNumber = 0;
+    SetValue(value);
+  }
+
+  bool IsOK(uint8& status_) const {
+    if (!IsReceiveSuccessful())
+      throw std::runtime_error("");
+    status_ = _fromStatus;
+    return status_ == NO_ERROR_;
+  };
+};
+
+typedef TMCL_1_0<TMCLRequest::MVP, TMCLRequest::DRIVE> MoveToPosition; // Absolute position, if type=1, rel, if type=2, then coord - according to set SCO
+
+
+

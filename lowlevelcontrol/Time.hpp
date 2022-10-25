@@ -58,8 +58,8 @@
 namespace youbot {
 
 #define SLEEP_MILLISEC(millisec) std::this_thread::sleep_for(std::chrono::milliseconds(millisec));
-#define SLEEP_MICROSEC(microsec) std::this_thread::sleep_for(std::chrono::microseconds(millisec));
-#define SLEEP_SEC(sec) std::this_thread::sleep_for(std::chrono::seconds(millisec));
+#define SLEEP_MICROSEC(microsec) std::this_thread::sleep_for(std::chrono::microseconds(microsec));
+#define SLEEP_SEC(sec) std::this_thread::sleep_for(std::chrono::seconds(sec));
 
 } // namespace youbot
 #endif //YOUBOT_TIME_HPP

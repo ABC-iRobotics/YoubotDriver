@@ -43,7 +43,7 @@ protected:
 };
 
 class TMCLRequest : public EthercatRequest {
-protected:
+public:
   enum TMCL_Module : uint8 {
     DRIVE = 0,
     GRIPPER = 1
@@ -80,7 +80,7 @@ protected:
     COMMAND_NOT_AVAILABLE = 6,
     REPLY_WRITE_PROTECTED = 8
   };
-
+protected:
   TMCLRequest(unsigned int slaveIndex) : EthercatRequest(slaveIndex) {}
 
   uint8& _toModuleAddress = mailboxToSlave[0];
@@ -104,6 +104,72 @@ public:
 
   void GetOutput(long& controllernum, long& firmwareversion) const;
 };
+
+template<uint8 module, uint8 command >
+class TMCL_0_0 : public TMCLRequest {
+public:
+  TMCL_0_0(unsigned int slaveNumber);
+
+  bool IsOK(uint8& status_) const;
+};
+
+typedef TMCL_0_0<TMCLRequest::DRIVE, TMCLRequest::MST> MotorStop;
+
+template<uint8 module, uint8 paramtype>
+class TMCL_0_1 : public TMCLRequest {
+public:
+  TMCL_0_1(unsigned int slaveNumber);
+
+  bool IsOK(uint8& status_) const;
+
+  int32 GetValue() const {
+    return GetReplyValue();
+  }
+};
+
+typedef TMCL_0_1<TMCLRequest::DRIVE, 130> PParameterFirstParametersPositionControl;
+
+typedef TMCL_0_1<TMCLRequest::DRIVE, 1> GetPosition;
+
+
+//typedef TMCL_0_1<130, TMCLRequest::DRIVE> PParameterFirstParametersPositionControl;
+
+template<uint8 command, uint8 module>
+inline TMCL_0_0<command, module>::TMCL_0_0(unsigned int slaveNumber) : TMCLRequest(slaveNumber) {
+  _toModuleAddress = module;
+  _toCommandNumber = command;
+  _toTypeNumber = 0;
+  _toMotorNumber = 0;
+  SetValue(0);
+}
+
+template<uint8 command, uint8 module>
+inline bool TMCL_0_0<command, module>::IsOK(uint8& status_) const {
+  if (!IsReceiveSuccessful())
+    throw std::runtime_error("");
+  status_ = _fromStatus;
+  return status_ == NO_ERROR_;
+}
+
+
+template<uint8 module, uint8 paramtype>
+inline TMCL_0_1<module, paramtype>::TMCL_0_1(unsigned int slaveNumber)
+  : TMCLRequest(slaveNumber) {
+  _toModuleAddress = module;
+  _toCommandNumber = GAP;
+  _toTypeNumber = paramtype;
+  _toMotorNumber = 0;
+  SetValue(0);
+}
+
+template<uint8 module, uint8 paramtype>
+inline bool TMCL_0_1<module, paramtype>::IsOK(uint8& status_) const {
+  if (!IsReceiveSuccessful())
+    throw std::runtime_error("");
+  status_ = _fromStatus;
+  return status_ == NO_ERROR_;
+}
+
 
 
 #endif
