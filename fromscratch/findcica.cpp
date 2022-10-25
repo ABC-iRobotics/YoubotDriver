@@ -29,7 +29,10 @@ extern "C" {
 #include "ethercatprint.h"
 }
 
+#include "TMCLMessages.hpp"
+
 using namespace youbot;
+
 
 char ifbuf[1024];
 
@@ -147,44 +150,34 @@ int main(int argc, char *argv[])
     throw std::runtime_error("No EtherCAT slave could be found");
     return -1;
   }
-
+  
   int iSlave = 3;
+
+  FirmWareRequest req3(3);
+  req3.SendToSlave(mailboxTimeout);
+
+
+  FirmWareRequest req4(4);
+  req4.SendToSlave(mailboxTimeout);
+
+  req4.ReceiveFromSlave(mailboxTimeout);
+  req3.ReceiveFromSlave(mailboxTimeout);
   
-  mailboxBufferSend[0] = DRIVE; //module
-  mailboxBufferSend[1] = FIRMWARE_VERSION; //command
-  mailboxBufferSend[2] = 0; //type number 0/234
-  mailboxBufferSend[3] = 0; //motor or bank number
-  mailboxBufferSend[4] = 0;
-  mailboxBufferSend[5] = 0;
-  mailboxBufferSend[6] = 0;
-  mailboxBufferSend[7] = 0;
-  if (ec_mbxsend(iSlave, &mailboxBufferSend, mailboxTimeout)) {
-    //printf("Send successful\n");
-  }
-  else {
-    //printf("Send unsuccessful\n");
-  }
-  
-  // Bouml preserved body begin 00052FF1
-  int n = ec_mbxreceive(iSlave, &mailboxBufferReceive, mailboxTimeout);
-  int k = 0;
-  while (n>0) {
-    //    LOG(trace) << "received mailbox message (buffer two) slave " << mailboxMsg.getSlaveNo();
-    if (n > 0) {
-      int replyAddress = (int)mailboxBufferReceive[0];
-      int moduleAddress = (int)mailboxBufferReceive[1];
-      int status = (int)mailboxBufferReceive[2];
-      int commandNumber = (int)mailboxBufferReceive[3];
-      long value = (mailboxBufferReceive[4] << 24 | mailboxBufferReceive[5] << 16 | mailboxBufferReceive[6] << 8 | mailboxBufferReceive[7]);
-      //printf("Recieve successful %d %d %d %d %d %d\n", n, replyAddress, moduleAddress, status, commandNumber, value);
-      k++;
-    }
-     //ec_mbxempty(iSlave, mailboxTimeout);
-     n = ec_mbxreceive(iSlave, &mailboxBufferReceive, mailboxTimeout*100);
-  }
-  printf("Recieve unsuccessful (%d)\n",n);
-  printf("%d\n", k);
-    
+  long controllertype, firmwareversion;
+  req3.GetOutput(controllertype, firmwareversion);
+  printf("c: %d, f: %d\n", controllertype, firmwareversion);
+  req4.GetOutput(controllertype, firmwareversion);
+  printf("c: %d, f: %d\n", controllertype, firmwareversion);
+
+
+
+
+
+
+
+
+
+
 
   // Request safe operational state for all slaves
   ec_slave[0].state = EC_STATE_SAFE_OP;

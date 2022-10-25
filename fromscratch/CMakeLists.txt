@@ -1,9 +1,11 @@
 
 set(SOURCES 
     findcica.cpp
+	TMCLMessages.cpp
 	)
 
 set(HEADERS
+	TMCLMessages.hpp
 	)
 
 add_executable(fromscratch ${SOURCES} ${HEADERS})
