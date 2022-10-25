@@ -96,6 +96,9 @@ protected:
   uint8& _fromCommandNumber = mailboxFromSlave[3];
 
   uint32 GetReplyValue() const;
+
+public:
+  bool IsOK(uint8& status_)  const;
 };
 
 class FirmWareRequest : public TMCLRequest {
@@ -109,8 +112,6 @@ template<uint8 module, uint8 command >
 class TMCL_0_0 : public TMCLRequest {
 public:
   TMCL_0_0(unsigned int slaveNumber);
-
-  bool IsOK(uint8& status_) const;
 };
 
 typedef TMCL_0_0<TMCLRequest::DRIVE, TMCLRequest::MST> MotorStop;
@@ -119,8 +120,6 @@ template<uint8 module, uint8 paramtype>
 class TMCL_0_1 : public TMCLRequest {
 public:
   TMCL_0_1(unsigned int slaveNumber);
-
-  bool IsOK(uint8& status_) const;
 
   int32 GetValue() const {
     return GetReplyValue();
@@ -143,14 +142,6 @@ inline TMCL_0_0<command, module>::TMCL_0_0(unsigned int slaveNumber) : TMCLReque
   SetValue(0);
 }
 
-template<uint8 command, uint8 module>
-inline bool TMCL_0_0<command, module>::IsOK(uint8& status_) const {
-  if (!IsReceiveSuccessful())
-    throw std::runtime_error("");
-  status_ = _fromStatus;
-  return status_ == NO_ERROR_;
-}
-
 
 template<uint8 module, uint8 paramtype>
 inline TMCL_0_1<module, paramtype>::TMCL_0_1(unsigned int slaveNumber)
@@ -161,15 +152,5 @@ inline TMCL_0_1<module, paramtype>::TMCL_0_1(unsigned int slaveNumber)
   _toMotorNumber = 0;
   SetValue(0);
 }
-
-template<uint8 module, uint8 paramtype>
-inline bool TMCL_0_1<module, paramtype>::IsOK(uint8& status_) const {
-  if (!IsReceiveSuccessful())
-    throw std::runtime_error("");
-  status_ = _fromStatus;
-  return status_ == NO_ERROR_;
-}
-
-
 
 #endif

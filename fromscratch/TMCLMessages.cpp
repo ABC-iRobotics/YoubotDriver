@@ -142,6 +142,14 @@ uint32 TMCLRequest::GetReplyValue() const {
   return (mailboxFromSlave[4] << 24 | mailboxFromSlave[5] << 16 | mailboxFromSlave[6] << 8 | mailboxFromSlave[7]);
 }
 
+
+bool TMCLRequest::IsOK(uint8& status_)  const {
+  if (!IsReceiveSuccessful())
+    throw std::runtime_error("");
+  status_ = _fromStatus;
+  return status_ == NO_ERROR_;
+}
+
 FirmWareRequest::FirmWareRequest(unsigned int slaveNumber) : TMCLRequest(slaveNumber) {
   _toModuleAddress = DRIVE;
   _toCommandNumber = FIRMWARE_VERSION;
