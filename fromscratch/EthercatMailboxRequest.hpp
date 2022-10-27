@@ -4,6 +4,7 @@
 #include <atomic>
 #include <memory>
 #include <string>
+#include <mutex>
 
 extern "C" {
 #include "ethercattype.h"
@@ -20,11 +21,7 @@ public:
   EthercatMailboxRequest(const EthercatMailboxRequest&) = delete;
 
   bool TryToSend(unsigned int mailboxTimeoutUS,
-    unsigned char numOfRetrieves, unsigned int sleepBeforeRecUS);
-
-  bool SendToSlave(unsigned int mailboxTimeout);
-
-  bool ReceiveFromSlave(unsigned int mailboxTimeout);
+    unsigned char numOfRetrieves, unsigned int sleepBeforeRecUS); // Only one thread can call in the same time - wait reading the output until RECEIVED_SUCCESSFUL
 
   EthercatMailboxRequest(unsigned int slaveIndex);
 
@@ -47,7 +44,7 @@ private:
 
   const unsigned int slaveIndex;
 
-  //TODO: mutex - under process
+  std::mutex under_process;
 
 protected:
   ec_mbxbuft mailboxToSlave; // initialize from subclasses before send

@@ -1,6 +1,6 @@
 #include "EthercatMailboxRequest.hpp"
 #include <Exceptions.hpp>
-#include <sstream>
+#include "Time.hpp"
 
 extern "C" {
 #include "ethercattype.h"
@@ -13,57 +13,48 @@ extern "C" {
 #include "ethercatprint.h"
 }
 
-bool TryToSend(unsigned int mailboxTimeoutUS,
+bool EthercatMailboxRequest::TryToSend(unsigned int mailboxTimeoutUS,
   unsigned char numOfRetrieves, unsigned int sleepBeforeRecUS) {
-  
-
-
-}
-
-
-bool EthercatMailboxRequest::SendToSlave(unsigned int mailboxTimeout) {
-  if (status >= Status::SENT)
-    throw std::runtime_error("EthercatMailboxRequest::SendToSlave : Multiple send commands detected!");
-  if (ec_mbxsend(slaveIndex, &mailboxToSlave, mailboxTimeout) > 0) {
-    status = Status::SENT;
-    return true;
+  std::lock_guard<mutex> lock(under_process);
+  bool now = false;
+  if (status < Status::SENT_SUCCESSFUL) {
+    if (ec_mbxsend(slaveIndex, &mailboxToSlave, mailboxTimeoutUS) > 0) {
+      status = Status::SENT_SUCCESSFUL;
+      now = true;
+    }
+    else
+      return false;
   }
-  status = Status::FAILED_SEND;
-  return false;
-}
-
-bool EthercatMailboxRequest::ReceiveFromSlave(unsigned int mailboxTimeout) {
-  if (status < Status::SENT || status >= Status::RECEIVED)
-    throw std::runtime_error("EthercatMailboxRequest::ReceiveFromSlave : Receive before successful send detected!"); 
-  if (ec_mbxreceive(slaveIndex, &mailboxFromSlave, mailboxTimeout) > 0) {
-    status = Status::RECEIVED;
-    return true;
+  if (status == Status::SENT_SUCCESSFUL) {
+    if (sleepBeforeRecUS>0 && now)
+      SLEEP_MICROSEC(sleepBeforeRecUS);
+    for (unsigned int i = 0; i < numOfRetrieves; i++) {
+      if (ec_mbxreceive(slaveIndex, &mailboxFromSlave, mailboxTimeoutUS) > 0) {
+        status = Status::RECEIVED_SUCCESSFUL;
+        return true;
+      }
+    }
+    return false;
   }
-  status = Status::FALED_RECEIVE;
   return false;
 }
 
 EthercatMailboxRequest::EthercatMailboxRequest(unsigned int slaveIndex) : status(Status::INITIALIZED), slaveIndex(slaveIndex) {}
 
 bool EthercatMailboxRequest::IsSendSuccessful() const {
-  return status >= Status::SENT;
+  return status >= Status::SENT_SUCCESSFUL;
 }
 
 bool EthercatMailboxRequest::IsReceiveSuccessful() const {
-  return status >= Status::RECEIVED;
+  return status >= Status::RECEIVED_SUCCESSFUL;
 }
 
 std::string EthercatMailboxRequest::StatusToString() const {
-  std::stringstream ss;
   if (status == Status::INITIALIZED)
-    ss << " INITIALIZED";
-  if (status == Status::FAILED_SEND)
-    ss << " FAILED_SEND";
-  if (status == Status::SENT)
-    ss << " SENT";
-  if (status == Status::FALED_RECEIVE)
-    ss << " FALED_RECEIVE";
-  if (status == Status::RECEIVED)
-    ss << " RECEIVED";
-  return ss.str();
+    return "INITIALIZED";
+  if (status == Status::SENT_SUCCESSFUL)
+    return "SENT_SUCCESSFUL";
+  if (status == Status::RECEIVED_SUCCESSFUL)
+    return "RECEIVED_SUCCESSFUL";
+  return "NO_EXPECTED";
 }

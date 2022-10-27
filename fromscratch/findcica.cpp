@@ -1,16 +1,3 @@
-/** \file
- * \brief Example code for Simple Open EtherCAT master
- *
- * Usage : slaveinfo [ifname] [-sdo] [-map]
- * Ifname is NIC interface, f.e. eth0.
- * Optional -sdo to display CoE object dictionary.
- * Optional -map to display slave PDO mapping
- *
- * This shows the configured slave data.
- *
- * (c)Arthur Ketels 2010 - 2011
- */
-
 #include <stdio.h>
 #include <string.h>
 
@@ -155,12 +142,9 @@ int main(int argc, char *argv[])
   int iSlave = 3;
   {
     FirmWareRequest req3(4);
-    req3.SendToSlave(mailboxTimeout);
+    req3.TryToSend(mailboxTimeout, 10, 0);
     FirmWareRequest req4(3);
-    req4.SendToSlave(mailboxTimeout);
-
-    req4.ReceiveFromSlave(mailboxTimeout);
-    req3.ReceiveFromSlave(mailboxTimeout);
+    req4.TryToSend(mailboxTimeout, 10, 0);
 
     long controllertype, firmwareversion;
     req3.GetOutput(controllertype, firmwareversion);
@@ -171,27 +155,19 @@ int main(int argc, char *argv[])
   
   {
     SetEncoder param0(2, (uint32)100000);
-    if (!param0.SendToSlave(mailboxTimeout))
-      printf("Send error...\n");
-    if (!param0.ReceiveFromSlave(mailboxTimeout))
-      printf("Rec error...\n");
+    param0.TryToSend(mailboxTimeout, 10, 0);
+    printf(" %s\n",param0.StatusToString().c_str());
   }
   {
     SetEncoderDirection param0(2, (uint32)1);
-    if (!param0.SendToSlave(mailboxTimeout))
-      printf("Send error...\n");
-    if (!param0.ReceiveFromSlave(mailboxTimeout))
-      printf("Rec error...\n");
+    param0.TryToSend(mailboxTimeout, 10, 0);
+    printf(" %s\n", param0.StatusToString().c_str());
   }
   for (unsigned long i = 0; i < 1e4; i++)
   {
     GetPosition param2(2);
-
-    if (!param2.SendToSlave(mailboxTimeout))
-      printf("send error\n");
-
-    if (!param2.ReceiveFromSlave(mailboxTimeout))
-      printf("receive error\n");
+    param2.TryToSend(mailboxTimeout, 10, 0);
+    printf(" %s\n", param2.StatusToString().c_str());
     
     if (param2.IsReceiveSuccessful()) {
 
