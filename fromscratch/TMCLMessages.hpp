@@ -23,6 +23,10 @@ typedef TMCL_GetAxisParam<TMCLRequest::ENCODER_STEPS_PER_ROTATION> GetEncoderSte
 
 typedef TMCL_GetAxisParam<TMCLRequest::ENCODER_DIRECTION> GetEncoderDirection;
 
+typedef TMCL_GetAxisParam<TMCLRequest::ACTUAL_MOTOR_CURRENT> GetCurrent;
+
+typedef TMCL_GetAxisParam<TMCLRequest::MAX_CURRENT> GetMaxCurrent;
+
 
 
 typedef TMCL_SetAxisParam<TMCLRequest::ACTUAL_POSITION> SetEncoder;
