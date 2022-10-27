@@ -154,9 +154,9 @@ int main(int argc, char *argv[])
   
   int iSlave = 3;
   {
-    FirmWareRequest req3(3);
+    FirmWareRequest req3(4);
     req3.SendToSlave(mailboxTimeout);
-    FirmWareRequest req4(4);
+    FirmWareRequest req4(3);
     req4.SendToSlave(mailboxTimeout);
 
     req4.ReceiveFromSlave(mailboxTimeout);
@@ -168,17 +168,24 @@ int main(int argc, char *argv[])
     req4.GetOutput(controllertype, firmwareversion);
     printf("c: %d, f: %d\n", controllertype, firmwareversion);
   }
-  /*
-  SetEncoder param0(2,1000);
-  if (!param0.SendToSlave(mailboxTimeout))
-    printf("Send error...\n");
-  if (!param0.ReceiveFromSlave(mailboxTimeout))
-    printf("Rec error...\n");
-*/
-
+  
+  {
+    SetEncoder param0(2, (uint32)100000);
+    if (!param0.SendToSlave(mailboxTimeout))
+      printf("Send error...\n");
+    if (!param0.ReceiveFromSlave(mailboxTimeout))
+      printf("Rec error...\n");
+  }
+  {
+    SetEncoderDirection param0(2, (uint32)1);
+    if (!param0.SendToSlave(mailboxTimeout))
+      printf("Send error...\n");
+    if (!param0.ReceiveFromSlave(mailboxTimeout))
+      printf("Rec error...\n");
+  }
   for (unsigned long i = 0; i < 1e4; i++)
   {
-    GetMaxCurrent param2(2);
+    GetPosition param2(2);
 
     if (!param2.SendToSlave(mailboxTimeout))
       printf("send error\n");
@@ -192,8 +199,10 @@ int main(int argc, char *argv[])
       param2.GetRecStatusFlag(status);
       printf("status: %d\n", status);
 
-      std::string a = TMCLRequest::StatusErrorFlagsToString(param2.GetValue());
-      printf("Pos value: %s\n", a.c_str());
+
+      printf("Pos value: %u\n", param2.GetValue());
+      //std::string a = TMCLRequest::StatusErrorFlagsToString(param2.GetValue());
+      //printf("Pos value: %s\n", a.c_str());
     }
     else
       printf("unsuccessful rec\n");

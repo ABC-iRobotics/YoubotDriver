@@ -34,6 +34,7 @@ typedef TMCL_GetAxisParam<TMCLRequest::ERROR_STATUS_FLAG> GetErrorStatusFlag;
 
 
 
+
 typedef TMCL_OnlyCommand<TMCLRequest::MST> MotorStop;
 
 typedef TMCL_CmdWithValue<TMCLRequest::MVP> MoveToPosition; // Absolute position, if type=1, rel, if type=2, then coord - according to set SCO
@@ -47,7 +48,6 @@ typedef TMCL_CmdWithValue<TMCLRequest::MVP> MoveToPosition; // Absolute position
 
 typedef TMCL_GetAxisParam<TMCLRequest::POSITION_PID_P1> GetPParameterFirstParametersPositionControl;
 
-
 typedef TMCL_GetAxisParam<TMCLRequest::ENCODER_STEPS_PER_ROTATION> GetEncoderStepsPerRotation;
 
 typedef TMCL_GetAxisParam<TMCLRequest::ENCODER_DIRECTION> GetEncoderDirection;
@@ -57,12 +57,14 @@ typedef TMCL_GetAxisParam<TMCLRequest::ACTUAL_MOTOR_CURRENT> GetCurrent;
 typedef TMCL_GetAxisParam<TMCLRequest::MAX_CURRENT> GetMaxCurrent;
 
 
-
-
 typedef TMCL_SetAxisParam<TMCLRequest::POSITION_PID_P1> SetPParameterFirstParametersPositionControl;
 
 typedef TMCL_SetAxisParam<TMCLRequest::ENCODER_STEPS_PER_ROTATION> SetEncoderStepsPerRotation;
 
 typedef TMCL_SetAxisParam<TMCLRequest::ENCODER_DIRECTION> SetEncoderDirection;
+
+
+typedef TMCL_GetAxisParam<TMCLRequest::ENCODER_DIRECTION> GetEncoderDirection; // handled manually in the old
+typedef TMCL_SetAxisParam<TMCLRequest::ENCODER_DIRECTION> SetEncoderDirection; // handled manually in the old
 
 #endif

@@ -19,6 +19,9 @@ public:
 
   EthercatMailboxRequest(const EthercatMailboxRequest&) = delete;
 
+  bool TryToSend(unsigned int mailboxTimeoutUS,
+    unsigned char numOfRetrieves, unsigned int sleepBeforeRecUS);
+
   bool SendToSlave(unsigned int mailboxTimeout);
 
   bool ReceiveFromSlave(unsigned int mailboxTimeout);
@@ -36,15 +39,15 @@ public:
 private:
   enum class Status {
     INITIALIZED = 0,
-    FAILED_SEND = 1,
-    SENT = 2,
-    FALED_RECEIVE = 3,
-    RECEIVED = 4
+    SENT_SUCCESSFUL = 2,
+    RECEIVED_SUCCESSFUL = 4
   };
 
   volatile std::atomic<Status> status;
 
   const unsigned int slaveIndex;
+
+  //TODO: mutex - under process
 
 protected:
   ec_mbxbuft mailboxToSlave; // initialize from subclasses before send

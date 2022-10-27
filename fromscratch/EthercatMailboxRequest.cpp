@@ -13,6 +13,14 @@ extern "C" {
 #include "ethercatprint.h"
 }
 
+bool TryToSend(unsigned int mailboxTimeoutUS,
+  unsigned char numOfRetrieves, unsigned int sleepBeforeRecUS) {
+  
+
+
+}
+
+
 bool EthercatMailboxRequest::SendToSlave(unsigned int mailboxTimeout) {
   if (status >= Status::SENT)
     throw std::runtime_error("EthercatMailboxRequest::SendToSlave : Multiple send commands detected!");
