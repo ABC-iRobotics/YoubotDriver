@@ -2,10 +2,12 @@
 set(SOURCES 
     findcica.cpp
 	TMCLMessages.cpp
+	EthercatMailboxRequest.cpp
 	)
 
 set(HEADERS
 	TMCLMessages.hpp
+	EthercatMailboxRequest.hpp
 	)
 
 add_executable(fromscratch ${SOURCES} ${HEADERS})
