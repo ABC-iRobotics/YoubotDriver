@@ -84,7 +84,7 @@ public:
     REPLY_WRITE_PROTECTED = 8
   };
 
-  std::string RecvStatusToString(uint8 in);
+  static std::string RecvStatusToString(uint8 in);
 
   enum StatusErrorFlags : uint32 {
     OVER_CURRENT = 0x1,
@@ -107,7 +107,7 @@ public:
     I2T_EXCEEDED = 0x20000
   };
 
-  std::string StatusErrorFlagsToString(uint8 in);
+  static std::string StatusErrorFlagsToString(uint8 in);
 
 protected:
   TMCLRequest(unsigned int slaveIndex) : EthercatMailboxRequest(slaveIndex) {}

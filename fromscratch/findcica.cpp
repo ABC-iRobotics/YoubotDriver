@@ -178,28 +178,29 @@ int main(int argc, char *argv[])
 
   for (unsigned long i = 0; i < 1e4; i++)
   {
-    GetPosition param2(2);
+    GetMaxCurrent param2(2);
 
     if (!param2.SendToSlave(mailboxTimeout))
       printf("send error\n");
 
     if (!param2.ReceiveFromSlave(mailboxTimeout))
       printf("receive error\n");
-    /*
-      if (param2.IsReceiveSuccessful()) {
+    
+    if (param2.IsReceiveSuccessful()) {
 
-        uint8 status;
-        param2.GetRecStatusFlag(status);
-        printf("status: %d\n", status);
+      uint8 status;
+      param2.GetRecStatusFlag(status);
+      printf("status: %d\n", status);
 
-        printf("Pos value: %d\n", param2.GetValue());
-      }
-      else
-      printf("unsuccessful rec\n");
+      std::string a = TMCLRequest::StatusErrorFlagsToString(param2.GetValue());
+      printf("Pos value: %s\n", a.c_str());
     }
     else
-      printf("unsuccessful send\n");
-      */
+      printf("unsuccessful rec\n");
+   
+    //else
+      //printf("unsuccessful send\n");
+      
   }
   
 
