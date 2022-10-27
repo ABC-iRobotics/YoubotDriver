@@ -44,3 +44,18 @@ bool EthercatMailboxRequest::IsSendSuccessful() const {
 bool EthercatMailboxRequest::IsReceiveSuccessful() const {
   return status >= Status::RECEIVED;
 }
+
+std::string EthercatMailboxRequest::StatusToString() const {
+  std::stringstream ss;
+  if (status == Status::INITIALIZED)
+    ss << " INITIALIZED";
+  if (status == Status::FAILED_SEND)
+    ss << " FAILED_SEND";
+  if (status == Status::SENT)
+    ss << " SENT";
+  if (status == Status::FALED_RECEIVE)
+    ss << " FALED_RECEIVE";
+  if (status == Status::RECEIVED)
+    ss << " RECEIVED";
+  return ss.str();
+}

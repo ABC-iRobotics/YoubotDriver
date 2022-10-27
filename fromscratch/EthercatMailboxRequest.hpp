@@ -3,6 +3,8 @@
 
 #include <atomic>
 #include <memory>
+#include <string>
+
 extern "C" {
 #include "ethercattype.h"
 #include "nicdrv.h"
@@ -11,6 +13,12 @@ extern "C" {
 
 class EthercatMailboxRequest {
 public:
+  EthercatMailboxRequest() = delete;
+
+  EthercatMailboxRequest(EthercatMailboxRequest&) = delete;
+
+  EthercatMailboxRequest(const EthercatMailboxRequest&) = delete;
+
   bool SendToSlave(unsigned int mailboxTimeout);
 
   bool ReceiveFromSlave(unsigned int mailboxTimeout);
@@ -22,6 +30,8 @@ public:
   bool IsReceiveSuccessful() const;
 
   typedef std::shared_ptr<EthercatMailboxRequest> EthercatRequestPtr;
+
+  std::string StatusToString() const;
 
 private:
   enum class Status {
