@@ -170,6 +170,13 @@ int main(int argc, char *argv[])
   req4.GetOutput(controllertype, firmwareversion);
   //printf("c: %d, f: %d\n", controllertype, firmwareversion);
 
+  SetEncoder param0(2,1000);
+  if (!param0.SendToSlave(mailboxTimeout))
+    printf("Send error...\n");
+  if (!param0.ReceiveFromSlave(mailboxTimeout))
+    printf("Rec error...\n");
+
+
   for (unsigned long i = 0; i < 1e4; i++)
   {
     GetPosition param2(2);
@@ -184,7 +191,7 @@ int main(int argc, char *argv[])
       if (param2.IsReceiveSuccessful()) {
 
         uint8 status;
-        param2.IsOK(status);
+        param2.GetRecStatusFlag(status);
         printf("status: %d\n", status);
 
         printf("Pos value: %d\n", param2.GetValue());
