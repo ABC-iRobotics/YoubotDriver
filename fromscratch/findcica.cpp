@@ -23,29 +23,18 @@ using namespace youbot;
 
 
 char ifbuf[1024];
+char IOmap_[4096];
 
-int main(int argc, char *argv[])
-{
-  char name[5000];
-  printf("sg\n");
-  if (findYouBotEtherCatAdapter(name)) {
-	printf("\n\n\nAdapter found: %s\n", name);
-  }
+void initEtherCat(const char* name) {
+  //initialize to zero
+  for (unsigned int i = 0; i < 4096; i++)
+    IOmap_[i] = 0;
 
-
-  char IOmap_[4096];
-
-
-  const std::string configFileName;
-
-  const std::string configFilepath;
-
-  bool ethercatConnectionEstablished;
-  ec_mbxbuft mailboxBufferSend;
-  ec_mbxbuft mailboxBufferReceive;
+  //bool ethercatConnectionEstablished;
+  //ec_mbxbuft mailboxBufferSend;
+  //ec_mbxbuft mailboxBufferReceive;
   unsigned int nrOfSlaves;
-  unsigned int ethercatTimeout;
-  unsigned int mailboxTimeout = 4000;
+  //unsigned int ethercatTimeout;
 
   /* initialise SOEM, bind socket to ifname */
   if (ec_init(name)) {
@@ -105,12 +94,6 @@ int main(int argc, char *argv[])
   std::string ManipulatorJointControllerNameAlternative = "TMCM-1610";
 
   nrOfSlaves = 0;
-  /*
-  ConfigFile configfile;
-  configfile->readInto(baseJointControllerName, "BaseJointControllerName");
-  configfile->readInto(baseJointControllerNameAlternative, "BaseJointControllerNameAlternative");
-  configfile->readInto(manipulatorJointControllerName, "ManipulatorJointControllerName");
-  configfile->readInto(ManipulatorJointControllerNameAlternative, "ManipulatorJointControllerNameAlternative");*/
   std::string actualSlaveName;
 
   //reserve memory for all slave with a input/output buffer
@@ -136,10 +119,97 @@ int main(int argc, char *argv[])
   }
   else {
     throw std::runtime_error("No EtherCAT slave could be found");
+  }
+}
+
+//TODO: mutex to make impossible reading until send&rec...
+template <int toSlaveSize, int fromSlaveSize>
+class EthercatProcessRequest {
+  int slaveNum;
+public:
+  EthercatProcessRequest(int slaveNum) : slaveNum(slaveNum) {}
+
+  void PrepareToSlaveMsg(uint8* buffer) {
+    memcpy(ec_slave[iSlave].outputs, buffer, toSlaveSize);
+  }
+
+  uint8* GetOutput(int& length) {
+    length = fromSlaveSize;
+    return ec_slave[iSlave].inputs;
+  }
+};
+
+class TMCLModuleProcessRequest : private EthercatProcessRequest<5,20> {
+public:
+
+};
+
+class EthercatProcessComm {
+public:
+  void Do() {
+    ec_send_processdata();
+    ec_receive_processdata(EC_TIMEOUTRET);
+  }
+};
+
+int main(int argc, char *argv[])
+{
+  char name[1000];
+  printf("sg\n");
+  if (findYouBotEtherCatAdapter(name)) {
+    printf("\n\n\nAdapter found: %s\n", name);
+  }
+  else {
+    printf("\n\n\nAdapter with turned on youBot arm NOT found!\n");
     return -1;
   }
+
+  initEtherCat(name);
+ 
   
+
+
+
+
+  unsigned int mailboxTimeout = 4000;
+
+
+
   int iSlave = 3;
+
+  {
+    SetEncoder param0(iSlave, (uint32)100000);
+    param0.TryToSend(mailboxTimeout, 10, 0);
+    printf(" %s\n", param0.StatusToString().c_str());
+  }
+
+  SLEEP_MILLISEC(10);
+
+  ec_send_processdata();
+  ec_receive_processdata(EC_TIMEOUTRET);
+
+  uint8* out = ec_slave[iSlave].outputs;
+  uint8* in = ec_slave[iSlave].inputs;
+
+  uint8* cmd = out + 4;
+  *cmd = 7;
+
+  ec_send_processdata();
+  ec_receive_processdata(EC_TIMEOUTRET);
+
+  printf(" %d %d %d %d %d \n", *out, *(out + 1), *(out + 2), *(out + 3), *(out + 4));
+  printf(" %d %d %d %d %d \n", *in, *(in + 1), *(in + 2), *(in + 3), *(in + 4));
+
+  SLEEP_MILLISEC(30);
+
+  *cmd = 2;
+
+  ec_send_processdata();
+  ec_receive_processdata(EC_TIMEOUTRET);
+
+  printf(" %d %d %d %d %d \n", *out, *(out + 1), *(out + 2), *(out + 3), *(out + 4));
+  printf(" %d %d %d %d %d \n", *in, *(in + 1), *(in + 2), *(in + 3), *(in + 4));
+
   {
     FirmWareRequest req3(4);
     req3.TryToSend(mailboxTimeout, 10, 0);
@@ -154,18 +224,19 @@ int main(int argc, char *argv[])
   }
   
   {
-    SetEncoder param0(2, (uint32)100000);
-    param0.TryToSend(mailboxTimeout, 10, 0);
-    printf(" %s\n",param0.StatusToString().c_str());
-  }
-  {
-    SetEncoderDirection param0(2, (uint32)1);
+    //SetEncoderDirection param0(2, (uint32)1);
+    GetP2ParameterPositionControl param0(iSlave);
     param0.TryToSend(mailboxTimeout, 10, 0);
     printf(" %s\n", param0.StatusToString().c_str());
   }
+  
   for (unsigned long i = 0; i < 1e4; i++)
   {
-    GetPosition param2(2);
+
+    ec_send_processdata();
+    ec_receive_processdata(EC_TIMEOUTRET);
+    /*
+    GetPosition param2(iSlave);
     param2.TryToSend(mailboxTimeout, 10, 0);
     printf(" %s\n", param2.StatusToString().c_str());
     
@@ -182,12 +253,39 @@ int main(int argc, char *argv[])
     }
     else
       printf("unsuccessful rec\n");
-   
-    //else
-      //printf("unsuccessful send\n");
-      
+      */
   }
   
+  
+  /*
+  int ethercatTimeout = 4000;
+  int communicationErrors = 0;
+
+  //send and receive data from ethercat
+  if (ec_send_processdata() == 0) {
+    LOG(warning) << "Sending process data failed";
+  }
+
+  if (ec_receive_processdata(ethercatTimeout) == 0) {
+    if (communicationErrors == 0) {
+      LOG(warning) << "Receiving data failed";
+    }
+    communicationErrors++;
+  }
+  else {
+    communicationErrors = 0;
+  }
+
+  */
+
+
+
+
+
+
+
+
+
 
 
 

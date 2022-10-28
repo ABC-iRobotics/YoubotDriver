@@ -118,5 +118,5 @@ std::string TMCLRequest::StatusErrorFlagsToString(uint8 in) {
 }
 
 uint32 TMCLRequest::GetReplyValue() const {
-  return (mailboxFromSlave[4] << 24 | mailboxFromSlave[5] << 16 | mailboxFromSlave[6] << 8 | mailboxFromSlave[7]);
+   return (mailboxFromSlave[4] << 24 | mailboxFromSlave[5] << 16 | mailboxFromSlave[6] << 8 | mailboxFromSlave[7]);
 }

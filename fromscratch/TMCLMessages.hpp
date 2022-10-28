@@ -43,6 +43,7 @@ typedef TMCL_CmdWithValue<TMCLRequest::MVP> MoveToPosition; // Absolute position
 
 
 
+typedef TMCL_GetAxisParam<TMCLRequest::POSITION_PID_P2> GetP2ParameterPositionControl;
 
 
 

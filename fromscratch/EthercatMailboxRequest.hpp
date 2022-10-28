@@ -21,7 +21,8 @@ public:
   EthercatMailboxRequest(const EthercatMailboxRequest&) = delete;
 
   bool TryToSend(unsigned int mailboxTimeoutUS,
-    unsigned char numOfRetrieves, unsigned int sleepBeforeRecUS); // Only one thread can call in the same time - wait reading the output until RECEIVED_SUCCESSFUL
+    unsigned char numOfRetrieves, unsigned int sleepBeforeRecUS);
+  // Only one thread can call in the same time (guarded by a mutex) - wait reading the output until RECEIVED_SUCCESSFUL
 
   EthercatMailboxRequest(unsigned int slaveIndex);
 
