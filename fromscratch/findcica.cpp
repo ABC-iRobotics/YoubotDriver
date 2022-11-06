@@ -186,9 +186,14 @@ public:
 
 };
 
+#include "SOEMMessageCenter.hpp"
 
 int main(int argc, char *argv[])
 {
+
+
+
+
   char name[1000];
   printf("sg\n");
   if (findYouBotEtherCatAdapter(name)) {
@@ -198,6 +203,27 @@ int main(int argc, char *argv[])
     printf("\n\n\nAdapter with turned on youBot arm NOT found!\n");
     return -1;
   }
+
+  SOEMMessageCenter center;
+  if (!center.OpenConnection(name)) {
+    return -1;
+  }
+
+  //VMailboxMessage::MailboxMessagePtr ptr = std::make_shared<GetFirmware>(3);
+  std::shared_ptr<GetFirmware> ptr = std::make_shared<GetFirmware>(3);
+
+  center.SendMessage(ptr);
+
+  long a, b;
+  std::static_pointer_cast<GetFirmware>(ptr)->GetOutput(a, b);
+  printf("%d %d", a, b);
+
+
+  center.CloseConnection();
+
+
+
+  return 0;
 
   initEtherCat(name);
 

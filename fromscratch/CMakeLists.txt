@@ -4,12 +4,14 @@ set(SOURCES
 	TMCLMessages.cpp
 	EthercatMailboxRequest.cpp
 	TMCLMessageTemplates.cpp
+	SOEMMessageCenter.cpp
 	)
 
 set(HEADERS
 	TMCLMessages.hpp
 	EthercatMailboxRequest.hpp
 	TMCLMessageTemplates.hpp
+	SOEMMessageCenter.hpp
 	)
 
 add_executable(fromscratch ${SOURCES} ${HEADERS})
