@@ -26,13 +26,16 @@ bool EthercatMailboxRequest::TryToSend(unsigned int mailboxTimeoutUS,
       return false;
   }
   if (status == Status::SENT_SUCCESSFUL) {
-    if (sleepBeforeRecUS>0 && now)
-      SLEEP_MICROSEC(sleepBeforeRecUS);
     for (unsigned int i = 0; i < numOfRetrieves; i++) {
-      if (ec_mbxreceive(slaveIndex, &mailboxFromSlave, mailboxTimeoutUS) > 0) {
+      if (sleepBeforeRecUS > 0 && now)
+        SLEEP_MICROSEC(sleepBeforeRecUS);
+      int out = ec_mbxreceive(slaveIndex, &mailboxFromSlave, mailboxTimeoutUS);
+      if (out > 0) {
         status = Status::RECEIVED_SUCCESSFUL;
+        printf("rec ok: %d\n", out);
         return true;
       }
+      else printf("rec error: %d\n",out);
     }
     return false;
   }

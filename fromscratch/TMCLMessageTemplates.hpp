@@ -41,6 +41,7 @@ public:
     TARGET_SPEED = 2,
     ACTUAL_SPEED = 3,
     MAX_CURRENT = 4,
+    INITIALIZE = 15,
     POSITION_PID_P1 = 130,
     POSITION_PID_I1 = 131,
     POSITION_PID_D1 = 132,
@@ -53,6 +54,7 @@ public:
     ACTUAL_VOLTAGE = 151, // in 0.01V
     ACTUAL_TEMPERATURE = 152,
     ERROR_STATUS_FLAG = 156,
+    CLEAR_MOTOR_CONTROLLER_TIMEOUT_FLAG = 158, // only in the drive..
     COMMUTATION_MODE = 159,
     CURRENT_PID_P1 = 168,
     CURRENT_PID_I1 = 169,
@@ -93,24 +95,31 @@ public:
     OVER_TEMPERATURE = 0x8,
     MOTOR_HALTED = 0x10,
     HALL_SENSOR_ERROR = 0x20,
-    //    ENCODER_ERROR = 0x40,
-    //    INITIALIZATION_ERROR = 0x80,
+        ENCODER_ERROR = 0x40,
+        INITIALIZATION_ERROR = 0x80,
     PWM_MODE_ACTIVE = 0x100,
     VELOCITY_MODE_ACTIVE = 0x200,
     POSITION_MODE_ACTIVE = 0x400,
     TORQUE_MODE_ACTIVE = 0x800,
-    //    EMERGENCY_STOP = 0x1000,
-    //    FREERUNNING = 0x2000,
+        EMERGENCY_STOP = 0x1000,
+        FREERUNNING = 0x2000,
     POSITION_REACHED = 0x4000,
     INITIALIZED = 0x8000,
     TIMEOUT = 0x10000,
     I2T_EXCEEDED = 0x20000
   };
 
-  static std::string StatusErrorFlagsToString(uint8 in);
-
+  static std::string StatusErrorFlagsToString(uint32 in);
+public:
+  std::string  RecvStatusAsString() const {
+    printf("Ret with: address %d, moduleAdress %d, status %d, commandNumber %d, value %d\n",
+      _fromReplyAddress, _fromModuleAddress, _fromStatus, _fromCommandNumber, GetReplyValue());
+    return RecvStatusToString(_fromStatus);
+  }
 protected:
-  TMCLRequest(unsigned int slaveIndex) : EthercatMailboxRequest(slaveIndex) {}
+  TMCLRequest(unsigned int slaveIndex) : EthercatMailboxRequest(slaveIndex) {
+    _fromStatus = 0;
+  }
 
   uint8& _toModuleAddress = mailboxToSlave[0];
   uint8& _toCommandNumber = mailboxToSlave[1];

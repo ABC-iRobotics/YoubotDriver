@@ -59,9 +59,9 @@ void initEtherCat(const char* name) {
         }
       }
       //Read the state of all slaves
-      //ec_readstate();
+      ec_readstate();
 
-      LOG(trace) << "Request operational state for all EtherCAT slaves";
+      LOG(info) << "Request operational state for all EtherCAT slaves";
 
       ec_slave[0].state = EC_STATE_OPERATIONAL;
       // request OP state for all slaves
@@ -74,7 +74,7 @@ void initEtherCat(const char* name) {
 
       ec_statecheck(0, EC_STATE_OPERATIONAL, EC_TIMEOUTSTATE);
       if (ec_slave[0].state == EC_STATE_OPERATIONAL) {
-        LOG(trace) << "Operational state reached for all EtherCAT slaves.";
+        LOG(info) << "Operational state reached for all EtherCAT slaves.";
       }
       else {
         throw std::runtime_error("Not all EtherCAT slaves reached operational state.");
@@ -123,11 +123,44 @@ void initEtherCat(const char* name) {
 }
 
 //TODO: mutex to make impossible reading until send&rec...
+
+//TODO: lock mechanism...
+
+class EthercatComm {
+  std::mutex ethercatComm;
+  std::mutex ethercatPrcBuffer;
+
+public:
+  void SendRcvProcessData() {
+    // lock guard ethercatComm ethercatPrcBuffer
+
+    ec_send_processdata();
+    ec_receive_processdata(EC_TIMEOUTRET);
+  }
+
+  std::mutex& GetCommMutex() {
+    return ethercatComm;
+  }
+
+  std::mutex& GetPrcBufferMutex() {
+    return ethercatPrcBuffer;
+  }
+
+  typedef std::shared_ptr<EthercatComm> EthercatCommPtr;
+
+  static EthercatCommPtr GetSingleton() {
+    static EthercatCommPtr singleton = std::make_shared<EthercatComm>();
+    return singleton;
+  }
+};
+
 template <int toSlaveSize, int fromSlaveSize>
 class EthercatProcessRequest {
   int slaveNum;
 public:
-  EthercatProcessRequest(int slaveNum) : slaveNum(slaveNum) {}
+  EthercatProcessRequest(int slaveNum) : slaveNum(slaveNum) {
+  
+  }
 
   void PrepareToSlaveMsg(uint8* buffer) {
     memcpy(ec_slave[iSlave].outputs, buffer, toSlaveSize);
@@ -139,18 +172,20 @@ public:
   }
 };
 
-class TMCLModuleProcessRequest : private EthercatProcessRequest<5,20> {
-public:
+class TMCLModuleProcessRequest : protected EthercatProcessRequest<5,20> {
+  uint8 toSlave[5];
+  
+  using EthercatProcessRequest::PrepareToSlaveMsg;
+  using EthercatProcessRequest::GetOutput;
 
-};
-
-class EthercatProcessComm {
 public:
-  void Do() {
-    ec_send_processdata();
-    ec_receive_processdata(EC_TIMEOUTRET);
+  TMCLModuleProcessRequest(int slaveNum) : EthercatProcessRequest(slaveNum) {
+    for (int i = 0; i < 5; i++)
+      toSlave[i] = 0;
   }
+
 };
+
 
 int main(int argc, char *argv[])
 {
@@ -165,25 +200,60 @@ int main(int argc, char *argv[])
   }
 
   initEtherCat(name);
- 
-  
 
-
-
-
-  unsigned int mailboxTimeout = 4000;
+  unsigned int mailboxTimeoutUS = 40;
 
 
 
   int iSlave = 3;
-
   {
     SetEncoder param0(iSlave, (uint32)100000);
-    param0.TryToSend(mailboxTimeout, 10, 0);
-    printf(" %s\n", param0.StatusToString().c_str());
+    param0.TryToSend(mailboxTimeoutUS, 1000, 100);
+    printf("SetEncoder: %s\n", param0.StatusToString().c_str());
   }
 
+  {
+    GetMotorControllerStatus param0(iSlave);
+    param0.TryToSend(mailboxTimeoutUS * 10, 1000, 100);
+    printf("GetMotorControllerStatus: %s\n", param0.StatusToString().c_str());
+    uint8 status;
+    if (param0.GetRecStatusFlag(status))
+      printf(" Res: %s\n", param0.StatusErrorFlagsAsString().c_str());
+  }
+  {
+    GetIsUnderInitialization param0(iSlave);
+    param0.TryToSend(mailboxTimeoutUS * 10, 1, 100);
+    printf("GetIsUnderInitialization: %s\n", param0.StatusToString().c_str());
+    printf(" Res: %s\n", param0.RecvStatusAsString().c_str());
+  }
+  if (1) {
+    ClearErrorFlags param0(iSlave);
+    param0.TryToSend(mailboxTimeoutUS * 10, 10, 100);
+    printf("ClearErrorFlags: %s\n", param0.StatusToString().c_str());
+    printf(" Res: %s\n", param0.RecvStatusAsString().c_str());
+  }
+  {
+    GetMotorControllerStatus param0(iSlave);
+    param0.TryToSend(mailboxTimeoutUS * 10, 1000, 100);
+    printf("GetMotorControllerStatus: %s\n", param0.StatusToString().c_str());
+    uint8 status;
+    //if (param0.GetRecStatusFlag(status))
+      printf(" Res: %s\n", param0.StatusErrorFlagsAsString().c_str());
+  }
+  {
+    //SetEncoderDirection param0(2, (uint32)1);
+    GetP1ParameterPositionControl param0(iSlave);
+    param0.TryToSend(mailboxTimeoutUS*10, 1, 100);
+    printf("GetP1ParameterPositionControl: %s\n", param0.StatusToString().c_str());
+    printf(" Res: %s\n", param0.RecvStatusAsString().c_str());
+  }
+  return 0;
   SLEEP_MILLISEC(10);
+
+
+  ec_send_processdata();
+  ec_receive_processdata(EC_TIMEOUTRET);
+
 
   ec_send_processdata();
   ec_receive_processdata(EC_TIMEOUTRET);
@@ -212,9 +282,9 @@ int main(int argc, char *argv[])
 
   {
     FirmWareRequest req3(4);
-    req3.TryToSend(mailboxTimeout, 10, 0);
+    req3.TryToSend(mailboxTimeoutUS, 10, 0);
     FirmWareRequest req4(3);
-    req4.TryToSend(mailboxTimeout, 10, 0);
+    req4.TryToSend(mailboxTimeoutUS, 10, 0);
 
     long controllertype, firmwareversion;
     req3.GetOutput(controllertype, firmwareversion);
@@ -226,7 +296,7 @@ int main(int argc, char *argv[])
   {
     //SetEncoderDirection param0(2, (uint32)1);
     GetP2ParameterPositionControl param0(iSlave);
-    param0.TryToSend(mailboxTimeout, 10, 0);
+    param0.TryToSend(mailboxTimeoutUS, 10, 0);
     printf(" %s\n", param0.StatusToString().c_str());
   }
   

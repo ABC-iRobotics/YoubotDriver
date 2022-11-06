@@ -18,16 +18,64 @@ typedef TMCL_SetAxisParam<TMCLRequest::ACTUAL_POSITION> SetEncoder;
 
 typedef TMCL_GetAxisParam<TMCLRequest::ERROR_STATUS_FLAG> GetErrorStatusFlag;
 
+class GetMotorControllerStatus : public TMCLRequest {
+public:
+  GetMotorControllerStatus(unsigned int slaveNumber);
+
+  std::string StatusErrorFlagsAsString();
+
+  using TMCLRequest::GetRecStatusFlag;
+};
+
+
 
 
 
 
 // Under development
 
+typedef TMCL_GetAxisParam<TMCLRequest::INITIALIZE> GetIsUnderInitialization;
 
+typedef TMCL_SetAxisParam<TMCLRequest::INITIALIZE> SetIsUnderInitialization;
 
+class RestroreFromEEPROM : public TMCLRequest {
+public:
+  RestroreFromEEPROM(unsigned int slaveNumber) : TMCLRequest(slaveNumber) {
+    _toModuleAddress = DRIVE;
+    _toCommandNumber = RSAP;
+    _toTypeNumber = TMCLRequest::POSITION_PID_P1;
+    _toMotorNumber = 0;
+    SetValue(0);
+  }
 
+  using TMCLRequest::GetRecStatusFlag;
+};
 
+//
+
+class ClearErrorFlags : public TMCLRequest {
+public:
+  ClearErrorFlags(unsigned int slaveNumber) : TMCLRequest(slaveNumber) {
+    _toModuleAddress = DRIVE;
+    _toCommandNumber = CLE;
+    _toTypeNumber = 0;
+    _toMotorNumber = 0;
+    SetValue(0);
+  }
+};
+
+class ClearMotorControllerTimeoutFlag : public TMCLRequest {
+public:
+  ClearMotorControllerTimeoutFlag(unsigned int slaveNumber) : TMCLRequest(slaveNumber) {
+    _toModuleAddress = DRIVE;
+    _toCommandNumber = SAP;
+    _toTypeNumber = TMCLRequest::CLEAR_MOTOR_CONTROLLER_TIMEOUT_FLAG;
+    _toMotorNumber = 0;
+    SetValue(1);
+  }
+
+  using TMCLRequest::GetRecStatusFlag;
+};
 
 
 
@@ -47,7 +95,7 @@ typedef TMCL_GetAxisParam<TMCLRequest::POSITION_PID_P2> GetP2ParameterPositionCo
 
 
 
-typedef TMCL_GetAxisParam<TMCLRequest::POSITION_PID_P1> GetPParameterFirstParametersPositionControl;
+typedef TMCL_GetAxisParam<TMCLRequest::POSITION_PID_P1> GetP1ParameterPositionControl;
 
 typedef TMCL_GetAxisParam<TMCLRequest::ENCODER_STEPS_PER_ROTATION> GetEncoderStepsPerRotation;
 

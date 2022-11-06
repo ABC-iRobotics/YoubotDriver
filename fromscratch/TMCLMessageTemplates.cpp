@@ -59,7 +59,7 @@ void TMCLRequest::SetValue(const uint32& value) {
 };
 
 bool TMCLRequest::GetRecStatusFlag(uint8& status_) const {
-  if (!IsReceiveSuccessful())
+  if (0 && !IsReceiveSuccessful())
     throw std::runtime_error("TMCLRequest::GetRecStatusFlag : haven't received anything");
   status_ = _fromStatus;
   return status_ == NO_ERROR_;
@@ -84,7 +84,7 @@ std::string TMCLRequest::RecvStatusToString(uint8 in) {
   return ss.str();
 }
 
-std::string TMCLRequest::StatusErrorFlagsToString(uint8 in) {
+std::string TMCLRequest::StatusErrorFlagsToString(uint32 in) {
   std::stringstream ss;
   if (in & OVER_CURRENT)
     ss << " OVER_CURRENT";

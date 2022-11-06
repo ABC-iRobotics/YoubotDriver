@@ -16,3 +16,14 @@ void FirmWareRequest::GetOutput(long& controllernum, long& firmwarenum) const {
   firmwarenum = strtol(ptr + 1, &ptr2, 10);
 }
 
+GetMotorControllerStatus::GetMotorControllerStatus(unsigned int slaveNumber) : TMCLRequest(slaveNumber) {
+  _toModuleAddress = DRIVE;
+  _toCommandNumber = GAP;
+  _toTypeNumber = TMCLRequest::ERROR_STATUS_FLAG;
+  _toMotorNumber = 0;
+  SetValue(0);
+}
+
+std::string GetMotorControllerStatus::StatusErrorFlagsAsString() {
+  return StatusErrorFlagsToString(GetReplyValue());
+}
