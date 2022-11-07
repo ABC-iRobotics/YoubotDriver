@@ -208,11 +208,7 @@ typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
   TMCL::AxisParam::ACTUAL_MOTOR_CURRENT, 0> GetCurrent;//[mA]
 
-typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::MAX_CURRENT, 0> GetMaxCurrent;
 
-typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
-  TMCL::AxisParam::MAX_CURRENT, 4000> SetMaxCurrent;
 
 double ConvertTemperature(int32_t adc);
 
