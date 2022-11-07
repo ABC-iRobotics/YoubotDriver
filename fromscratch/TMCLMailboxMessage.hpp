@@ -205,13 +205,18 @@ typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::CURRENT_PID_D1, 0> SetD1ParameterCurrentControl;
 
-typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::ACTUAL_MOTOR_CURRENT, 0> GetCurrent;
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::ACTUAL_MOTOR_CURRENT, 0> GetCurrent;//[mA]
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
   TMCL::AxisParam::MAX_CURRENT, 0> GetMaxCurrent;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::MAX_CURRENT, 4000> SetMaxCurrent;
+
+double ConvertTemperature(int32_t adc);
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::ACTUAL_TEMPERATURE, 0> GetTemperature; // analog-digital-converter value
 
 #endif
