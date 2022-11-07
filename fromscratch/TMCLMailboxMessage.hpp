@@ -133,6 +133,42 @@ typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::POSITION_PID_D1, 0> SetD1ParameterPositionControl;
 
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::VELOCITY_PID_P2, 0> GetP2ParameterVelocityControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::VELOCITY_PID_P2, 1000> SetP2ParameterVelocityControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::VELOCITY_PID_P1, 0> GetP1ParameterVelocityControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::VELOCITY_PID_P1, 200> SetP1ParameterVelocityControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::VELOCITY_PID_I2, 0> GetI2ParameterVelocityControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::VELOCITY_PID_I2, 1000> SetI2ParameterVelocityControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::VELOCITY_PID_I1, 0> GetI1ParameterVelocityControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::VELOCITY_PID_I1, 200> SetI1ParameterVelocityControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::VELOCITY_PID_D2, 0> GetD2ParameterVelocityControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::VELOCITY_PID_D2, 0> SetD2ParameterVelocityControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::VELOCITY_PID_D1, 0> GetD1ParameterVelocityControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::VELOCITY_PID_D1, 0> SetD1ParameterVelocityControl;
+
 typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
   TMCL::AxisParam::ACTUAL_MOTOR_CURRENT, 0> GetCurrent;
 
