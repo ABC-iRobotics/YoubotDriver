@@ -101,26 +101,102 @@ int main(int argc, char *argv[])
   }
 
   {
-    auto ptr = SetMaxCurrent::InitSharedPtr(3,4000);
+    auto ptr = ClearMotorControllerTimeoutFlag::InitSharedPtr(3);
     center->SendMessage_(ptr);
-    printf(" ? %lu \n", ptr->GetReplyValue());
-    std::cout << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << std::endl;
+    std::cout << "  ClearMotorControllerTimeoutFlag: " << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << std::endl;
   }
-  for (int i = 0; i < 50;i++) {
-    auto ptr = GetCurrent::InitSharedPtr(3);
+  {
+    auto ptr = GetErrorStatusFlag::InitSharedPtr(3);
+    center->SendMessage_(ptr);
+    std::cout << "GetErrorStatusFlag: " <<
+      TMCL::StatusErrorFlagsToString(ptr->GetReplyValue()).c_str()
+      << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  }
+  {
+    auto ptr = SetInitialize::InitSharedPtr(3,1);
+    center->SendMessage_(ptr);
+    std::cout << "  SetInitialize: " << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << std::endl;
+  }
+  {
+    auto ptr = GetErrorStatusFlag::InitSharedPtr(3);
+    center->SendMessage_(ptr);
+    std::cout << "GetErrorStatusFlag: " <<
+      TMCL::StatusErrorFlagsToString(ptr->GetReplyValue()).c_str()
+      << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  }
+  {
+    auto ptr = RotateRight::InitSharedPtr(3, 60);
+    center->SendMessage_(ptr);
+    std::cout << " RotateRight: " << ptr->GetReplyValue() <<
+      " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  }
+  for (int i = 0; i < 100;i++) {
+
+    {
+      auto ptr = GetErrorStatusFlag::InitSharedPtr(3);
+      center->SendMessage_(ptr);
+      std::cout << "GetErrorStatusFlag: " <<
+        TMCL::StatusErrorFlagsToString(ptr->GetReplyValue()).c_str()
+        << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+    }
+    {
+      auto ptr = GetTargetSpeed::InitSharedPtr(3);
+      center->SendMessage_(ptr);
+      std::cout << " GetTargetSpeed: " << ptr->GetReplyValue() << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+    }
+    {
+      auto ptr = GetActualSpeed::InitSharedPtr(3);
+      center->SendMessage_(ptr);
+      std::cout << " GetActualSpeed: " << ptr->GetReplyValue() << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+    }
+
+  }
+  
+  {
+      auto ptr = MotorStop::InitSharedPtr(3);
+      center->SendMessage_(ptr);
+      std::cout << " MotorStop: " << ptr->GetReplyValue() << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  }
+
+  center->CloseConnection();
+
+  return 0;
+
+
+  if (0) {
+    auto ptr = ClearErrorFlags::InitSharedPtr(3);
+    center->SendMessage_(ptr);
+    std::cout << "  ClearErrorFlags: " << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << std::endl;
+  }
+  /*
+      {
+        auto ptr = GetMotorHaltedVelocity::InitSharedPtr(3);
+        center->SendMessage_(ptr);
+        std::cout << " GetMotorHaltedVelocity: " << ptr->GetReplyValue() << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+      }
+      */
+
+  if (0) {
+    auto ptr = GetIsUnderInitialization::InitSharedPtr(3);
+    center->SendMessage_(ptr);
+    std::cout << "  GetIsUnderInitialization: " << ptr->GetReplyValue() <<
+      "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  }
+
+
+  /*
+  {
+    auto ptr = GetD2ParameterPositionControl::InitSharedPtr(3);
     center->SendMessage_(ptr);
     printf(" ? %lu \n", ptr->GetReplyValue());
     std::cout << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << std::endl;
   }
   {
-    auto ptr = GetMaxCurrent::InitSharedPtr(3);
+    auto ptr = GetD1ParameterPositionControl::InitSharedPtr(3);
     center->SendMessage_(ptr);
     printf(" ? %lu \n", ptr->GetReplyValue());
     std::cout << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << std::endl;
-  }
-  center->CloseConnection();
-
-  return 0;
+  }*/
 
   {
     auto ptr = GetFirmware::InitSharedPtr(3);
@@ -152,6 +228,20 @@ int main(int argc, char *argv[])
 
   return 0;
 
+
+
+
+  /*
+  {
+    auto ptr = GetSupplyVoltage::InitSharedPtr(3);
+    center->SendMessage_(ptr);
+    std::cout << " GetSupplyVoltage: " << ptr->GetReplyValue() << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  }
+  {
+    auto ptr = GetTemperature::InitSharedPtr(3);
+    center->SendMessage_(ptr);
+    std::cout << " GetTemperature: " << ConvertTemperature(ptr->GetReplyValue()) << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  }*/
   /*
 
   unsigned int mailboxTimeoutUS = 40;
