@@ -109,11 +109,37 @@ typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::POSITION_PID_P1, 500> SetP1ParameterPositionControl;
 
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::POSITION_PID_I2, 0> GetI2ParameterPositionControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::POSITION_PID_I2, 0> SetI2ParameterPositionControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::POSITION_PID_I1, 0> GetI1ParameterPositionControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::POSITION_PID_I1, 0> SetI1ParameterPositionControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::POSITION_PID_D2, 0> GetD2ParameterPositionControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::POSITION_PID_D2, 0> SetD2ParameterPositionControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::POSITION_PID_D1, 0> GetD1ParameterPositionControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::POSITION_PID_D1, 0> SetD1ParameterPositionControl;
 
 typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
   TMCL::AxisParam::ACTUAL_MOTOR_CURRENT, 0> GetCurrent;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
   TMCL::AxisParam::MAX_CURRENT, 0> GetMaxCurrent;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::MAX_CURRENT, 4000> SetMaxCurrent;
 
 #endif
