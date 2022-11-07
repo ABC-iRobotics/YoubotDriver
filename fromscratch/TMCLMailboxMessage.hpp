@@ -169,6 +169,42 @@ typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::VELOCITY_PID_D1, 0> SetD1ParameterVelocityControl;
 
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::CURRENT_PID_P2, 0> GetP2ParameterCurrentControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::CURRENT_PID_P2, 25> SetP2ParameterCurrentControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::CURRENT_PID_P1, 0> GetP1ParameterCurrentControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::CURRENT_PID_P1, 50> SetP1ParameterCurrentControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::CURRENT_PID_I2, 0> GetI2ParameterCurrentControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::CURRENT_PID_I2, 60> SetI2ParameterCurrentControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::CURRENT_PID_I1, 0> GetI1ParameterCurrentControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::CURRENT_PID_I1, 50> SetI1ParameterCurrentControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::CURRENT_PID_D2, 0> GetD2ParameterCurrentControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::CURRENT_PID_D2, 0> SetD2ParameterCurrentControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::CURRENT_PID_D1, 0> GetD1ParameterCurrentControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::CURRENT_PID_D1, 0> SetD1ParameterCurrentControl;
+
 typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
   TMCL::AxisParam::ACTUAL_MOTOR_CURRENT, 0> GetCurrent;
 
