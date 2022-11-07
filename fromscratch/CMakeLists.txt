@@ -5,6 +5,7 @@ set(SOURCES
 	EthercatMailboxRequest.cpp
 	TMCLMessageTemplates.cpp
 	SOEMMessageCenter.cpp
+	MailboxMessage.cpp
 	VMessageCenter.cpp
 	)
 
@@ -13,6 +14,7 @@ set(HEADERS
 	EthercatMailboxRequest.hpp
 	TMCLMessageTemplates.hpp
 	SOEMMessageCenter.hpp
+	MailboxMessage.hpp
 	VMessageCenter.hpp
 	)
 
