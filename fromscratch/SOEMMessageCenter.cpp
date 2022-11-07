@@ -13,9 +13,7 @@ extern "C" {
 #include "ethercatprint.h"
 }
 
-
 bool SOEMMessageCenter::opened = false;
-
 
 bool SOEMMessageCenter::OpenConnection(const std::string& adapterName) {
   std::lock_guard<std::mutex> lock(ethercatComm);
@@ -100,13 +98,8 @@ void SOEMMessageCenter::CloseConnection() {
 
   //stop SOEM, close socket
   ec_close();
-}
 
-uint8* SOEMMessageCenter::getToSlaveMailboxBuffer(int cnt) const  {
-  return ec_slave[cnt-1].outputs;
-}
-uint8* SOEMMessageCenter::getFromSlaveMailboxBuffer(int cnt) const {
-  return ec_slave[cnt - 1].inputs;
+  opened = false;
 }
 
 int SOEMMessageCenter::getSlaveNum() const {
@@ -115,4 +108,34 @@ int SOEMMessageCenter::getSlaveNum() const {
 
 std::string SOEMMessageCenter::getSlaveName(int cnt) const {
   return ec_slave[cnt - 1].name;
+}
+
+SOEMMessageCenter::MailboxStatus SOEMMessageCenter::SendMessage_(VMailboxMessage::MailboxMessagePtr ptr) {
+  //copy from buffer
+  int i = ptr->getSlaveIndex();
+  {
+    std::lock_guard<std::mutex> lock(slaveBufferMutexes[i]);
+    memcpy((void*)mailboxBuffers[i].toSlave,
+      ptr->getToSlaveBuff(),
+      ptr->getToSlaveBuffSize());
+  }
+  //send and receive
+  int mailboxTimeoutUS = 4000;
+  MailboxStatus status = MailboxStatus::INITIALIZED;
+  {
+    std::lock_guard<std::mutex> lock(ethercatComm);
+    if (ec_mbxsend(i + 1, &mailboxBuffers[i].toSlave, mailboxTimeoutUS) >= 0) {
+      status = MailboxStatus::SENT_SUCCESSFUL;
+      if (ec_mbxreceive(i + 1, &mailboxBuffers[i].fromSlave, mailboxTimeoutUS) >= 0)
+        status = MailboxStatus::RECEIVED_SUCCESSFUL;
+    }
+  }
+  // copy to buffer
+  {
+    std::lock_guard<std::mutex> lock(slaveBufferMutexes[i]);
+    memcpy((void*)ptr->getFromSlaveBuff(),
+      mailboxBuffers[i].fromSlave,
+      ptr->getFromSlaveBuffSize());
+  }
+  return status;
 }
