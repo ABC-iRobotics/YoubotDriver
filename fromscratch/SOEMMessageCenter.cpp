@@ -13,6 +13,10 @@ extern "C" {
 #include "ethercatprint.h"
 }
 
+#include "Logger.hpp"
+
+using namespace youbot;
+
 bool SOEMMessageCenter::opened = false;
 
 bool SOEMMessageCenter::OpenConnection(const std::string& adapterName) {
@@ -100,6 +104,11 @@ void SOEMMessageCenter::CloseConnection() {
   ec_close();
 
   opened = false;
+}
+
+SOEMMessageCenter::~SOEMMessageCenter() {
+  if (opened)
+    CloseConnection();
 }
 
 int SOEMMessageCenter::getSlaveNum() const {

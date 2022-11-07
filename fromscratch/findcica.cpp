@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <iostream>
 #include <string.h>
 
 #include "adapters.hpp"
@@ -114,15 +115,18 @@ int main(int argc, char *argv[])
     auto ptr = GetPosition::InitSharedPtr(3);
     center->SendMessage_(ptr);
     printf(" ? %lu \n", ptr->GetReplyValue());
+    std::cout << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << std::endl;
   }
   {
     auto ptr = SetEncoder::InitSharedPtr(3,10000);
-    center->SendMessage_(ptr);
+    auto status = center->SendMessage_(ptr);
+    std::cout << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << std::endl;
   }
   {
     auto ptr = GetErrorStatusFlag::InitSharedPtr(3);
     center->SendMessage_(ptr);
     printf(" ? %s \n", TMCL::StatusErrorFlagsToString(ptr->GetReplyValue()).c_str());
+    std::cout << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << std::endl;
   }
   center->CloseConnection();
 

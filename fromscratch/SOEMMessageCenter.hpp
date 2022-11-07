@@ -10,10 +10,6 @@ extern "C" {
 #include "nicdrv.h"
 #include "ethercatmain.h"
 }
-#include "Logger.hpp"
-
-using namespace youbot;
-
 #include "MailboxMessage.hpp"
 #include "VMessageCenter.hpp"
 
@@ -39,10 +35,7 @@ public:
 
   virtual void CloseConnection() override;
 
-  ~SOEMMessageCenter() {
-    if (opened)
-      CloseConnection();
-  }
+  ~SOEMMessageCenter();
 
   // index: 0..(num-1)
   int getSlaveNum() const override;

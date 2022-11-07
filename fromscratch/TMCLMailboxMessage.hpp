@@ -14,7 +14,8 @@ public:
   static std::shared_ptr<GetFirmware> InitSharedPtr(int slaveIndex);
 };
 
-template <typename ValueType, TMCL::Module module_, TMCL::Cmd cmd, TMCL::AxisParam param>
+template <typename ValueType, TMCL::Module module_, TMCL::Cmd cmd,
+  TMCL::AxisParam param, uint32_t defaultValue>
 class TMCLTemplate : public MailboxMessage<8, 8> {
   uint8_t& _toModuleAddress = toSlaveBuff[0];
   uint8_t& _toCommandNumber = toSlaveBuff[1];
@@ -40,6 +41,10 @@ public:
     _toCommandNumber = (uint8_t)cmd;
     _toTypeNumber = (uint8_t)param;
     _toMotorNumber = 0;
+    toSlaveBuff[4] = defaultValue >> 24;
+    toSlaveBuff[5] = defaultValue >> 16;
+    toSlaveBuff[6] = defaultValue >> 8;
+    toSlaveBuff[7] = defaultValue & 0xff;
   }
 
   TMCLTemplate(unsigned int slaveIndex, ValueType value) : MailboxMessage(slaveIndex) {
@@ -56,7 +61,7 @@ public:
   }
 
   TMCL::ReplyStatus GetRecStatusFlag() const {
-    return status_ == (TMCL::ReplyStatus)_fromStatus;
+    return (TMCL::ReplyStatus)_fromStatus;
   }
 
   std::string  RecvStatusAsString() const {
@@ -74,11 +79,14 @@ public:
   }
 };
 
-typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP, TMCL::AxisParam::ACTUAL_POSITION> GetPosition;
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::ACTUAL_POSITION,0> GetPosition;
 
-typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP, TMCL::AxisParam::ACTUAL_POSITION> SetEncoder;
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::ACTUAL_POSITION, 10000> SetEncoder;
 
-typedef TMCLTemplate<TMCL::StatusErrorFlags, TMCL::Module::DRIVE, TMCL::Cmd::GAP, TMCL::AxisParam::ERROR_STATUS_FLAG> GetErrorStatusFlag;
+typedef TMCLTemplate<TMCL::StatusErrorFlags, TMCL::Module::DRIVE,
+  TMCL::Cmd::GAP, TMCL::AxisParam::ERROR_STATUS_FLAG, 0> GetErrorStatusFlag;
 
 
 
