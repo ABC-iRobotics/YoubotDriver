@@ -35,7 +35,7 @@ public:
     FIRMWARE_VERSION = 136
   };
 
-  enum AxisParameter : uint8 {
+  enum AxisParam : uint8 {
     TARGET_POSITION = 0,
     ACTUAL_POSITION = 1, // ok
     TARGET_SPEED = 2,

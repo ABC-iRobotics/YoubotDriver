@@ -16,7 +16,7 @@ void FirmWareRequest::GetOutput(long& controllernum, long& firmwarenum) const {
   firmwarenum = strtol(ptr + 1, &ptr2, 10);
 }
 
-GetMotorControllerStatus::GetMotorControllerStatus(unsigned int slaveNumber) : TMCLRequest(slaveNumber) {
+GetMotorControllerStatus_::GetMotorControllerStatus_(unsigned int slaveNumber) : TMCLRequest(slaveNumber) {
   _toModuleAddress = DRIVE;
   _toCommandNumber = GAP;
   _toTypeNumber = TMCLRequest::ERROR_STATUS_FLAG;
@@ -24,6 +24,6 @@ GetMotorControllerStatus::GetMotorControllerStatus(unsigned int slaveNumber) : T
   SetValue(0);
 }
 
-std::string GetMotorControllerStatus::StatusErrorFlagsAsString() {
+std::string GetMotorControllerStatus_::StatusErrorFlagsAsString() {
   return StatusErrorFlagsToString(GetReplyValue());
 }

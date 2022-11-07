@@ -75,7 +75,7 @@ typedef enum TMCLCommandNumber {
   GCO = 31,
   CCO = 32,
   FIRMWARE_VERSION = 136
-} CommandNumber;
+} Cmd;
 
 #define USER_VARIABLE_BANK 2
 

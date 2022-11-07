@@ -2,9 +2,11 @@
 #include <string.h>
 
 #include "adapters.hpp"
-#include "DataObjectLockFree.hpp"
-#include "Logger.hpp"
 
+//#include "TMCLMessages.hpp"
+#include "Time.hpp"
+
+/*
 extern "C" {
 #include "ethercattype.h"
 #include "nicdrv.h"
@@ -15,116 +17,7 @@ extern "C" {
 #include "ethercatdc.h"
 #include "ethercatprint.h"
 }
-
-#include "TMCLMessages.hpp"
-#include "Time.hpp"
-
-using namespace youbot;
-
-
-char ifbuf[1024];
-char IOmap_[4096];
-
-void initEtherCat(const char* name) {
-  //initialize to zero
-  for (unsigned int i = 0; i < 4096; i++)
-    IOmap_[i] = 0;
-
-  //bool ethercatConnectionEstablished;
-  //ec_mbxbuft mailboxBufferSend;
-  //ec_mbxbuft mailboxBufferReceive;
-  unsigned int nrOfSlaves;
-  //unsigned int ethercatTimeout;
-
-  /* initialise SOEM, bind socket to ifname */
-  if (ec_init(name)) {
-    LOG(info) << "Initializing EtherCAT on " << name << " with communication thread";
-    /* find and auto-config slaves */
-    if (ec_config(TRUE, &IOmap_) > 0) {
-      LOG(trace) << ec_slavecount << " EtherCAT slaves found and configured.";
-
-      /* wait for all slaves to reach SAFE_OP state */
-      ec_statecheck(0, EC_STATE_SAFE_OP, EC_TIMEOUTSTATE);
-      if (ec_slave[0].state != EC_STATE_SAFE_OP) {
-        LOG(warning) << "Not all EtherCAT slaves reached safe operational state.";
-        ec_readstate();
-        //If not all slaves operational find out which one
-        for (int i = 1; i <= ec_slavecount; i++) {
-          if (ec_slave[i].state != EC_STATE_SAFE_OP) {
-            LOG(info) << "Slave " << i <<
-              " State=" << ec_slave[i].state <<
-              " StatusCode=" << ec_slave[i].ALstatuscode <<
-              " : " << ec_ALstatuscode2string(ec_slave[i].ALstatuscode);
-          }
-        }
-      }
-      //Read the state of all slaves
-      ec_readstate();
-
-      LOG(info) << "Request operational state for all EtherCAT slaves";
-
-      ec_slave[0].state = EC_STATE_OPERATIONAL;
-      // request OP state for all slaves
-      /* send one valid process data to make outputs in slaves happy*/
-      ec_send_processdata();
-      ec_receive_processdata(EC_TIMEOUTRET);
-      /* request OP state for all slaves */
-      ec_writestate(0);
-      // wait for all slaves to reach OP state
-
-      ec_statecheck(0, EC_STATE_OPERATIONAL, EC_TIMEOUTSTATE);
-      if (ec_slave[0].state == EC_STATE_OPERATIONAL) {
-        LOG(info) << "Operational state reached for all EtherCAT slaves.";
-      }
-      else {
-        throw std::runtime_error("Not all EtherCAT slaves reached operational state.");
-      }
-    }
-    else {
-      throw std::runtime_error("No EtherCAT slaves found!");
-    }
-  }
-  else {
-    throw std::runtime_error("No socket connection on  socket \nExcecute as root");
-  }
-
-  std::string baseJointControllerName = "TMCM-174";
-  std::string baseJointControllerNameAlternative = "TMCM-1632";
-  std::string manipulatorJointControllerName = "TMCM-174";
-  std::string ManipulatorJointControllerNameAlternative = "TMCM-1610";
-
-  nrOfSlaves = 0;
-  std::string actualSlaveName;
-
-  //reserve memory for all slave with a input/output buffer
-  for (int cnt = 1; cnt <= ec_slavecount; cnt++) {
-    LOG(trace) << "Slave: " << cnt << " Name: " << ec_slave[cnt].name << " Output size: " << ec_slave[cnt].Obits
-      << "bits Input size: " << ec_slave[cnt].Ibits << "bits State: " << ec_slave[cnt].state
-      << " delay: " << ec_slave[cnt].pdelay; //<< " has dclock: " << (bool)ec_slave[cnt].hasdc;
-
-    //ethercatSlaveInfo.push_back(ec_slave[cnt]);
-
-    actualSlaveName = ec_slave[cnt].name;
-    if ((actualSlaveName == baseJointControllerName || actualSlaveName == baseJointControllerNameAlternative ||
-      actualSlaveName == manipulatorJointControllerName || actualSlaveName == ManipulatorJointControllerNameAlternative
-      ) && ec_slave[cnt].Obits > 0 && ec_slave[cnt].Ibits > 0) {
-      //identified_slaves.push_back(cnt);
-      nrOfSlaves++;
-      //ethercatOutputBufferVector.push_back((SlaveMessageOutput*)(ec_slave[cnt].outputs));
-      //ethercatInputBufferVector.push_back((SlaveMessageInput*)(ec_slave[cnt].inputs));
-    }
-  }
-  if (nrOfSlaves > 0) {
-    LOG(info) << nrOfSlaves << " EtherCAT slaves found";
-  }
-  else {
-    throw std::runtime_error("No EtherCAT slave could be found");
-  }
-}
-
-//TODO: mutex to make impossible reading until send&rec...
-
-//TODO: lock mechanism...
+#include "DataObjectLockFree.hpp"
 
 class EthercatComm {
   std::mutex ethercatComm;
@@ -185,15 +78,12 @@ public:
   }
 
 };
-
+*/
 #include "SOEMMessageCenter.hpp"
+#include "TMCLMailboxMessage.hpp"
 
 int main(int argc, char *argv[])
 {
-
-
-
-
   char name[1000];
   printf("sg\n");
   if (findYouBotEtherCatAdapter(name)) {
@@ -204,28 +94,43 @@ int main(int argc, char *argv[])
     return -1;
   }
 
-  SOEMMessageCenter center;
-  if (!center.OpenConnection(name)) {
+  auto center = VMessageCenter::GetSingleton();
+  if (!center->OpenConnection(name)) {
     return -1;
   }
 
   //VMailboxMessage::MailboxMessagePtr ptr = std::make_shared<GetFirmware>(3);
-  std::shared_ptr<GetFirmware> ptr = std::make_shared<GetFirmware>(3);
+  {
+    auto ptr = GetFirmware::InitSharedPtr(3);
 
-  center.SendMessage(ptr);
+    center->SendMessage_(ptr);
 
-  long a, b;
-  std::static_pointer_cast<GetFirmware>(ptr)->GetOutput(a, b);
-  printf("%d %d", a, b);
-
-
-  center.CloseConnection();
+    long a, b;
+    //std::static_pointer_cast<GetFirmware>(ptr)->GetOutput(a, b);
+    ptr->GetOutput(a, b);
+    printf("%d %d\n", a, b);
+  }
+  {
+    auto ptr = GetPosition::InitSharedPtr(3);
+    center->SendMessage_(ptr);
+    printf(" ? %lu \n", ptr->GetReplyValue());
+  }
+  {
+    auto ptr = SetEncoder::InitSharedPtr(3,10000);
+    center->SendMessage_(ptr);
+  }
+  {
+    auto ptr = GetErrorStatusFlag::InitSharedPtr(3);
+    center->SendMessage_(ptr);
+    printf(" ? %s \n", TMCL::StatusErrorFlagsToString(ptr->GetReplyValue()).c_str());
+  }
+  center->CloseConnection();
 
 
 
   return 0;
 
-  initEtherCat(name);
+  /*
 
   unsigned int mailboxTimeoutUS = 40;
 
@@ -350,7 +255,7 @@ int main(int argc, char *argv[])
     else
       printf("unsuccessful rec\n");
       */
-  }
+  //}
   
   
   /*
@@ -383,19 +288,14 @@ int main(int argc, char *argv[])
 
 
 
-
-
-
-
-
   // Request safe operational state for all slaves
-  ec_slave[0].state = EC_STATE_SAFE_OP;
+  //ec_slave[0].state = EC_STATE_SAFE_OP;
 
   /* request SAFE_OP state for all slaves */
-  ec_writestate(0);
+  //ec_writestate(0);
 
   //stop SOEM, close socket
-  ec_close();
+  //ec_close();
 
-  return (0);
+  //return (0);*/
 }

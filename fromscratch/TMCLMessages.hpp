@@ -12,15 +12,15 @@ public:
   void GetOutput(long& controllernum, long& firmwareversion) const;
 };
 
-typedef TMCL_GetAxisParam<TMCLRequest::ACTUAL_POSITION> GetPosition;
+typedef TMCL_GetAxisParam<TMCLRequest::ACTUAL_POSITION> GetPosition_;
 
-typedef TMCL_SetAxisParam<TMCLRequest::ACTUAL_POSITION> SetEncoder;
+typedef TMCL_SetAxisParam<TMCLRequest::ACTUAL_POSITION> SetEncoder_;
 
-typedef TMCL_GetAxisParam<TMCLRequest::ERROR_STATUS_FLAG> GetErrorStatusFlag;
+typedef TMCL_GetAxisParam<TMCLRequest::ERROR_STATUS_FLAG> GetErrorStatusFlag_;
 
-class GetMotorControllerStatus : public TMCLRequest {
+class GetMotorControllerStatus_ : public TMCLRequest {
 public:
-  GetMotorControllerStatus(unsigned int slaveNumber);
+  GetMotorControllerStatus_(unsigned int slaveNumber);
 
   std::string StatusErrorFlagsAsString();
 
@@ -34,13 +34,13 @@ public:
 
 // Under development
 
-typedef TMCL_GetAxisParam<TMCLRequest::INITIALIZE> GetIsUnderInitialization;
+typedef TMCL_GetAxisParam<TMCLRequest::INITIALIZE> GetIsUnderInitialization_;
 
-typedef TMCL_SetAxisParam<TMCLRequest::INITIALIZE> SetIsUnderInitialization;
+typedef TMCL_SetAxisParam<TMCLRequest::INITIALIZE> SetIsUnderInitialization_;
 
-class RestroreFromEEPROM : public TMCLRequest {
+class RestroreFromEEPROM_ : public TMCLRequest {
 public:
-  RestroreFromEEPROM(unsigned int slaveNumber) : TMCLRequest(slaveNumber) {
+  RestroreFromEEPROM_(unsigned int slaveNumber) : TMCLRequest(slaveNumber) {
     _toModuleAddress = DRIVE;
     _toCommandNumber = RSAP;
     _toTypeNumber = TMCLRequest::POSITION_PID_P1;
@@ -53,9 +53,9 @@ public:
 
 //
 
-class ClearErrorFlags : public TMCLRequest {
+class ClearErrorFlags_ : public TMCLRequest {
 public:
-  ClearErrorFlags(unsigned int slaveNumber) : TMCLRequest(slaveNumber) {
+  ClearErrorFlags_(unsigned int slaveNumber) : TMCLRequest(slaveNumber) {
     _toModuleAddress = DRIVE;
     _toCommandNumber = CLE;
     _toTypeNumber = 0;
