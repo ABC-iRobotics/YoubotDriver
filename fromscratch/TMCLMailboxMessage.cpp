@@ -18,6 +18,6 @@ std::shared_ptr<GetFirmware> GetFirmware::InitSharedPtr(int slaveIndex) {
   return std::make_shared<GetFirmware>(slaveIndex);
 }
 
-double ConvertTemperature(int32_t adc) {
+double ConvertTemperature(uint32_t adc) {
   return 3434 * 298.16 / (3434 + log((9011.2 / adc + 2.2) / 10) * 298.16) - 273.16;
 }
