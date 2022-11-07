@@ -88,7 +88,14 @@ typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
 typedef TMCLTemplate<TMCL::StatusErrorFlags, TMCL::Module::DRIVE,
   TMCL::Cmd::GAP, TMCL::AxisParam::ERROR_STATUS_FLAG, 0> GetErrorStatusFlag;
 
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::ENCODER_STEPS_PER_ROTATION, 0> GetEncoderStepsPerRotation;
 
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::ENCODER_DIRECTION, 0> GetEncoderDirection; // 0/1
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::ENCODER_DIRECTION, 1> SetEncoderDirection; // EEPROM_LOCKED!!
 
 
 #endif
