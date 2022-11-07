@@ -6,6 +6,7 @@ set(SOURCES
 	TMCLMessageTemplates.cpp
 	SOEMMessageCenter.cpp
 	MailboxMessage.cpp
+	TMCLDefinitions.cpp
 	VMessageCenter.cpp
 	)
 
@@ -15,6 +16,7 @@ set(HEADERS
 	TMCLMessageTemplates.hpp
 	SOEMMessageCenter.hpp
 	MailboxMessage.hpp
+	TMCLDefinitions.hpp
 	VMessageCenter.hpp
 	)
 
