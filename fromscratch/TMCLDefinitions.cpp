@@ -3,7 +3,7 @@
 
 using namespace TMCL;
 
-std::string RecvStatusToString(ReplyStatus in) {
+std::string TMCL::RecvStatusToString(ReplyStatus in) {
   std::stringstream ss;
   if (in == ReplyStatus::NO_ERROR_)
 	ss << " NO_ERROR";
@@ -22,7 +22,7 @@ std::string RecvStatusToString(ReplyStatus in) {
   return ss.str();
 }
 
-std::string StatusErrorFlagsToString(StatusErrorFlags in) {
+std::string TMCL::StatusErrorFlagsToString(StatusErrorFlags in) {
   std::stringstream ss;
   if ((uint32_t)in & (uint32_t)StatusErrorFlags::OVER_CURRENT)
 	ss << " OVER_CURRENT";

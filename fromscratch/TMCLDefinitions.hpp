@@ -5,12 +5,12 @@
 
 namespace TMCL {
 
-  enum class TMCL_Module : uint8_t {
+  enum class Module : uint8_t {
 	DRIVE = 0,
 	GRIPPER = 1
   };
 
-  enum class TMCL_CommandNumber : uint8_t {
+  enum class Cmd : uint8_t {
 	ROR = 1,  //Rotate right
 	ROL = 2,  //Rotate left
 	MST = 3,  //Motor stop
@@ -33,7 +33,7 @@ namespace TMCL {
 	FIRMWARE_VERSION = 136
   };
 
-  enum class AxisParameter : uint8_t {
+  enum class AxisParam : uint8_t {
 	TARGET_POSITION = 0,
 	ACTUAL_POSITION = 1, // ok
 	TARGET_SPEED = 2,
@@ -84,7 +84,7 @@ namespace TMCL {
 	REPLY_WRITE_PROTECTED = 8
   };
 
-  std::string RecvStatusToString(uint8_t in);
+  std::string RecvStatusToString(ReplyStatus in);
 
   enum class StatusErrorFlags : uint32_t {
 	OVER_CURRENT = 0x1,
@@ -105,9 +105,9 @@ namespace TMCL {
 	INITIALIZED = 0x8000,
 	TIMEOUT = 0x10000,
 	I2T_EXCEEDED = 0x20000
-  };
+  }; 
 
-  std::string StatusErrorFlagsToString(uint32_t in);
+  std::string StatusErrorFlagsToString(StatusErrorFlags in);
 
   /*
   enum YouBotJointControllerMode {
