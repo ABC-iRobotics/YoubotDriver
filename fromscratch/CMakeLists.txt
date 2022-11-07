@@ -1,9 +1,6 @@
 
 set(SOURCES 
     findcica.cpp
-	TMCLMessages.cpp
-	EthercatMailboxRequest.cpp
-	TMCLMessageTemplates.cpp
 	SOEMMessageCenter.cpp
 	MailboxMessage.cpp
 	TMCLMailboxMessage.cpp
@@ -12,9 +9,6 @@ set(SOURCES
 	)
 
 set(HEADERS
-	TMCLMessages.hpp
-	EthercatMailboxRequest.hpp
-	TMCLMessageTemplates.hpp
 	SOEMMessageCenter.hpp
 	MailboxMessage.hpp
 	TMCLMailboxMessage.hpp
