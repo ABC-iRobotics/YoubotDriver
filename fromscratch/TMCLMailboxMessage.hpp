@@ -228,4 +228,10 @@ typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
 typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::ROR,
   TMCL::AxisParam(0), 10> RotateRight; // does cgange to velocity mode and set target speed
 
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::MST,
+  TMCL::AxisParam(0), 0> MotorStop;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::INITIALIZE, 1> SetInitialize;
+
 #endif
