@@ -100,14 +100,32 @@ int main(int argc, char *argv[])
     return -1;
   }
 
-  //VMailboxMessage::MailboxMessagePtr ptr = std::make_shared<GetFirmware>(3);
+  {
+    auto ptr = SetMaxCurrent::InitSharedPtr(3,4000);
+    center->SendMessage_(ptr);
+    printf(" ? %lu \n", ptr->GetReplyValue());
+    std::cout << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << std::endl;
+  }
+  for (int i = 0; i < 50;i++) {
+    auto ptr = GetCurrent::InitSharedPtr(3);
+    center->SendMessage_(ptr);
+    printf(" ? %lu \n", ptr->GetReplyValue());
+    std::cout << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << std::endl;
+  }
+  {
+    auto ptr = GetMaxCurrent::InitSharedPtr(3);
+    center->SendMessage_(ptr);
+    printf(" ? %lu \n", ptr->GetReplyValue());
+    std::cout << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << std::endl;
+  }
+  center->CloseConnection();
+
+  return 0;
+
   {
     auto ptr = GetFirmware::InitSharedPtr(3);
-
     center->SendMessage_(ptr);
-
     long a, b;
-    //std::static_pointer_cast<GetFirmware>(ptr)->GetOutput(a, b);
     ptr->GetOutput(a, b);
     printf("%d %d\n", a, b);
   }

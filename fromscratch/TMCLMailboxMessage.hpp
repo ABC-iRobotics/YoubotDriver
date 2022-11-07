@@ -97,5 +97,23 @@ typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::ENCODER_DIRECTION, 1> SetEncoderDirection; // EEPROM_LOCKED!!
 
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::POSITION_PID_P2, 0> GetP2ParameterPositionControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::POSITION_PID_P2, 2000> SetP2ParameterPositionControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::POSITION_PID_P1, 0> GetP1ParameterPositionControl;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::POSITION_PID_P1, 500> SetP1ParameterPositionControl;
+
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::ACTUAL_MOTOR_CURRENT, 0> GetCurrent;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::MAX_CURRENT, 0> GetMaxCurrent;
 
 #endif
