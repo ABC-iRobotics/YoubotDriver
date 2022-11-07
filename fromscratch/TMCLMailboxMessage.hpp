@@ -208,11 +208,11 @@ typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
   TMCL::AxisParam::ACTUAL_MOTOR_CURRENT, 0> GetCurrent;//[mA]
 
-
-
 double ConvertTemperature(int32_t adc);
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
   TMCL::AxisParam::ACTUAL_TEMPERATURE, 0> GetTemperature; // analog-digital-converter value
 
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::CLEAR_MOTOR_CONTROLLER_TIMEOUT_FLAG, 1> ClearMotorControllerTimeoutFlag;
 #endif
