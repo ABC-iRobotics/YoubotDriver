@@ -108,7 +108,7 @@ namespace TMCL {
 	I2T_EXCEEDED = 0x20000
   }; 
 
-  std::string StatusErrorFlagsToString(StatusErrorFlags in);
+  std::string StatusErrorFlagsToString(uint32_t in);
 
   enum class MotorBank : uint8_t {
 	USER_VARIABLES = 2 //0..15: password protected, 16-. freely usable... 

@@ -86,7 +86,7 @@ typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::ACTUAL_POSITION, 10000> SetEncoder;
 
-typedef TMCLTemplate<TMCL::StatusErrorFlags, TMCL::Module::DRIVE,
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE,
   TMCL::Cmd::GAP, TMCL::AxisParam::ERROR_STATUS_FLAG> GetErrorStatusFlag;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
@@ -232,7 +232,7 @@ typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::ROR,
 typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::MST> MotorStop;
 
 typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
-  TMCL::AxisParam::INITIALIZE, 1> SetInitialize;
+  TMCL::AxisParam::INITIALIZE> SetInitialize; // only command - no values
 
 // Setting a user variables, that will allow to check if the motor is already calibrated
 typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::SGP,

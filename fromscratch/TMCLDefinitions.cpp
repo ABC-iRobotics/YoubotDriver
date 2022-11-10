@@ -22,35 +22,35 @@ std::string TMCL::RecvStatusToString(ReplyStatus in) {
   return ss.str();
 }
 
-std::string TMCL::StatusErrorFlagsToString(StatusErrorFlags in) {
+std::string TMCL::StatusErrorFlagsToString(uint32_t in) {
   std::stringstream ss;
-  if ((uint32_t)in & (uint32_t)StatusErrorFlags::OVER_CURRENT)
+  if (in & (uint32_t)StatusErrorFlags::OVER_CURRENT)
 	ss << " OVER_CURRENT";
-  if ((uint32_t)in & (uint32_t)StatusErrorFlags::UNDER_VOLTAGE)
+  if (in & (uint32_t)StatusErrorFlags::UNDER_VOLTAGE)
 	ss << " UNDER_VOLTAGE";
-  if ((uint32_t)in & (uint32_t)StatusErrorFlags::OVER_VOLTAGE)
+  if (in & (uint32_t)StatusErrorFlags::OVER_VOLTAGE)
 	ss << " OVER_VOLTAGE";
-  if ((uint32_t)in & (uint32_t)StatusErrorFlags::OVER_TEMPERATURE)
+  if (in & (uint32_t)StatusErrorFlags::OVER_TEMPERATURE)
 	ss << " OVER_TEMPERATURE";
-  if ((uint32_t)in & (uint32_t)StatusErrorFlags::MOTOR_HALTED)
+  if (in & (uint32_t)StatusErrorFlags::MOTOR_HALTED)
 	ss << " MOTOR_HALTED";
-  if ((uint32_t)in & (uint32_t)StatusErrorFlags::HALL_SENSOR_ERROR)
+  if (in & (uint32_t)StatusErrorFlags::HALL_SENSOR_ERROR)
 	ss << " HALL_SENSOR_ERROR";
-  if ((uint32_t)in & (uint32_t)StatusErrorFlags::PWM_MODE_ACTIVE)
+  if (in & (uint32_t)StatusErrorFlags::PWM_MODE_ACTIVE)
 	ss << " PWM_MODE_ACTIVE";
-  if ((uint32_t)in & (uint32_t)StatusErrorFlags::VELOCITY_MODE_ACTIVE)
+  if (in & (uint32_t)StatusErrorFlags::VELOCITY_MODE_ACTIVE)
 	ss << " VELOCITY_MODE_ACTIVE";
-  if ((uint32_t)in & (uint32_t)StatusErrorFlags::POSITION_MODE_ACTIVE)
+  if (in & (uint32_t)StatusErrorFlags::POSITION_MODE_ACTIVE)
 	ss << " POSITION_MODE_ACTIVE";
-  if ((uint32_t)in & (uint32_t)StatusErrorFlags::TORQUE_MODE_ACTIVE)
+  if (in & (uint32_t)StatusErrorFlags::TORQUE_MODE_ACTIVE)
 	ss << " TORQUE_MODE_ACTIVE";
-  if ((uint32_t)in & (uint32_t)StatusErrorFlags::POSITION_REACHED)
+  if (in & (uint32_t)StatusErrorFlags::POSITION_REACHED)
 	ss << " POSITION_REACHED";
-  if ((uint32_t)in & (uint32_t)StatusErrorFlags::INITIALIZED)
+  if (in & (uint32_t)StatusErrorFlags::INITIALIZED)
 	ss << " INITIALIZED";
-  if ((uint32_t)in & (uint32_t)StatusErrorFlags::TIMEOUT)
+  if (in & (uint32_t)StatusErrorFlags::TIMEOUT)
 	ss << " TIMEOUT";
-  if ((uint32_t)in & (uint32_t)StatusErrorFlags::I2T_EXCEEDED)
+  if (in & (uint32_t)StatusErrorFlags::I2T_EXCEEDED)
 	ss << " I2T_EXCEEDED";
   return ss.str();
 }
