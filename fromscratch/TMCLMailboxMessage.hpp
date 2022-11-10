@@ -15,7 +15,8 @@ public:
 };
 
 template <typename ValueType, TMCL::Module module_, TMCL::Cmd cmd,
-  TMCL::AxisParam param, uint32_t defaultValue>
+  TMCL::AxisParam param= TMCL::AxisParam(0), uint32_t defaultValue=0,
+  TMCL::MotorBank bankNumber= TMCL::MotorBank(0)>
 class TMCLTemplate : public MailboxMessage<8, 8> {
   uint8_t& _toModuleAddress = toSlaveBuff[0];
   uint8_t& _toCommandNumber = toSlaveBuff[1];
@@ -40,7 +41,7 @@ public:
     _toModuleAddress = (uint8_t)module_;
     _toCommandNumber = (uint8_t)cmd;
     _toTypeNumber = (uint8_t)param;
-    _toMotorNumber = 0;
+    _toMotorNumber = (uint8_t)bankNumber;
     toSlaveBuff[4] = defaultValue >> 24;
     toSlaveBuff[5] = defaultValue >> 16;
     toSlaveBuff[6] = defaultValue >> 8;
@@ -52,7 +53,7 @@ public:
     _toModuleAddress = (uint8_t)module_;
     _toCommandNumber = (uint8_t)cmd;
     _toTypeNumber = (uint8_t)param;
-    _toMotorNumber = 0;
+    _toMotorNumber = (uint8_t)bankNumber;
     SetValue(value);
   }
 
@@ -80,158 +81,157 @@ public:
 };
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::ACTUAL_POSITION,0> GetPosition;
+  TMCL::AxisParam::ACTUAL_POSITION> GetPosition;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::ACTUAL_POSITION, 10000> SetEncoder;
 
 typedef TMCLTemplate<TMCL::StatusErrorFlags, TMCL::Module::DRIVE,
-  TMCL::Cmd::GAP, TMCL::AxisParam::ERROR_STATUS_FLAG, 0> GetErrorStatusFlag;
+  TMCL::Cmd::GAP, TMCL::AxisParam::ERROR_STATUS_FLAG> GetErrorStatusFlag;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::ENCODER_STEPS_PER_ROTATION, 0> GetEncoderStepsPerRotation;
+  TMCL::AxisParam::ENCODER_STEPS_PER_ROTATION> GetEncoderStepsPerRotation;
 
-typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::ENCODER_DIRECTION, 0> GetEncoderDirection; // 0/1
+typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::ENCODER_DIRECTION> GetEncoderDirection; // 0/1
 
-typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::ENCODER_DIRECTION, 1> SetEncoderDirection; // EEPROM_LOCKED!!
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::POSITION_PID_P2, 0> GetP2ParameterPositionControl;
+  TMCL::AxisParam::POSITION_PID_P2> GetP2ParameterPositionControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::POSITION_PID_P2, 2000> SetP2ParameterPositionControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::POSITION_PID_P1, 0> GetP1ParameterPositionControl;
+  TMCL::AxisParam::POSITION_PID_P1> GetP1ParameterPositionControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::POSITION_PID_P1, 500> SetP1ParameterPositionControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::POSITION_PID_I2, 0> GetI2ParameterPositionControl;
+  TMCL::AxisParam::POSITION_PID_I2> GetI2ParameterPositionControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::POSITION_PID_I2, 0> SetI2ParameterPositionControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::POSITION_PID_I1, 0> GetI1ParameterPositionControl;
+  TMCL::AxisParam::POSITION_PID_I1> GetI1ParameterPositionControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::POSITION_PID_I1, 0> SetI1ParameterPositionControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::POSITION_PID_D2, 0> GetD2ParameterPositionControl;
+  TMCL::AxisParam::POSITION_PID_D2> GetD2ParameterPositionControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::POSITION_PID_D2, 0> SetD2ParameterPositionControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::POSITION_PID_D1, 0> GetD1ParameterPositionControl;
+  TMCL::AxisParam::POSITION_PID_D1> GetD1ParameterPositionControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::POSITION_PID_D1, 0> SetD1ParameterPositionControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::VELOCITY_PID_P2, 0> GetP2ParameterVelocityControl;
+  TMCL::AxisParam::VELOCITY_PID_P2> GetP2ParameterVelocityControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::VELOCITY_PID_P2, 1000> SetP2ParameterVelocityControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::VELOCITY_PID_P1, 0> GetP1ParameterVelocityControl;
+  TMCL::AxisParam::VELOCITY_PID_P1> GetP1ParameterVelocityControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::VELOCITY_PID_P1, 200> SetP1ParameterVelocityControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::VELOCITY_PID_I2, 0> GetI2ParameterVelocityControl;
+  TMCL::AxisParam::VELOCITY_PID_I2> GetI2ParameterVelocityControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::VELOCITY_PID_I2, 1000> SetI2ParameterVelocityControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::VELOCITY_PID_I1, 0> GetI1ParameterVelocityControl;
+  TMCL::AxisParam::VELOCITY_PID_I1> GetI1ParameterVelocityControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::VELOCITY_PID_I1, 200> SetI1ParameterVelocityControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::VELOCITY_PID_D2, 0> GetD2ParameterVelocityControl;
+  TMCL::AxisParam::VELOCITY_PID_D2> GetD2ParameterVelocityControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::VELOCITY_PID_D2, 0> SetD2ParameterVelocityControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::VELOCITY_PID_D1, 0> GetD1ParameterVelocityControl;
+  TMCL::AxisParam::VELOCITY_PID_D1> GetD1ParameterVelocityControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::VELOCITY_PID_D1, 0> SetD1ParameterVelocityControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::CURRENT_PID_P2, 0> GetP2ParameterCurrentControl;
+  TMCL::AxisParam::CURRENT_PID_P2> GetP2ParameterCurrentControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::CURRENT_PID_P2, 25> SetP2ParameterCurrentControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::CURRENT_PID_P1, 0> GetP1ParameterCurrentControl;
+  TMCL::AxisParam::CURRENT_PID_P1> GetP1ParameterCurrentControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::CURRENT_PID_P1, 50> SetP1ParameterCurrentControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::CURRENT_PID_I2, 0> GetI2ParameterCurrentControl;
+  TMCL::AxisParam::CURRENT_PID_I2> GetI2ParameterCurrentControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::CURRENT_PID_I2, 60> SetI2ParameterCurrentControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::CURRENT_PID_I1, 0> GetI1ParameterCurrentControl;
+  TMCL::AxisParam::CURRENT_PID_I1> GetI1ParameterCurrentControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::CURRENT_PID_I1, 50> SetI1ParameterCurrentControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::CURRENT_PID_D2, 0> GetD2ParameterCurrentControl;
+  TMCL::AxisParam::CURRENT_PID_D2> GetD2ParameterCurrentControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::CURRENT_PID_D2, 0> SetD2ParameterCurrentControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::CURRENT_PID_D1, 0> GetD1ParameterCurrentControl;
+  TMCL::AxisParam::CURRENT_PID_D1> GetD1ParameterCurrentControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::CURRENT_PID_D1, 0> SetD1ParameterCurrentControl;
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::ACTUAL_MOTOR_CURRENT, 0> GetCurrent;//[mA]
+  TMCL::AxisParam::ACTUAL_MOTOR_CURRENT> GetCurrent;//[mA]
 
 double ConvertTemperature(uint32_t adc);
 
 typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::ACTUAL_TEMPERATURE, 0> GetTemperature; // analog-digital-converter value
+  TMCL::AxisParam::ACTUAL_TEMPERATURE> GetTemperature; // analog-digital-converter value
 
-typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::CLEAR_MOTOR_CONTROLLER_TIMEOUT_FLAG, 1> ClearMotorControllerTimeoutFlag;
 
 typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::TARGET_SPEED, 0> GetTargetSpeed;
+  TMCL::AxisParam::TARGET_SPEED> GetTargetSpeed;
 
 typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::MOTOR_HALTED_VELOCITY, 0> GetMotorHaltedVelocity;
+  TMCL::AxisParam::MOTOR_HALTED_VELOCITY> GetMotorHaltedVelocity;
 
 typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::ACTUAL_SPEED, 0> GetActualSpeed;
+  TMCL::AxisParam::ACTUAL_SPEED> GetActualSpeed;
 
 typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::ROR,
-  TMCL::AxisParam(0), 10> RotateRight; // does cgange to velocity mode and set target speed
+  TMCL::AxisParam(0), 10> RotateRight; // does change to velocity mode and set target speed
 
-typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::MST,
-  TMCL::AxisParam(0), 0> MotorStop;
+typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::MST> MotorStop;
 
-typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::INITIALIZE, 1> SetInitialize;
 
 #endif

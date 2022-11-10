@@ -110,6 +110,14 @@ namespace TMCL {
 
   std::string StatusErrorFlagsToString(StatusErrorFlags in);
 
+  enum class MotorBank : uint8_t {
+	USER_VARIABLES = 2 //0..15: password protected, 16-. freely usable... 
+  };
+
+  enum UserVariables : uint8_t {
+	NEED_CALIBRATION = 17 
+  };
+
   /*
   enum YouBotJointControllerMode {
 	MOTOR_STOP = 0,
