@@ -113,6 +113,12 @@ int main(int argc, char *argv[])
       << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   }
   {
+    auto ptr = GetIsInitialized::InitSharedPtr(3, 60);
+    center->SendMessage_(ptr);
+    std::cout << " GetIsInitialized: " << ptr->GetReplyValue() <<
+      " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  }
+  {
     auto ptr = SetInitialize::InitSharedPtr(3,1);
     center->SendMessage_(ptr);
     std::cout << "  SetInitialize: " << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << std::endl;
@@ -128,6 +134,12 @@ int main(int argc, char *argv[])
     auto ptr = RotateRight::InitSharedPtr(3, 60);
     center->SendMessage_(ptr);
     std::cout << " RotateRight: " << ptr->GetReplyValue() <<
+      " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  }
+  {
+    auto ptr = GetIsInitialized::InitSharedPtr(3, 60);
+    center->SendMessage_(ptr);
+    std::cout << " GetIsInitialized: " << ptr->GetReplyValue() <<
       " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   }
   for (int i = 0; i < 100;i++) {
@@ -158,6 +170,26 @@ int main(int argc, char *argv[])
       std::cout << " MotorStop: " << ptr->GetReplyValue() << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   }
 
+
+
+  {
+    auto ptr = GetNeedCalibration::InitSharedPtr(3);
+    center->SendMessage_(ptr);
+    std::cout << " GetNeedCalibration: " << ptr->GetReplyValue() << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  }
+  {
+    auto ptr = SetIsCalibrated::InitSharedPtr(3);
+    center->SendMessage_(ptr);
+    std::cout << " SetIsCalibrated: " << ptr->GetReplyValue() << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  }
+
+  {
+    auto ptr = GetNeedCalibration::InitSharedPtr(3);
+    center->SendMessage_(ptr);
+    std::cout << " GetNeedCalibration: " << ptr->GetReplyValue() << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  }
+
+
   center->CloseConnection();
 
   return 0;
@@ -177,9 +209,9 @@ int main(int argc, char *argv[])
       */
 
   if (0) {
-    auto ptr = GetIsUnderInitialization::InitSharedPtr(3);
+    auto ptr = GetIsInitialized::InitSharedPtr(3);
     center->SendMessage_(ptr);
-    std::cout << "  GetIsUnderInitialization: " << ptr->GetReplyValue() <<
+    std::cout << "  GetIsInitialized: " << ptr->GetReplyValue() <<
       "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   }
 

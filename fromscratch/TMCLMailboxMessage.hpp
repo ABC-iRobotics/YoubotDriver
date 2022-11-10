@@ -234,4 +234,13 @@ typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::MST> MotorStop;
 typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::INITIALIZE, 1> SetInitialize;
 
+// Setting a user variables, that will allow to check if the motor is already calibrated
+typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::SGP,
+  TMCL::AxisParam(TMCL::UserVariables::NEED_CALIBRATION),
+  0, TMCL::MotorBank::USER_VARIABLES> SetIsCalibrated; // by default it is one, after calibration can be set to zero
+
+typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::GGP,
+  TMCL::AxisParam(TMCL::UserVariables::NEED_CALIBRATION),
+  0, TMCL::MotorBank::USER_VARIABLES> GetNeedCalibration;
+
 #endif
