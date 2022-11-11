@@ -29,10 +29,10 @@ class TMCLTemplate : public MailboxMessage<8, 8> {
   uint8_t& _fromCommandNumber = fromSlaveBuff[3];
 
   void SetValue(const ValueType& value) {
-    toSlaveBuff[4] = value >> 24;
-    toSlaveBuff[5] = value >> 16;
-    toSlaveBuff[6] = value >> 8;
-    toSlaveBuff[7] = value & 0xff;
+    toSlaveBuff[4] = (uint32_t)value >> 24;
+    toSlaveBuff[5] = (uint32_t)value >> 16;
+    toSlaveBuff[6] = (uint32_t)value >> 8;
+    toSlaveBuff[7] = (uint32_t)value & 0xff;
   };
 
 public:
@@ -251,5 +251,32 @@ typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
 
 typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
   TMCL::AxisParam::INITIALIZE> GetInitialized; // the set does need a few second - and movement
+
+// Under development
+
+
+
+
+
+
+
+
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::ACTUAL_SUPPLY_VOLTAGE, 0> GetSupplyVoltage; //0.01 V or 1/128 V
+
+// Value is 0/1?
+
+
+// Value is 0/1 - does not clear timeout flag...
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::CLE,
+  TMCL::AxisParam(1), 0> ClearErrorFlags;
+
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::MVP,
+  TMCL::AxisParam(0), 0> MoveToAbsPosition;
+
+typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::MVP,
+  TMCL::AxisParam(1), 0> MoveToRelPosition;
 
 #endif

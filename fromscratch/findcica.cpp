@@ -3,21 +3,9 @@
 #include <string.h>
 
 #include "adapters.hpp"
-
-//#include "TMCLMessages.hpp"
 #include "Time.hpp"
 
 /*
-extern "C" {
-#include "ethercattype.h"
-#include "nicdrv.h"
-#include "ethercatbase.h"
-#include "ethercatmain.h"
-#include "ethercatconfig.h"
-#include "ethercatcoe.h"
-#include "ethercatdc.h"
-#include "ethercatprint.h"
-}
 #include "DataObjectLockFree.hpp"
 
 class EthercatComm {
@@ -80,8 +68,10 @@ public:
 
 };
 */
-#include "SOEMMessageCenter.hpp"
+#include "VMessageCenter.hpp"
 #include "TMCLMailboxMessage.hpp"
+#include "YoubotConfig.hpp"
+#include "YoubotManipulator.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -100,93 +90,254 @@ int main(int argc, char *argv[])
     return -1;
   }
 
+  YoubotConfig config("C:/Users/kutij/Desktop/myYouBotDriver/src/fromscratch/youBotArmConfig_fromdriver.json");
+
+  YoubotManipulator man(config, center);
+
+  return 0;
+
+
+
+  std::cout << center->getSlaveNum() << std::endl;
+  for (int i = 0; i < center->getSlaveNum(); i++)
+    std::cout << center->getSlaveName(i) << std::endl;
+
+  int iSlave = 1;
+
+  // 1. Stop the motor
   {
-    auto ptr = ClearMotorControllerTimeoutFlag::InitSharedPtr(3);
+    auto ptr = MotorStop::InitSharedPtr(iSlave);
+    center->SendMessage_(ptr);
+    std::cout << " MotorStop: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  }
+  // Get Status
+  uint32_t status;
+  {
+    auto ptr = GetErrorStatusFlag::InitSharedPtr(iSlave);
+    center->SendMessage_(ptr);
+    status = ptr->GetReplyValue();
+    std::cout << "GetErrorStatusFlag: " <<
+      TMCL::StatusErrorFlagsToString(ptr->GetReplyValue()).c_str()
+      << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  }
+
+  // If timeout clear it..
+  if (status & (uint32_t)TMCL::StatusErrorFlags::TIMEOUT) {
+    auto ptr = ClearMotorControllerTimeoutFlag::InitSharedPtr(iSlave);
     center->SendMessage_(ptr);
     std::cout << "  ClearMotorControllerTimeoutFlag: " << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << std::endl;
   }
   {
-    auto ptr = GetErrorStatusFlag::InitSharedPtr(3);
+    auto ptr = GetErrorStatusFlag::InitSharedPtr(iSlave);
+    center->SendMessage_(ptr);
+    status = ptr->GetReplyValue();
+    std::cout << "GetErrorStatusFlag: " <<
+      TMCL::StatusErrorFlagsToString(ptr->GetReplyValue()).c_str()
+      << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  }
+  // If I2T exceeded
+  if (status & (uint32_t)TMCL::StatusErrorFlags::I2T_EXCEEDED) {
+    auto ptr = ClearI2TFlag::InitSharedPtr(iSlave);
+    center->SendMessage_(ptr);
+    std::cout << "  ClearI2TFlag: " << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << std::endl;
+  }
+  {
+    auto ptr = GetErrorStatusFlag::InitSharedPtr(iSlave);
+    center->SendMessage_(ptr);
+    status = ptr->GetReplyValue();
+    std::cout << "GetErrorStatusFlag: " <<
+      TMCL::StatusErrorFlagsToString(ptr->GetReplyValue()).c_str()
+      << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  }
+  uint32_t pos;
+  {
+    auto ptr = GetPosition::InitSharedPtr(iSlave);
+    center->SendMessage_(ptr);
+    pos = ptr->GetReplyValue();
+    std::cout << " GetPosition: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  }
+  // If not initialized
+  if (!(status & (uint32_t)TMCL::StatusErrorFlags::INITIALIZED)) {
+    {
+      auto ptr = SetInitialize::InitSharedPtr(iSlave, 1);
+      center->SendMessage_(ptr);
+      std::cout << "  SetInitialize: " << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << std::endl;
+    }
+    do {
+      SLEEP_MILLISEC(100);
+      auto ptr = GetErrorStatusFlag::InitSharedPtr(iSlave);
+      center->SendMessage_(ptr);
+      status = ptr->GetReplyValue();
+      std::cout << "GetErrorStatusFlag: " <<
+        TMCL::StatusErrorFlagsToString(ptr->GetReplyValue()).c_str()
+        << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+    } while (!(status & (uint32_t)TMCL::StatusErrorFlags::INITIALIZED));
+  }
+  {
+    auto ptr = GetInitialized::InitSharedPtr(iSlave);
+    center->SendMessage_(ptr);
+    std::cout << "GetInitialized: " <<
+      ptr->GetReplyValue()
+      << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  }
+
+  // If timeout clear it..
+  if (status & (uint32_t)TMCL::StatusErrorFlags::TIMEOUT) {
+    auto ptr = ClearMotorControllerTimeoutFlag::InitSharedPtr(iSlave);
+    center->SendMessage_(ptr);
+    std::cout << "  ClearMotorControllerTimeoutFlag: " << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << std::endl;
+  }
+  {
+    auto ptr = GetErrorStatusFlag::InitSharedPtr(iSlave);
     center->SendMessage_(ptr);
     std::cout << "GetErrorStatusFlag: " <<
       TMCL::StatusErrorFlagsToString(ptr->GetReplyValue()).c_str()
       << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   }
   {
-    auto ptr = GetIsInitialized::InitSharedPtr(3, 60);
+    auto ptr = GetPosition::InitSharedPtr(iSlave);
     center->SendMessage_(ptr);
-    std::cout << " GetIsInitialized: " << ptr->GetReplyValue() <<
-      " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+    pos = ptr->GetReplyValue();
+    std::cout << " GetPosition: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  }
+
+
+
+
+
+
+
+
+
+
+
+  {
+    auto ptr = MotorStop::InitSharedPtr(iSlave);
+    center->SendMessage_(ptr);
+    std::cout << " MotorStop: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   }
   {
-    auto ptr = SetInitialize::InitSharedPtr(3,1);
+    auto ptr = GetErrorStatusFlag::InitSharedPtr(iSlave);
     center->SendMessage_(ptr);
-    std::cout << "  SetInitialize: " << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << std::endl;
-  }
-  {
-    auto ptr = GetErrorStatusFlag::InitSharedPtr(3);
-    center->SendMessage_(ptr);
+    status = ptr->GetReplyValue();
     std::cout << "GetErrorStatusFlag: " <<
       TMCL::StatusErrorFlagsToString(ptr->GetReplyValue()).c_str()
       << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   }
   {
-    auto ptr = RotateRight::InitSharedPtr(3, 60);
+    auto ptr = RotateLeft::InitSharedPtr(iSlave, -600);
     center->SendMessage_(ptr);
     std::cout << " RotateRight: " << ptr->GetReplyValue() <<
       " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   }
-  {
-    auto ptr = GetIsInitialized::InitSharedPtr(3, 60);
-    center->SendMessage_(ptr);
-    std::cout << " GetIsInitialized: " << ptr->GetReplyValue() <<
-      " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
-  }
-  for (int i = 0; i < 100;i++) {
 
+  for (int i = 0; i < 100; i++) {
     {
-      auto ptr = GetErrorStatusFlag::InitSharedPtr(3);
+      auto ptr = GetErrorStatusFlag::InitSharedPtr(iSlave);
       center->SendMessage_(ptr);
       std::cout << "GetErrorStatusFlag: " <<
         TMCL::StatusErrorFlagsToString(ptr->GetReplyValue()).c_str()
-        << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+        << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
     }
     {
-      auto ptr = GetTargetSpeed::InitSharedPtr(3);
+      auto ptr = GetCurrent::InitSharedPtr(iSlave);
       center->SendMessage_(ptr);
-      std::cout << " GetTargetSpeed: " << ptr->GetReplyValue() << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+      std::cout << " GetCurrent: " << (int32_t)ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+      if ((int32_t)ptr->GetReplyValue() > 2000)
+        break;
     }
     {
-      auto ptr = GetActualSpeed::InitSharedPtr(3);
+      auto ptr = GetTargetSpeed::InitSharedPtr(iSlave);
       center->SendMessage_(ptr);
-      std::cout << " GetActualSpeed: " << ptr->GetReplyValue() << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+      std::cout << " GetTargetSpeed: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
     }
+    {
+      auto ptr = GetActualSpeed::InitSharedPtr(iSlave);
+      center->SendMessage_(ptr);
+      std::cout << " GetActualSpeed: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+    }
+    {
+      auto ptr = GetPosition::InitSharedPtr(iSlave);
+      center->SendMessage_(ptr);
+      std::cout << " GetPosition: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+    }
+  }
 
+  {
+    auto ptr = MotorStop::InitSharedPtr(iSlave);
+    center->SendMessage_(ptr);
+    std::cout << " MotorStop: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  }
+
+
+  return 0;
+  
+  
+
+  return 0;
+
+  if (0) {
+    auto ptr = RotateRight::InitSharedPtr(iSlave, 20);
+    center->SendMessage_(ptr);
+    std::cout << " RotateRight: " << ptr->GetReplyValue() <<
+      " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  } else {
+    auto ptr = RotateLeft::InitSharedPtr(iSlave, 20);
+    center->SendMessage_(ptr);
+    std::cout << " RotateRight: " << ptr->GetReplyValue() <<
+      " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  }
+  for (int i = 0; i < 300;i++) {
+
+    {
+      auto ptr = GetErrorStatusFlag::InitSharedPtr(iSlave);
+      center->SendMessage_(ptr);
+      std::cout << "GetErrorStatusFlag: " <<
+        TMCL::StatusErrorFlagsToString(ptr->GetReplyValue()).c_str()
+        << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+    }
+    {
+      auto ptr = GetCurrent::InitSharedPtr(iSlave);
+      center->SendMessage_(ptr);
+      std::cout << " GetCurrent: " << (int32_t)ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+      if ((int32_t)ptr->GetReplyValue() > 2000)
+        break;
+    }
+    {
+      auto ptr = GetActualSpeed::InitSharedPtr(iSlave);
+      center->SendMessage_(ptr);
+      std::cout << " GetActualSpeed: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+    }
+    {
+      auto ptr = GetPosition::InitSharedPtr(iSlave);
+      center->SendMessage_(ptr);
+      std::cout << " GetPosition: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+    }
   }
   
   {
-      auto ptr = MotorStop::InitSharedPtr(3);
-      center->SendMessage_(ptr);
-      std::cout << " MotorStop: " << ptr->GetReplyValue() << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+    auto ptr = MotorStop::InitSharedPtr(iSlave);
+    center->SendMessage_(ptr);
+    std::cout << " MotorStop: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   }
 
 
 
   {
-    auto ptr = GetNeedCalibration::InitSharedPtr(3);
+    auto ptr = GetNeedCalibration::InitSharedPtr(iSlave);
     center->SendMessage_(ptr);
-    std::cout << " GetNeedCalibration: " << ptr->GetReplyValue() << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+    std::cout << " GetNeedCalibration: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   }
   {
-    auto ptr = SetIsCalibrated::InitSharedPtr(3);
+    auto ptr = SetIsCalibrated::InitSharedPtr(iSlave);
     center->SendMessage_(ptr);
-    std::cout << " SetIsCalibrated: " << ptr->GetReplyValue() << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+    std::cout << " SetIsCalibrated: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   }
 
   {
-    auto ptr = GetNeedCalibration::InitSharedPtr(3);
+    auto ptr = GetNeedCalibration::InitSharedPtr(iSlave);
     center->SendMessage_(ptr);
-    std::cout << " GetNeedCalibration: " << ptr->GetReplyValue() << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+    std::cout << " GetNeedCalibration: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   }
 
 
@@ -194,29 +345,35 @@ int main(int argc, char *argv[])
 
   return 0;
 
-
-  if (0) {
-    auto ptr = ClearErrorFlags::InitSharedPtr(3);
+  /*
+  {
+    auto ptr = SetMaxCurrent::InitSharedPtr(iSlave);
     center->SendMessage_(ptr);
-    std::cout << "  ClearErrorFlags: " << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << std::endl;
+    std::cout << " SetMaxCurrent: " << ptr->GetReplyValue() << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   }
+  {
+    auto ptr = SetMaxCurrent2::InitSharedPtr(iSlave, 1000);
+    center->SendMessage_(ptr);
+    std::cout << " SetMaxCurrent2: " << ptr->GetReplyValue() << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  }
+  {
+    auto ptr = GetMaxCurrent::InitSharedPtr(iSlave);
+    center->SendMessage_(ptr);
+    std::cout << "GetMaxCurrent: " << ptr->GetReplyValue()
+      << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  }
+  {
+    auto ptr = GetMaxCurrent2::InitSharedPtr(iSlave);
+    center->SendMessage_(ptr);
+    std::cout << "GetMaxCurrent2: " << ptr->GetReplyValue()
+      << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  }*/
   /*
       {
         auto ptr = GetMotorHaltedVelocity::InitSharedPtr(3);
         center->SendMessage_(ptr);
         std::cout << " GetMotorHaltedVelocity: " << ptr->GetReplyValue() << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
       }
-      */
-
-  if (0) {
-    auto ptr = GetIsInitialized::InitSharedPtr(3);
-    center->SendMessage_(ptr);
-    std::cout << "  GetIsInitialized: " << ptr->GetReplyValue() <<
-      "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
-  }
-
-
-  /*
   {
     auto ptr = GetD2ParameterPositionControl::InitSharedPtr(3);
     center->SendMessage_(ptr);
@@ -422,24 +579,4 @@ int main(int argc, char *argv[])
   }
 
   */
-
-
-
-
-
-
-
-
-
-
-  // Request safe operational state for all slaves
-  //ec_slave[0].state = EC_STATE_SAFE_OP;
-
-  /* request SAFE_OP state for all slaves */
-  //ec_writestate(0);
-
-  //stop SOEM, close socket
-  //ec_close();
-
-  //return (0);*/
 }
