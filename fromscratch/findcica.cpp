@@ -94,6 +94,8 @@ int main(int argc, char *argv[])
 
   YoubotManipulator man(config, center);
 
+  man.GetJoint(0).ConfigParameters();
+
   return 0;
 
 
