@@ -17,6 +17,7 @@ public:
 
   void ConfigJoints();
 
+  bool CheckJointConfigs();
 };
 
 #endif

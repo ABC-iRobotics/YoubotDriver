@@ -22,3 +22,9 @@ void YoubotManipulator::ConfigJoints() {
   for (int i = 0; i < 5; i++)
 	joints[i].ConfigParameters();
 }
+
+bool YoubotManipulator::CheckJointConfigs() {
+  for (int i = 0; i < 5; i++)
+	if (!joints[i].CheckConfig())
+	  return false;
+}

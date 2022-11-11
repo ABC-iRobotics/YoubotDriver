@@ -94,10 +94,10 @@ int main(int argc, char *argv[])
 
   YoubotManipulator man(config, center);
 
-  man.GetJoint(0).ConfigParameters();
 
+  man.ConfigJoints();
 
-  if (man.GetJoint(0).CheckConfig()) {
+  if (man.CheckJointConfigs()) {
     std::cout << "OK!!" << std::endl;
   }
 
