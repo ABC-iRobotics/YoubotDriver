@@ -8,7 +8,7 @@ GetFirmware::GetFirmware(int slaveIndex) : MailboxMessage(slaveIndex) {
   *(buff + 3) = 0;
 }
 
-void GetFirmware::GetOutput(long& controllernum, long& firmwarenum) const {
+void GetFirmware::GetOutput(int& controllernum, int& firmwarenum) const {
   char* ptr, * ptr2;
   controllernum = strtol((const char*)getFromSlaveBuff(), &ptr, 10);
   firmwarenum = strtol(ptr + 1, &ptr2, 10);

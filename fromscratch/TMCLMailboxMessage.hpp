@@ -9,7 +9,7 @@ class GetFirmware : public MailboxMessage<8, 8> {
 public:
   GetFirmware(int slaveIndex);
 
-  void GetOutput(long& controllernum, long& firmwarenum) const;
+  void GetOutput(int& controllernum, int& firmwarenum) const;
 
   static std::shared_ptr<GetFirmware> InitSharedPtr(int slaveIndex);
 };
@@ -251,32 +251,5 @@ typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
 
 typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
   TMCL::AxisParam::INITIALIZE> GetInitialized; // the set does need a few second - and movement
-
-// Under development
-
-
-
-
-
-
-
-
-
-typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::ACTUAL_SUPPLY_VOLTAGE, 0> GetSupplyVoltage; //0.01 V or 1/128 V
-
-// Value is 0/1?
-
-
-// Value is 0/1 - does not clear timeout flag...
-typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::CLE,
-  TMCL::AxisParam(1), 0> ClearErrorFlags;
-
-
-typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::MVP,
-  TMCL::AxisParam(0), 0> MoveToAbsPosition;
-
-typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::MVP,
-  TMCL::AxisParam(1), 0> MoveToRelPosition;
 
 #endif

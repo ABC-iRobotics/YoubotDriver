@@ -392,7 +392,7 @@ int main(int argc, char *argv[])
   {
     auto ptr = GetFirmware::InitSharedPtr(3);
     center->SendMessage_(ptr);
-    long a, b;
+    int a, b;
     ptr->GetOutput(a, b);
     printf("%d %d\n", a, b);
   }
