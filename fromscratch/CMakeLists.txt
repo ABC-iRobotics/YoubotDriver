@@ -6,6 +6,7 @@ set(SOURCES
 	TMCLMailboxMessage.cpp
 	TMCLDefinitions.cpp
 	VMessageCenter.cpp
+	YoubotConfig.cpp
 	)
 
 set(HEADERS
@@ -14,6 +15,7 @@ set(HEADERS
 	TMCLMailboxMessage.hpp
 	TMCLDefinitions.hpp
 	VMessageCenter.hpp
+	YoubotConfig.hpp
 	)
 
 add_executable(fromscratch ${SOURCES} ${HEADERS})
