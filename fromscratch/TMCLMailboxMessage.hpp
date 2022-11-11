@@ -336,4 +336,10 @@ typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
 typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::VEL_THRESHOLD_HALLFX, 1000> SetVelThresholdHallFXRPM;
 
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GGP,
+  TMCL::AxisParam(90)> GetControllerTimeoutMS;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::SGP,
+  TMCL::AxisParam(90), 100> SetControllerTimeoutMS; // Write protected!
+
 #endif
