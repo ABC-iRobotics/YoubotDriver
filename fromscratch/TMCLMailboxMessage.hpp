@@ -235,7 +235,7 @@ typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::ROR,
 typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::MST> MotorStop;
 
 typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
-  TMCL::AxisParam::INITIALIZE> SetInitialize; // only command - no values
+  TMCL::AxisParam::INITIALIZE,1> SetInitialize; // only command - no values
 
 // Setting a user variables, that will allow to check if the motor is already calibrated
 typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::SGP,
@@ -245,5 +245,11 @@ typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::SGP,
 typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::GGP,
   TMCL::AxisParam(TMCL::UserVariables::NEED_CALIBRATION),
   0, TMCL::MotorBank::USER_VARIABLES> GetNeedCalibration;
+
+typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::CLEAR_I2T_FLAG> ClearI2TFlag; // only command - no values
+
+typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::INITIALIZE> GetInitialized; // the set does need a few second - and movement
 
 #endif
