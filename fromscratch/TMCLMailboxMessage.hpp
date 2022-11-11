@@ -226,6 +226,9 @@ typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
 typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
   TMCL::AxisParam::ACTUAL_SPEED> GetActualSpeed;
 
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::ROL,
+  TMCL::AxisParam(0), 10> RotateLeft; // does change to velocity mode and set target speed
+
 typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::ROR,
   TMCL::AxisParam(0), 10> RotateRight; // does change to velocity mode and set target speed
 
