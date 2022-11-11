@@ -96,6 +96,13 @@ int main(int argc, char *argv[])
 
   man.GetJoint(0).ConfigParameters();
 
+
+  if (man.GetJoint(0).CheckConfig()) {
+    std::cout << "OK!!" << std::endl;
+  }
+
+
+
   return 0;
 
 

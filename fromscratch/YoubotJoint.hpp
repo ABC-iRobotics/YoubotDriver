@@ -28,6 +28,8 @@ public:
 
   void ConfigParameters();
 
+  bool CheckConfig();
+
 };
 
 #endif
