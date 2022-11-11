@@ -252,4 +252,88 @@ typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
 typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
   TMCL::AxisParam::INITIALIZE> GetInitialized; // the set does need a few second - and movement
 
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::MAX_RAMP_VELOCITY> GetMaxRampVelocityRPM;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::MAX_RAMP_VELOCITY, 4000> SetMaxRampVelocityRPM;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::ACCELERATION> GetAccelerationParamRPMPSec;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::ACCELERATION, 2000> SetAccelerationParamRPMPSec;
+
+typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::ACTIVATERAMP_IN_PID, 1> SetRampGenerator;
+
+typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::ACTIVATERAMP_IN_PID> GetRampGenerator;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::TRESHOLD_SPEED_POS_PID, 0> SetTresholdSpeedForPosPIDRPM;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::TRESHOLD_SPEED_POS_PID> GetTresholdSpeedForPosPIDRPM;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::TRESHOLD_SPEED_VEL_PID, 0> SetTresholdSpeedForVelPIDRPM;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::TRESHOLD_SPEED_VEL_PID> GetTresholdSpeedForVelPIDRPM;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::POSITION_PID_I_CLIPPING1> GetClipping1ParameterPositionControl;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::POSITION_PID_I_CLIPPING1, 500> SetClipping1ParameterPositionControl;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::POSITION_PID_I_CLIPPING2> GetClipping2ParameterPositionControl;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::POSITION_PID_I_CLIPPING2, 1000> SetClipping2ParameterPositionControl;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::VELOCITY_PID_I_CLIPPING1> GetClipping1ParameterVelocityControl;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::VELOCITY_PID_I_CLIPPING1, 500> SetClipping1ParameterVelocityControl;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::VELOCITY_PID_I_CLIPPING2> GetClipping2ParameterVelocityControl;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::VELOCITY_PID_I_CLIPPING2, 1000> SetClipping2ParameterVelocityControl;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::CURRENT_PID_I_CLIPPING1> GetClipping1ParameterCurrentControl;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::CURRENT_PID_I_CLIPPING1> SetClipping1ParameterCurrentControl;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::CURRENT_PID_I_CLIPPING2> GetClipping2ParameterCurrentControl;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::CURRENT_PID_I_CLIPPING2, 1000> SetClipping2ParameterCurrentControl;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::MAX_VEL_TO_REACH_TARGET> GetMaxVelocityToReachTargetRPM;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::MAX_VEL_TO_REACH_TARGET, 500> SetMaxVelocityToReachTargetRPM;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::MAX_DISTANCE_TO_REACH_TARGET> GetMaxDistanceToReachTarget;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::MAX_DISTANCE_TO_REACH_TARGET, 5> SetMaxDistanceToReachTarget;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::VEL_THRESHOLD_HALLFX> GetVelThresholdHallFXRPM;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::VEL_THRESHOLD_HALLFX, 1000> SetVelThresholdHallFXRPM;
+
 #endif
