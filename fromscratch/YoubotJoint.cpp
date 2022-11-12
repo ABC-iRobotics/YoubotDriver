@@ -4,6 +4,18 @@ YoubotJoint::YoubotJoint(int slaveIndex, const NameValueMap& config, VMessageCen
     : slaveIndex(slaveIndex), center(center), config(config) {}
 
 void YoubotJoint::ConfigParameters() {
+  {
+    gearRatio = config.at("GearRatio");
+    std::cout << " GearRatio: " << gearRatio << std::endl;
+    torqueconstant = config.at("TorqueConstant_NmPerAmpere");
+    std::cout << " TorqueConstant_NmPerAmpere: " << torqueconstant << std::endl;
+    directionreversed = config.at("InverseMovement");
+    std::cout << " InverseMovement: " << directionreversed << std::endl;
+    calibrationDirection = config.at("CalibrationDirection");
+    std::cout << " CalibrationDirection: " << calibrationDirection << std::endl;
+    calibrationmaxAmpere = config.at("CalibrationMaxCurrentAmpere");
+    std::cout << " CalibrationMaxCurrentAmpere: " << calibrationmaxAmpere << std::endl;
+  }
   // 0. Get FirmwareVersion
   {
     auto ptr = GetFirmware::InitSharedPtr(slaveIndex);

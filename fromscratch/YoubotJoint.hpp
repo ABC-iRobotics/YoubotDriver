@@ -17,8 +17,11 @@ class YoubotJoint {
   // Read during configuration
   uint32_t ticksperround = -1;
   int firmwareversion = -1, controllerNum = -1;
-  // Maybe modfied during configuration
-  bool directionreverted = false;
+  double gearRatio = -1;
+  bool directionreversed = false;
+  bool calibrationDirection = false;
+  double torqueconstant = false;
+  double calibrationmaxAmpere = -1;
 
 
   bool calibratedposition = -1;

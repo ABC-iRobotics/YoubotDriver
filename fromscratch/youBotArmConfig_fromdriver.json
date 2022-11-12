@@ -9,6 +9,11 @@
 	},
 	
 	"WaistJoint" : {
+		"GearRatio" : 0.006410256410256,
+		"TorqueConstant_NmPerAmpere" : 0.0335,
+		"InverseMovement" : 1,
+		"CalibrationDirection" : 0,
+		"CalibrationMaxCurrentAmpere" : 0.5,
 		"MaximumPositioningVelocityRadPerSec": 2.685, 
 		"MotorAccelerationRadPerSec2": 1.34256096307256,
 		"RampGeneratorSpeedAndPositionControl" : 1,
@@ -40,6 +45,11 @@
 	},
 
 	"ShoulderJoint" : {
+		"GearRatio" : 0.006410256410256,
+		"TorqueConstant_NmPerAmpere" : 0.0335,
+		"InverseMovement" : 1,
+		"CalibrationDirection" : 0,
+		"CalibrationMaxCurrentAmpere" : 0.5,
 		"MaximumPositioningVelocityRadPerSec": 2.685, 
 		"MotorAccelerationRadPerSec2": 1.34256096307256,
 		"RampGeneratorSpeedAndPositionControl" : 1,
@@ -70,7 +80,12 @@
 		"VelocityThresholdForHallFX" : 1.34256096307256
 	},
 	
-	"ElbowJoint" : {		
+	"ElbowJoint" : {
+		"GearRatio" : 0.01,
+		"TorqueConstant_NmPerAmpere" : 0.0335,
+		"InverseMovement" : 0,
+		"CalibrationDirection" : 0,
+		"CalibrationMaxCurrentAmpere" : 0.5,
 		"MaximumPositioningVelocityRadPerSec": 4.18879020478639, 
 		"MotorAccelerationRadPerSec2": 2.0943951023932,
 		"RampGeneratorSpeedAndPositionControl" : 1,
@@ -102,6 +117,11 @@
 	},
 
 	"WristPitchJoint" : {
+		"GearRatio" : 0.014084507042254,
+		"TorqueConstant_NmPerAmpere" : 0.051,
+		"InverseMovement" : 1,
+		"CalibrationDirection" : 0,
+		"CalibrationMaxCurrentAmpere" : 0.5,
 		"MaximumPositioningVelocityRadPerSec": 5.89970451378365, 
 		"MotorAccelerationRadPerSec2": 2.94985225689182,
 		"RampGeneratorSpeedAndPositionControl" : 1,
@@ -133,6 +153,11 @@
 	},
 
 	"WristYawJoint" : {
+		"GearRatio" : 0.014084507042254,
+		"TorqueConstant_NmPerAmpere" : 0.049,
+		"InverseMovement" : 1,
+		"CalibrationDirection" : 0,
+		"CalibrationMaxCurrentAmpere" : 0.5,
 		"MaximumPositioningVelocityRadPerSec": 5.89970451378365, 
 		"MotorAccelerationRadPerSec2": 2.94985,
 		"RampGeneratorSpeedAndPositionControl" : 1,
