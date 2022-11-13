@@ -519,6 +519,28 @@ void YoubotJoint::ResetI2TExceededViaMailbox() {
   SLEEP_MILLISEC(6)
 }
 
+void YoubotJoint::StartInitialization() {
+  StopViaMailbox();
+  auto status = GetJointStatusViaMailbox();
+  std::cout << status.toString() << std::endl;
+  if (status.Timeout())
+    ResetTimeoutViaMailbox();
+  if (status.I2TExceeded())
+    ResetI2TExceededViaMailbox();
+  status = GetJointStatusViaMailbox();
+  std::cout << status.toString() << std::endl;
+  auto ptr = SetInitialize::InitSharedPtr(slaveIndex, 1);
+  center->SendMessage_(ptr);
+  std::cout << "  SetInitialize: " << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << std::endl;
+}
+
+bool YoubotJoint::IsInitialized() {
+  auto ptr = GetInitialized::InitSharedPtr(slaveIndex);
+  center->SendMessage_(ptr);
+  std::cout << "  GetInitialized: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  return ptr->GetReplyValue();
+}
+
 bool YoubotJoint::JointStatus::OverCurrent() const {
   return value & (uint32_t)TMCL::StatusErrorFlags::OVER_CURRENT;
 }

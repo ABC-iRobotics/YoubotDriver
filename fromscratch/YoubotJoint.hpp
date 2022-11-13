@@ -74,6 +74,10 @@ public:
 
   void ResetI2TExceededViaMailbox();
 
+  void StartInitialization();
+
+  bool IsInitialized();
+
 };
 
 #endif
