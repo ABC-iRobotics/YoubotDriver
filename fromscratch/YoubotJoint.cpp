@@ -16,9 +16,7 @@ YoubotJoint::YoubotJoint(int slaveIndex, const NameValueMap& config, VMessageCen
 
 void YoubotJoint::ConfigParameters() {
   // 0. Get FirmwareVersion
-  {
-    _getFirmwareVersion();
-  }
+  _getFirmwareVersion();
   {
     gearRatio = config.at("GearRatio");
     std::cout << " GearRatio: " << gearRatio << std::endl;
@@ -32,21 +30,7 @@ void YoubotJoint::ConfigParameters() {
     std::cout << " CalibrationMaxCurrentAmpere: " << calibrationmaxAmpere << std::endl;
   }
   // 1. Stop the motor
-  {
-    auto ptr = MotorStop::InitSharedPtr(slaveIndex);
-    center->SendMessage_(ptr);
-    std::cout << " MotorStop: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
-  }
-  // Get Status
-  uint32_t status;
-  {
-    auto ptr = GetErrorStatusFlag::InitSharedPtr(slaveIndex);
-    center->SendMessage_(ptr);
-    status = ptr->GetReplyValue();
-    std::cout << "GetErrorStatusFlag: " <<
-      TMCL::StatusErrorFlagsToString(ptr->GetReplyValue()).c_str()
-      << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
-  }
+  StopViaMailbox();
   // GetTickPerRounds
   {
     auto ptr = GetEncoderStepsPerRotation::InitSharedPtr(slaveIndex);
@@ -247,9 +231,7 @@ void YoubotJoint::ConfigParameters() {
 
 bool YoubotJoint::CheckConfig() {
   // 0. Get FirmwareVersion
-  {
-    _getFirmwareVersion();
-  }
+  _getFirmwareVersion();
   // GetMaxRampVelocityRPM
   {
     auto ptr = GetMaxRampVelocityRPM::InitSharedPtr(slaveIndex);
