@@ -27,17 +27,50 @@ class YoubotJoint {
   bool calibratedposition = -1;
 
 public:
+  struct JointStatus {
+    uint32_t value;
+
+    bool OverCurrent() const;
+    bool UnderVoltage() const;
+    bool OverVoltage() const;
+    bool OverTemperature() const;
+    bool MotorHalted() const;
+    bool HallSensorError() const;
+    bool EncoderError() const;
+    bool InitializationError() const;
+    bool PWMMode() const;
+    bool VelocityMode() const;
+    bool PositionMode() const;
+    bool TorqueMode() const;
+    bool EmergencyStop() const;
+    bool FreeRunning() const;
+    bool PosiitonReached() const;
+    bool Initialized() const;
+    bool Timeout() const;
+    bool I2TExceeded() const;
+    std::string toString() const;
+
+    JointStatus(uint32_t value) : value(value) {}
+
+  };
+
   YoubotJoint(int slaveIndex, const NameValueMap& config, VMessageCenter* center);;
 
   void ConfigParameters();
 
   bool CheckConfig();
 
-  void RotateRight(double speedJointRadPerSec);
+  void RotateRightViaMailbox(double speedJointRadPerSec);
 
-  void RotateLeft(double speedJointRadPerSec);
+  void RotateLeftViaMailbox(double speedJointRadPerSec);
 
-  void Stop();
+  void StopViaMailbox();
+
+  JointStatus GetJointStatusViaMailbox();
+
+  void ResetTimeoutViaMailbox();
+
+  void ResetI2TExceededViaMailbox();
 
 };
 

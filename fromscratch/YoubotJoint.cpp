@@ -1,4 +1,5 @@
 #include "YoubotJoint.hpp"
+#include <sstream>
 
 YoubotJoint::YoubotJoint(int slaveIndex, const NameValueMap& config, VMessageCenter* center)
     : slaveIndex(slaveIndex), center(center), config(config) {}
@@ -496,22 +497,150 @@ bool YoubotJoint::CheckConfig() {
   return true;
 }
 
-void YoubotJoint::RotateRight(double speedJointRadPerSec) {
+void YoubotJoint::RotateRightViaMailbox(double speedJointRadPerSec) {
   auto ptr = RotateRightMotorRPM::InitSharedPtr(slaveIndex, speedJointRadPerSec / gearRatio / 2. / M_PI * 60.);
   center->SendMessage_(ptr);
   std::cout << " RotateRightMotorRPM: " << ptr->GetReplyValue() <<
     " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
 }
 
-void YoubotJoint::RotateLeft(double speedJointRadPerSec) {
+void YoubotJoint::RotateLeftViaMailbox(double speedJointRadPerSec) {
   auto ptr = RotateLeftMotorRPM::InitSharedPtr(slaveIndex, speedJointRadPerSec / gearRatio / 2. / M_PI * 60.);
   center->SendMessage_(ptr);
   std::cout << " RotateLeftMotorRPM: " << ptr->GetReplyValue() <<
     " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
 }
 
-void YoubotJoint::Stop() {
+void YoubotJoint::StopViaMailbox() {
   auto ptr = MotorStop::InitSharedPtr(slaveIndex);
   center->SendMessage_(ptr);
   std::cout << " MotorStop: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+}
+
+YoubotJoint::JointStatus YoubotJoint::GetJointStatusViaMailbox() {
+  auto ptr = GetErrorStatusFlag::InitSharedPtr(slaveIndex);
+  center->SendMessage_(ptr);
+  std::cout << "GetErrorStatusFlag: " <<
+    TMCL::StatusErrorFlagsToString(ptr->GetReplyValue()).c_str()
+    << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  return ptr->GetReplyValue();
+}
+
+void YoubotJoint::ResetTimeoutViaMailbox() {
+  auto ptr = ClearMotorControllerTimeoutFlag::InitSharedPtr(slaveIndex);
+  center->SendMessage_(ptr);
+  std::cout << "  ClearMotorControllerTimeoutFlag: " << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << std::endl;
+  SLEEP_MILLISEC(6)
+}
+
+void YoubotJoint::ResetI2TExceededViaMailbox() {
+  auto ptr = ClearI2TFlag::InitSharedPtr(slaveIndex);
+  center->SendMessage_(ptr);
+  std::cout << "  ClearI2TFlag: " << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << std::endl;
+  SLEEP_MILLISEC(6)
+}
+
+bool YoubotJoint::JointStatus::OverCurrent() const {
+  return value & (uint32_t)TMCL::StatusErrorFlags::OVER_CURRENT;
+}
+
+bool YoubotJoint::JointStatus::UnderVoltage() const {
+  return value & (uint32_t)TMCL::StatusErrorFlags::UNDER_VOLTAGE;
+};
+
+bool YoubotJoint::JointStatus::OverVoltage() const {
+  return value & (uint32_t)TMCL::StatusErrorFlags::OVER_VOLTAGE;
+};
+
+bool YoubotJoint::JointStatus::OverTemperature() const {
+  return value & (uint32_t)TMCL::StatusErrorFlags::OVER_TEMPERATURE;
+};
+
+bool YoubotJoint::JointStatus::MotorHalted() const {
+  return value & (uint32_t)TMCL::StatusErrorFlags::MOTOR_HALTED;
+};
+
+bool YoubotJoint::JointStatus::HallSensorError() const {
+  return value & (uint32_t)TMCL::StatusErrorFlags::HALL_SENSOR_ERROR;
+};
+
+bool YoubotJoint::JointStatus::EncoderError() const {
+  return value & (uint32_t)TMCL::StatusErrorFlags::ENCODER_ERROR;
+};
+
+bool YoubotJoint::JointStatus::InitializationError() const {
+  return value & (uint32_t)TMCL::StatusErrorFlags::INITIALIZATION_ERROR;
+};
+
+bool YoubotJoint::JointStatus::PWMMode() const {
+  return value & (uint32_t)TMCL::StatusErrorFlags::PWM_MODE_ACTIVE;
+};
+
+bool YoubotJoint::JointStatus::VelocityMode() const {
+  return value & (uint32_t)TMCL::StatusErrorFlags::VELOCITY_MODE_ACTIVE;
+};
+
+bool YoubotJoint::JointStatus::PositionMode() const {
+  return value & (uint32_t)TMCL::StatusErrorFlags::POSITION_MODE_ACTIVE;
+};
+
+bool YoubotJoint::JointStatus::TorqueMode() const {
+  return value & (uint32_t)TMCL::StatusErrorFlags::TORQUE_MODE_ACTIVE;
+};
+
+bool YoubotJoint::JointStatus::EmergencyStop() const {
+  return value & (uint32_t)TMCL::StatusErrorFlags::EMERGENCY_STOP;
+};
+
+bool YoubotJoint::JointStatus::FreeRunning() const {
+  return value & (uint32_t)TMCL::StatusErrorFlags::FREERUNNING;
+};
+
+bool YoubotJoint::JointStatus::PosiitonReached() const {
+  return value & (uint32_t)TMCL::StatusErrorFlags::POSITION_REACHED;
+};
+
+bool YoubotJoint::JointStatus::Initialized() const {
+  return value & (uint32_t)TMCL::StatusErrorFlags::INITIALIZED;
+};
+
+bool YoubotJoint::JointStatus::Timeout() const {
+  return value & (uint32_t)TMCL::StatusErrorFlags::TIMEOUT;
+};
+
+bool YoubotJoint::JointStatus::I2TExceeded() const {
+  return value & (uint32_t)TMCL::StatusErrorFlags::I2T_EXCEEDED;
+};
+
+std::string YoubotJoint::JointStatus::toString() const {
+  std::stringstream ss;
+  if (value & (uint32_t)TMCL::StatusErrorFlags::OVER_CURRENT)
+    ss << " OVER_CURRENT";
+  if (value & (uint32_t)TMCL::StatusErrorFlags::UNDER_VOLTAGE)
+    ss << " UNDER_VOLTAGE";
+  if (value & (uint32_t)TMCL::StatusErrorFlags::OVER_VOLTAGE)
+    ss << " OVER_VOLTAGE";
+  if (value & (uint32_t)TMCL::StatusErrorFlags::OVER_TEMPERATURE)
+    ss << " OVER_TEMPERATURE";
+  if (value & (uint32_t)TMCL::StatusErrorFlags::MOTOR_HALTED)
+    ss << " MOTOR_HALTED";
+  if (value & (uint32_t)TMCL::StatusErrorFlags::HALL_SENSOR_ERROR)
+    ss << " HALL_SENSOR_ERROR";
+  if (value & (uint32_t)TMCL::StatusErrorFlags::PWM_MODE_ACTIVE)
+    ss << " PWM_MODE_ACTIVE";
+  if (value & (uint32_t)TMCL::StatusErrorFlags::VELOCITY_MODE_ACTIVE)
+    ss << " VELOCITY_MODE_ACTIVE";
+  if (value & (uint32_t)TMCL::StatusErrorFlags::POSITION_MODE_ACTIVE)
+    ss << " POSITION_MODE_ACTIVE";
+  if (value & (uint32_t)TMCL::StatusErrorFlags::TORQUE_MODE_ACTIVE)
+    ss << " TORQUE_MODE_ACTIVE";
+  if (value & (uint32_t)TMCL::StatusErrorFlags::POSITION_REACHED)
+    ss << " POSITION_REACHED";
+  if (value & (uint32_t)TMCL::StatusErrorFlags::INITIALIZED)
+    ss << " INITIALIZED";
+  if (value & (uint32_t)TMCL::StatusErrorFlags::TIMEOUT)
+    ss << " TIMEOUT";
+  if (value & (uint32_t)TMCL::StatusErrorFlags::I2T_EXCEEDED)
+    ss << " I2T_EXCEEDED";
+  return ss.str();
 }

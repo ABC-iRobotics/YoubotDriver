@@ -41,7 +41,7 @@
 		"IClippingParameterCurrentControl" : 1000,
 		"MaximumVelocityToSetPositionMotorRPM" : 500,
 		"PositionTargetReachedDistance" : 5,
-		"VelocityThresholdForHallFXMotorRPM" : 2000
+		"VelocityThresholdForHallFXMotorRPM" : 1000
 	},
 
 	"ShoulderJoint" : {
@@ -77,7 +77,7 @@
 		"IClippingParameterCurrentControl" : 1000,
 		"MaximumVelocityToSetPositionMotorRPM" : 500,
 		"PositionTargetReachedDistance" : 5,
-		"VelocityThresholdForHallFXMotorRPM" : 2000
+		"VelocityThresholdForHallFXMotorRPM" : 1000
 	},
 	
 	"ElbowJoint" : {
@@ -113,7 +113,7 @@
 		"IClippingParameterCurrentControl" : 1000,
 		"MaximumVelocityToSetPositionMotorRPM" : 500,
 		"PositionTargetReachedDistance" : 5,
-		"VelocityThresholdForHallFXMotorRPM" : 2000
+		"VelocityThresholdForHallFXMotorRPM" : 1000
 	},
 
 	"WristPitchJoint" : {
@@ -149,7 +149,7 @@
 		"IClippingParameterCurrentControl" : 1000,
 		"MaximumVelocityToSetPositionMotorRPM" : 500,
 		"PositionTargetReachedDistance" : 5,
-		"VelocityThresholdForHallFXMotorRPM" : 2000
+		"VelocityThresholdForHallFXMotorRPM" : 1000
 	},
 
 	"WristYawJoint" : {
@@ -185,6 +185,6 @@
 		"IClippingParameterCurrentControl" : 1000,
 		"MaximumVelocityToSetPositionMotorRPM" : 500,
 		"PositionTargetReachedDistance" : 5,
-		"VelocityThresholdForHallFXMotorRPM" : 2000
+		"VelocityThresholdForHallFXMotorRPM" : 1000
 	}
 }

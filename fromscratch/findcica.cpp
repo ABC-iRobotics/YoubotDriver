@@ -90,18 +90,36 @@ int main(int argc, char *argv[])
     return -1;
   }
 
-  YoubotConfig config("C:/Users/kutij/Desktop/myYouBotDriver/src/fromscratch/youBotArmConfig_fromdriver.json");
-
+  YoubotConfig config("C:/Users/kutij/Desktop/myYouBotDriver/src/fromscratch/youBotArmConfig_fromKeisler.json");
+  //youBotArmConfig_fromfactory.json");
+  //youBotArmConfig_fromMoveIt.json");
+  //youBotArmConfig_fromKeisler.json");
+    
   YoubotManipulator man(config, center);
-
-
+  
   man.ConfigJoints();
-
-  if (man.CheckJointConfigs()) {
+  if (man.CheckJointConfigs())
     std::cout << "OK!!" << std::endl;
-  }
+  
+ // return 0;
+ 
+  int ind = 4;
+
+  if (man.GetJoint(ind).IsInitialized())
+    std::cout << "isInitialized" << std::endl;
 
 
+  man.GetJoint(ind).StartInitialization();
+
+  //return 0;
+
+  for (int i=0;i<300;i++)
+    if (man.GetJoint(ind).IsInitialized())
+      std::cout << "isInitialized" << std::endl;
+  for (int i = 0; i < 400; i++)
+    man.GetJoint(ind).RotateLeftViaMailbox(0.5);
+
+  man.GetJoint(ind).StopViaMailbox();
 
   return 0;
 
@@ -234,9 +252,9 @@ int main(int argc, char *argv[])
       << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   }
   {
-    auto ptr = RotateLeft::InitSharedPtr(iSlave, -600);
+    auto ptr = RotateLeftMotorRPM::InitSharedPtr(iSlave, -600);
     center->SendMessage_(ptr);
-    std::cout << " RotateRight: " << ptr->GetReplyValue() <<
+    std::cout << " RotateRightMotorRPM: " << ptr->GetReplyValue() <<
       " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   }
 
@@ -256,14 +274,14 @@ int main(int argc, char *argv[])
         break;
     }
     {
-      auto ptr = GetTargetSpeed::InitSharedPtr(iSlave);
+      auto ptr = GetTargetSpeedMotorRPM::InitSharedPtr(iSlave);
       center->SendMessage_(ptr);
-      std::cout << " GetTargetSpeed: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+      std::cout << " GetTargetSpeedMotorRPM: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
     }
     {
-      auto ptr = GetActualSpeed::InitSharedPtr(iSlave);
+      auto ptr = GetActualSpeedMotorRPM::InitSharedPtr(iSlave);
       center->SendMessage_(ptr);
-      std::cout << " GetActualSpeed: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+      std::cout << " GetActualSpeedMotorRPM: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
     }
     {
       auto ptr = GetPosition::InitSharedPtr(iSlave);
@@ -286,14 +304,14 @@ int main(int argc, char *argv[])
   return 0;
 
   if (0) {
-    auto ptr = RotateRight::InitSharedPtr(iSlave, 20);
+    auto ptr = RotateRightMotorRPM::InitSharedPtr(iSlave, 20);
     center->SendMessage_(ptr);
-    std::cout << " RotateRight: " << ptr->GetReplyValue() <<
+    std::cout << " RotateRightMotorRPM: " << ptr->GetReplyValue() <<
       " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   } else {
-    auto ptr = RotateLeft::InitSharedPtr(iSlave, 20);
+    auto ptr = RotateLeftMotorRPM::InitSharedPtr(iSlave, 20);
     center->SendMessage_(ptr);
-    std::cout << " RotateRight: " << ptr->GetReplyValue() <<
+    std::cout << " RotateRightMotorRPM: " << ptr->GetReplyValue() <<
       " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   }
   for (int i = 0; i < 300;i++) {
@@ -313,9 +331,9 @@ int main(int argc, char *argv[])
         break;
     }
     {
-      auto ptr = GetActualSpeed::InitSharedPtr(iSlave);
+      auto ptr = GetActualSpeedMotorRPM::InitSharedPtr(iSlave);
       center->SendMessage_(ptr);
-      std::cout << " GetActualSpeed: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+      std::cout << " GetActualSpeedMotorRPM: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
     }
     {
       auto ptr = GetPosition::InitSharedPtr(iSlave);
