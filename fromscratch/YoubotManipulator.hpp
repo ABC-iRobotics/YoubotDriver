@@ -18,6 +18,8 @@ public:
   void ConfigJoints();
 
   bool CheckJointConfigs();
+
+  void InitializeAllJoints();
 };
 
 #endif

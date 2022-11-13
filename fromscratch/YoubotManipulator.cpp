@@ -28,3 +28,21 @@ bool YoubotManipulator::CheckJointConfigs() {
 	if (!joints[i].CheckConfig())
 	  return false;
 }
+
+void YoubotManipulator::InitializeAllJoints() {
+	for (auto& it : joints) {
+		auto status = it.GetJointStatusViaMailbox();
+		std::cout << status.toString() << std::endl;
+		it.ResetTimeoutViaMailbox();
+		it.ResetI2TExceededViaMailbox();
+		status = it.GetJointStatusViaMailbox();
+		std::cout << status.toString() << std::endl;
+		it.StartInitialization();
+
+		for (int i = 0; i < 300; i++)
+			if (it.IsInitialized()) {
+				std::cout << " joint isInitialized" << std::endl;
+				break;
+			}
+	}
+}
