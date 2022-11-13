@@ -540,3 +540,23 @@ bool YoubotJoint::CheckConfig() {
   }
   return true;
 }
+
+void YoubotJoint::RotateRight(double speedJointRadPerSec) {
+  auto ptr = RotateRightMotorRPM::InitSharedPtr(slaveIndex, speedJointRadPerSec / gearRatio / 2. / M_PI * 60.);
+  center->SendMessage_(ptr);
+  std::cout << " RotateRightMotorRPM: " << ptr->GetReplyValue() <<
+    " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+}
+
+void YoubotJoint::RotateLeft(double speedJointRadPerSec) {
+  auto ptr = RotateLeftMotorRPM::InitSharedPtr(slaveIndex, speedJointRadPerSec / gearRatio / 2. / M_PI * 60.);
+  center->SendMessage_(ptr);
+  std::cout << " RotateLeftMotorRPM: " << ptr->GetReplyValue() <<
+    " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+}
+
+void YoubotJoint::Stop() {
+  auto ptr = MotorStop::InitSharedPtr(slaveIndex);
+  center->SendMessage_(ptr);
+  std::cout << " MotorStop: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+}

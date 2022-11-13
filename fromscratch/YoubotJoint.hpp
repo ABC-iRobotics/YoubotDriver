@@ -33,6 +33,12 @@ public:
 
   bool CheckConfig();
 
+  void RotateRight(double speedJointRadPerSec);
+
+  void RotateLeft(double speedJointRadPerSec);
+
+  void Stop();
+
 };
 
 #endif

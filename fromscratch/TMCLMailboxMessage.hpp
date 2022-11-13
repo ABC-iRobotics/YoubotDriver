@@ -218,19 +218,19 @@ typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::CLEAR_MOTOR_CONTROLLER_TIMEOUT_FLAG, 1> ClearMotorControllerTimeoutFlag;
 
 typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::TARGET_SPEED> GetTargetSpeed;
+  TMCL::AxisParam::TARGET_SPEED> GetTargetSpeedMotorRPM;
 
 typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
   TMCL::AxisParam::MOTOR_HALTED_VELOCITY> GetMotorHaltedVelocity;
 
 typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
-  TMCL::AxisParam::ACTUAL_SPEED> GetActualSpeed;
+  TMCL::AxisParam::ACTUAL_SPEED> GetActualSpeedMotorRPM;
 
 typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::ROL,
-  TMCL::AxisParam(0), 10> RotateLeft; // does change to velocity mode and set target speed
+  TMCL::AxisParam(0), 10> RotateLeftMotorRPM; // does change to velocity mode and set target speed
 
 typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::ROR,
-  TMCL::AxisParam(0), 10> RotateRight; // does change to velocity mode and set target speed
+  TMCL::AxisParam(0), 10> RotateRightMotorRPM; // does change to velocity mode and set target speed
 
 typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::MST> MotorStop;
 
