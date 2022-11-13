@@ -42,27 +42,6 @@ void YoubotJoint::ConfigParameters() {
       TMCL::StatusErrorFlagsToString(ptr->GetReplyValue()).c_str()
       << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   }
-  // If timeout clear it..
-  if (status & (uint32_t)TMCL::StatusErrorFlags::TIMEOUT) {
-    auto ptr = ClearMotorControllerTimeoutFlag::InitSharedPtr(slaveIndex);
-    center->SendMessage_(ptr);
-    std::cout << "  ClearMotorControllerTimeoutFlag: " << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << std::endl;
-  }
-  // If I2T exceeded
-  if (status & (uint32_t)TMCL::StatusErrorFlags::I2T_EXCEEDED) {
-    auto ptr = ClearI2TFlag::InitSharedPtr(slaveIndex);
-    center->SendMessage_(ptr);
-    std::cout << "  ClearI2TFlag: " << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << std::endl;
-  }
-  SLEEP_MILLISEC(6)
-  {
-    auto ptr = GetErrorStatusFlag::InitSharedPtr(slaveIndex);
-    center->SendMessage_(ptr);
-    status = ptr->GetReplyValue();
-    std::cout << "GetErrorStatusFlag: " <<
-      TMCL::StatusErrorFlagsToString(ptr->GetReplyValue()).c_str()
-      << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
-  }
   // GetTickPerRounds
   {
     auto ptr = GetEncoderStepsPerRotation::InitSharedPtr(slaveIndex);
@@ -270,30 +249,6 @@ bool YoubotJoint::CheckConfig() {
     std::cout << "Joint with slaveindex " << slaveIndex << " to be checked. Controller: " << controllerNum << " Firmware: " << firmwareversion << std::endl;
     if (controllerNum != 1610 || firmwareversion != 148)
       throw std::runtime_error("Not supported joint controller/firmware type");
-  }
-  // Get Status
-  uint32_t status;
-  {
-    auto ptr = GetErrorStatusFlag::InitSharedPtr(slaveIndex);
-    center->SendMessage_(ptr);
-    status = ptr->GetReplyValue();
-    std::cout << "GetErrorStatusFlag: " <<
-      TMCL::StatusErrorFlagsToString(ptr->GetReplyValue()).c_str()
-      << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
-  }
-  // If timeout clear it..
-  if (status & (uint32_t)TMCL::StatusErrorFlags::TIMEOUT) {
-    auto ptr = ClearMotorControllerTimeoutFlag::InitSharedPtr(slaveIndex);
-    center->SendMessage_(ptr);
-    std::cout << "  ClearMotorControllerTimeoutFlag: " << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << std::endl;
-  }
-  {
-    auto ptr = GetErrorStatusFlag::InitSharedPtr(slaveIndex);
-    center->SendMessage_(ptr);
-    status = ptr->GetReplyValue();
-    std::cout << "GetErrorStatusFlag: " <<
-      TMCL::StatusErrorFlagsToString(ptr->GetReplyValue()).c_str()
-      << "(" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   }
   // GetMaxRampVelocityRPM
   {
