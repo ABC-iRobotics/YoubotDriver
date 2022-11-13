@@ -56,7 +56,7 @@ public:
 
   };
 
-  YoubotJoint(int slaveIndex, const NameValueMap& config, VMessageCenter* center);;
+  YoubotJoint(int slaveIndex, const NameValueMap& config, VMessageCenter* center);
 
   void ConfigParameters();
 

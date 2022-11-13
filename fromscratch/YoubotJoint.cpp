@@ -12,11 +12,11 @@ void YoubotJoint::_getFirmwareVersion() {
 }
 
 YoubotJoint::YoubotJoint(int slaveIndex, const NameValueMap& config, VMessageCenter* center)
-    : slaveIndex(slaveIndex), center(center), config(config) {}
+    : slaveIndex(slaveIndex), center(center), config(config) {
+  _getFirmwareVersion();
+}
 
 void YoubotJoint::ConfigParameters() {
-  // 0. Get FirmwareVersion
-  _getFirmwareVersion();
   {
     gearRatio = config.at("GearRatio");
     std::cout << " GearRatio: " << gearRatio << std::endl;
@@ -230,8 +230,6 @@ void YoubotJoint::ConfigParameters() {
 }
 
 bool YoubotJoint::CheckConfig() {
-  // 0. Get FirmwareVersion
-  _getFirmwareVersion();
   // GetMaxRampVelocityRPM
   {
     auto ptr = GetMaxRampVelocityRPM::InitSharedPtr(slaveIndex);
