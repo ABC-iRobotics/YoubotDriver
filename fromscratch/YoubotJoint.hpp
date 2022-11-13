@@ -26,6 +26,8 @@ class YoubotJoint {
 
   bool calibratedposition = -1;
 
+  void _getFirmwareVersion();
+
 public:
   struct JointStatus {
     uint32_t value;

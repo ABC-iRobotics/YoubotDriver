@@ -1,19 +1,23 @@
 #include "YoubotJoint.hpp"
 #include <sstream>
 
+void YoubotJoint::_getFirmwareVersion() {
+  auto ptr = GetFirmware::InitSharedPtr(slaveIndex);
+  center->SendMessage_(ptr);
+  ptr->GetOutput(controllerNum, firmwareversion);
+  std::cout << "Joint with slaveindex " << slaveIndex << " initialized. Controller: " << controllerNum
+    << " Firmware: " << firmwareversion << std::endl;
+  if (controllerNum != 1610 || firmwareversion != 148)
+    throw std::runtime_error("Not supported joint controller/firmware type");
+}
+
 YoubotJoint::YoubotJoint(int slaveIndex, const NameValueMap& config, VMessageCenter* center)
     : slaveIndex(slaveIndex), center(center), config(config) {}
 
 void YoubotJoint::ConfigParameters() {
   // 0. Get FirmwareVersion
   {
-    auto ptr = GetFirmware::InitSharedPtr(slaveIndex);
-    center->SendMessage_(ptr);
-    ptr->GetOutput(controllerNum, firmwareversion);
-    std::cout << "Joint with slaveindex " << slaveIndex << " initialized. Controller: " << controllerNum
-      << " Firmware: " << firmwareversion << std::endl;
-    if (controllerNum != 1610 || firmwareversion != 148)
-      throw std::runtime_error("Not supported joint controller/firmware type");
+    _getFirmwareVersion();
   }
   {
     gearRatio = config.at("GearRatio");
@@ -244,12 +248,7 @@ void YoubotJoint::ConfigParameters() {
 bool YoubotJoint::CheckConfig() {
   // 0. Get FirmwareVersion
   {
-    auto ptr = GetFirmware::InitSharedPtr(slaveIndex);
-    center->SendMessage_(ptr);
-    ptr->GetOutput(controllerNum, firmwareversion);
-    std::cout << "Joint with slaveindex " << slaveIndex << " to be checked. Controller: " << controllerNum << " Firmware: " << firmwareversion << std::endl;
-    if (controllerNum != 1610 || firmwareversion != 148)
-      throw std::runtime_error("Not supported joint controller/firmware type");
+    _getFirmwareVersion();
   }
   // GetMaxRampVelocityRPM
   {
