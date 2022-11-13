@@ -4,6 +4,16 @@ YoubotJoint::YoubotJoint(int slaveIndex, const NameValueMap& config, VMessageCen
     : slaveIndex(slaveIndex), center(center), config(config) {}
 
 void YoubotJoint::ConfigParameters() {
+  // 0. Get FirmwareVersion
+  {
+    auto ptr = GetFirmware::InitSharedPtr(slaveIndex);
+    center->SendMessage_(ptr);
+    ptr->GetOutput(controllerNum, firmwareversion);
+    std::cout << "Joint with slaveindex " << slaveIndex << " initialized. Controller: " << controllerNum
+      << " Firmware: " << firmwareversion << std::endl;
+    if (controllerNum != 1610 || firmwareversion != 148)
+      throw std::runtime_error("Not supported joint controller/firmware type");
+  }
   {
     gearRatio = config.at("GearRatio");
     std::cout << " GearRatio: " << gearRatio << std::endl;
@@ -15,16 +25,6 @@ void YoubotJoint::ConfigParameters() {
     std::cout << " CalibrationDirection: " << calibrationDirection << std::endl;
     calibrationmaxAmpere = config.at("CalibrationMaxCurrentAmpere");
     std::cout << " CalibrationMaxCurrentAmpere: " << calibrationmaxAmpere << std::endl;
-  }
-  // 0. Get FirmwareVersion
-  {
-    auto ptr = GetFirmware::InitSharedPtr(slaveIndex);
-    center->SendMessage_(ptr);
-    ptr->GetOutput(controllerNum, firmwareversion);
-    std::cout << "Joint with slaveindex " << slaveIndex << " initialized. Controller: " << controllerNum
-      << " Firmware: " << firmwareversion << std::endl;
-    if (controllerNum != 1610 || firmwareversion != 148)
-      throw std::runtime_error("Not supported joint controller/firmware type");
   }
   // 1. Stop the motor
   {
@@ -73,28 +73,28 @@ void YoubotJoint::ConfigParameters() {
   // SetMaxRampVelocity
   {
     auto ptr = SetMaxRampVelocityRPM::InitSharedPtr(slaveIndex,
-      int32_t(config.at("MaximumPositioningVelocityRadPerSec") / 2. / M_PI * 60));
+      int32_t(config.at("MaximumPositioningVelocityMotorRPM")));
     center->SendMessage_(ptr);
     std::cout << " SetMaxRampVelocityRPM: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   }
   // SetAccelerationParam
   {
     auto ptr = SetAccelerationParamRPMPSec::InitSharedPtr(slaveIndex,
-      int32_t(config.at("MotorAccelerationRadPerSec2") / 2. / M_PI * 60));
+      int32_t(config.at("MotorAccelerationMotorRPMPerSec")));
     center->SendMessage_(ptr);
     std::cout << " SetAccelerationParamRPMPSec: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   }
   // SetTresholdSpeedForPosPIDRPM
   {
     auto ptr = GetTresholdSpeedForPosPIDRPM::InitSharedPtr(slaveIndex,
-      int32_t(config.at("PositionControlSwitchingThresholdRadPerSec") / 2. / M_PI * 60));
+      int32_t(config.at("PositionControlSwitchingThresholdMotorRPM")));
     center->SendMessage_(ptr);
     std::cout << " SetTresholdSpeedForPosPIDRPM: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   }
   // SetTresholdSpeedForVelPIDRPM
   {
     auto ptr = GetTresholdSpeedForVelPIDRPM::InitSharedPtr(slaveIndex,
-      int32_t(config.at("SpeedControlSwitchingThresholdRadPerSec") / 2. / M_PI * 60));
+      int32_t(config.at("SpeedControlSwitchingThresholdMotorRPM")));
     center->SendMessage_(ptr);
     std::cout << " SetTresholdSpeedForVelPIDRPM: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   }
@@ -241,7 +241,7 @@ void YoubotJoint::ConfigParameters() {
   // SetMaxVelocityToReachTargetRPM
   {
     auto ptr = SetMaxVelocityToReachTargetRPM::InitSharedPtr(slaveIndex,
-      int32_t(config.at("MaximumVelocityToSetPositionRadPerSec") / 2. / M_PI * 60));
+      int32_t(config.at("MaximumVelocityToSetPositionMotorRPM")));
     center->SendMessage_(ptr);
     std::cout << " SetMaxVelocityToReachTargetRPM: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   }
@@ -255,7 +255,7 @@ void YoubotJoint::ConfigParameters() {
   // SetVelThresholdHallFXRPM
   {
     auto ptr = SetVelThresholdHallFXRPM::InitSharedPtr(slaveIndex,
-      int32_t(config.at("VelocityThresholdForHallFX") / 2. / M_PI * 60.));
+      int32_t(config.at("VelocityThresholdForHallFXMotorRPM")));
     center->SendMessage_(ptr);
     std::cout << " SetVelThresholdHallFXRPM: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   }
@@ -299,7 +299,7 @@ bool YoubotJoint::CheckConfig() {
   {
     auto ptr = GetMaxRampVelocityRPM::InitSharedPtr(slaveIndex);
     center->SendMessage_(ptr);
-    int32_t fromconfig = int32_t(config.at("MaximumPositioningVelocityRadPerSec") / 2. / M_PI * 60);
+    int32_t fromconfig = int32_t(config.at("MaximumPositioningVelocityMotorRPM"));
     std::cout << " GetMaxRampVelocityRPM: " << ptr->GetReplyValue() << "(=" << fromconfig << ")" << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
     if (ptr->GetReplyValue() != fromconfig)
       return false;
@@ -308,7 +308,7 @@ bool YoubotJoint::CheckConfig() {
   {
     auto ptr = GetAccelerationParamRPMPSec::InitSharedPtr(slaveIndex);
     center->SendMessage_(ptr);
-    int32_t fromconfig = int32_t(config.at("MotorAccelerationRadPerSec2") / 2. / M_PI * 60);
+    int32_t fromconfig = int32_t(config.at("MotorAccelerationMotorRPMPerSec"));
     std::cout << " GetAccelerationParamRPMPSec: " << ptr->GetReplyValue() << "(=" << fromconfig << ")" << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
     if (ptr->GetReplyValue() != fromconfig)
       return false;
@@ -317,7 +317,7 @@ bool YoubotJoint::CheckConfig() {
   {
     auto ptr = GetTresholdSpeedForPosPIDRPM::InitSharedPtr(slaveIndex);
     center->SendMessage_(ptr);
-    int32_t fromconfig = int32_t(config.at("PositionControlSwitchingThresholdRadPerSec") / 2. / M_PI * 60);
+    int32_t fromconfig = int32_t(config.at("PositionControlSwitchingThresholdMotorRPM"));
     std::cout << " GetTresholdSpeedForPosPIDRPM: " << ptr->GetReplyValue() << "(=" << fromconfig << ")" << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
     if (ptr->GetReplyValue() != fromconfig)
       return false;
@@ -326,7 +326,7 @@ bool YoubotJoint::CheckConfig() {
   {
     auto ptr = GetTresholdSpeedForVelPIDRPM::InitSharedPtr(slaveIndex);
     center->SendMessage_(ptr);
-    int32_t fromconfig = int32_t(config.at("SpeedControlSwitchingThresholdRadPerSec") / 2. / M_PI * 60);
+    int32_t fromconfig = int32_t(config.at("SpeedControlSwitchingThresholdMotorRPM"));
     std::cout << " GetTresholdSpeedForVelPIDRPM: " << ptr->GetReplyValue() << "(=" << fromconfig << ")" << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
     if (ptr->GetReplyValue() != fromconfig)
       return false;
@@ -515,7 +515,7 @@ bool YoubotJoint::CheckConfig() {
   {
     auto ptr = GetMaxVelocityToReachTargetRPM::InitSharedPtr(slaveIndex);
     center->SendMessage_(ptr);
-    int32_t fromconfig = int32_t(config.at("MaximumVelocityToSetPositionRadPerSec") / 2. / M_PI * 60);
+    int32_t fromconfig = int32_t(config.at("MaximumVelocityToSetPositionMotorRPM"));
     std::cout << " GetMaxVelocityToReachTargetRPM: " << ptr->GetReplyValue() << "(=" << fromconfig << ")" << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
     if (ptr->GetReplyValue() != fromconfig)
       return false;
@@ -533,7 +533,7 @@ bool YoubotJoint::CheckConfig() {
   {
     auto ptr = GetVelThresholdHallFXRPM::InitSharedPtr(slaveIndex);
     center->SendMessage_(ptr);
-    int32_t fromconfig = int32_t(config.at("VelocityThresholdForHallFX") / 2. / M_PI * 60.);
+    int32_t fromconfig = int32_t(config.at("VelocityThresholdForHallFXMotorRPM"));
     std::cout << " GetVelThresholdHallFXRPM: " << ptr->GetReplyValue() << "(=" << fromconfig << ")" << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
     if (ptr->GetReplyValue() != fromconfig)
       return false;

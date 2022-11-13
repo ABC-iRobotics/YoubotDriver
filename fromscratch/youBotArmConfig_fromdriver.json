@@ -14,11 +14,11 @@
 		"InverseMovement" : 1,
 		"CalibrationDirection" : 0,
 		"CalibrationMaxCurrentAmpere" : 0.5,
-		"MaximumPositioningVelocityRadPerSec": 2.685, 
-		"MotorAccelerationRadPerSec2": 1.34256096307256,
+		"MaximumPositioningVelocityMotorRPM": 4000, 
+		"MotorAccelerationMotorRPMPerSec": 2000,
 		"RampGeneratorSpeedAndPositionControl" : 1,
-		"PositionControlSwitchingThresholdRadPerSec" : 0,
-		"SpeedControlSwitchingThresholdRadPerSec" : 0,
+		"PositionControlSwitchingThresholdMotorRPM" : 0,
+		"SpeedControlSwitchingThresholdMotorRPM" : 0,
 		"PParameterFirstParametersPositionControl" : 200,
 		"IParameterFirstParametersPositionControl" : 0,
 		"DParameterFirstParametersPositionControl" : 0,
@@ -39,9 +39,9 @@
 		"IParameterCurrentControl" : 1000,
 		"DParameterCurrentControl" : 0,
 		"IClippingParameterCurrentControl" : 1000,
-		"MaximumVelocityToSetPositionRadPerSec" : 0.33564024076814,
+		"MaximumVelocityToSetPositionMotorRPM" : 500,
 		"PositionTargetReachedDistance" : 5,
-		"VelocityThresholdForHallFX" : 1.34256096307256
+		"VelocityThresholdForHallFXMotorRPM" : 2000
 	},
 
 	"ShoulderJoint" : {
@@ -50,11 +50,11 @@
 		"InverseMovement" : 1,
 		"CalibrationDirection" : 0,
 		"CalibrationMaxCurrentAmpere" : 0.5,
-		"MaximumPositioningVelocityRadPerSec": 2.685, 
-		"MotorAccelerationRadPerSec2": 1.34256096307256,
+		"MaximumPositioningVelocityMotorRPM": 4000, 
+		"MotorAccelerationMotorRPMPerSec": 2000,
 		"RampGeneratorSpeedAndPositionControl" : 1,
-		"PositionControlSwitchingThresholdRadPerSec" : 0,
-		"SpeedControlSwitchingThresholdRadPerSec" : 0,
+		"PositionControlSwitchingThresholdMotorRPM" : 0,
+		"SpeedControlSwitchingThresholdMotorRPM" : 0,
 		"PParameterFirstParametersPositionControl" : 200,
 		"IParameterFirstParametersPositionControl" : 0,
 		"DParameterFirstParametersPositionControl" : 0,
@@ -75,9 +75,9 @@
 		"IParameterCurrentControl" : 1500,
 		"DParameterCurrentControl" : 0,
 		"IClippingParameterCurrentControl" : 1000,
-		"MaximumVelocityToSetPositionRadPerSec" : 0.33564024076814,
+		"MaximumVelocityToSetPositionMotorRPM" : 500,
 		"PositionTargetReachedDistance" : 5,
-		"VelocityThresholdForHallFX" : 1.34256096307256
+		"VelocityThresholdForHallFXMotorRPM" : 2000
 	},
 	
 	"ElbowJoint" : {
@@ -86,11 +86,11 @@
 		"InverseMovement" : 0,
 		"CalibrationDirection" : 0,
 		"CalibrationMaxCurrentAmpere" : 0.5,
-		"MaximumPositioningVelocityRadPerSec": 4.18879020478639, 
-		"MotorAccelerationRadPerSec2": 2.0943951023932,
+		"MaximumPositioningVelocityMotorRPM": 4000, 
+		"MotorAccelerationMotorRPMPerSec": 2000,
 		"RampGeneratorSpeedAndPositionControl" : 1,
-		"PositionControlSwitchingThresholdRadPerSec" : 0,
-		"SpeedControlSwitchingThresholdRadPerSec" : 0,
+		"PositionControlSwitchingThresholdMotorRPM" : 0,
+		"SpeedControlSwitchingThresholdMotorRPM" : 0,
 		"PParameterFirstParametersPositionControl" : 200,
 		"IParameterFirstParametersPositionControl" : 0,
 		"DParameterFirstParametersPositionControl" : 0,
@@ -111,9 +111,9 @@
 		"IParameterCurrentControl" : 1500,
 		"DParameterCurrentControl" : 0,
 		"IClippingParameterCurrentControl" : 1000,
-		"MaximumVelocityToSetPositionRadPerSec" : 0.523599,
+		"MaximumVelocityToSetPositionMotorRPM" : 500,
 		"PositionTargetReachedDistance" : 5,
-		"VelocityThresholdForHallFX" : 2.0943951023932
+		"VelocityThresholdForHallFXMotorRPM" : 2000
 	},
 
 	"WristPitchJoint" : {
@@ -122,11 +122,11 @@
 		"InverseMovement" : 1,
 		"CalibrationDirection" : 0,
 		"CalibrationMaxCurrentAmpere" : 0.5,
-		"MaximumPositioningVelocityRadPerSec": 5.89970451378365, 
-		"MotorAccelerationRadPerSec2": 2.94985225689182,
+		"MaximumPositioningVelocityMotorRPM": 4000, 
+		"MotorAccelerationMotorRPMPerSec": 2000,
 		"RampGeneratorSpeedAndPositionControl" : 1,
-		"PositionControlSwitchingThresholdRadPerSec" : 0,
-		"SpeedControlSwitchingThresholdRadPerSec" : 0,
+		"PositionControlSwitchingThresholdMotorRPM" : 0,
+		"SpeedControlSwitchingThresholdMotorRPM" : 0,
 		"PParameterFirstParametersPositionControl" : 200,
 		"IParameterFirstParametersPositionControl" : 0,
 		"DParameterFirstParametersPositionControl" : 0,
@@ -147,9 +147,9 @@
 		"IParameterCurrentControl" : 3000,
 		"DParameterCurrentControl" : 0,
 		"IClippingParameterCurrentControl" : 1000,
-		"MaximumVelocityToSetPositionRadPerSec" : 0.737463,
+		"MaximumVelocityToSetPositionMotorRPM" : 500,
 		"PositionTargetReachedDistance" : 5,
-		"VelocityThresholdForHallFX" : 2.94985225689182
+		"VelocityThresholdForHallFXMotorRPM" : 2000
 	},
 
 	"WristYawJoint" : {
@@ -158,11 +158,11 @@
 		"InverseMovement" : 1,
 		"CalibrationDirection" : 0,
 		"CalibrationMaxCurrentAmpere" : 0.5,
-		"MaximumPositioningVelocityRadPerSec": 5.89970451378365, 
-		"MotorAccelerationRadPerSec2": 2.94985,
+		"MaximumPositioningVelocityMotorRPM": 4000, 
+		"MotorAccelerationMotorRPMPerSec": 2000,
 		"RampGeneratorSpeedAndPositionControl" : 1,
-		"PositionControlSwitchingThresholdRadPerSec" : 0,
-		"SpeedControlSwitchingThresholdRadPerSec" : 0,
+		"PositionControlSwitchingThresholdMotorRPM" : 0,
+		"SpeedControlSwitchingThresholdMotorRPM" : 0,
 		"PParameterFirstParametersPositionControl" : 50,
 		"IParameterFirstParametersPositionControl" : 0,
 		"DParameterFirstParametersPositionControl" : 0,
@@ -183,8 +183,8 @@
 		"IParameterCurrentControl" : 4000,
 		"DParameterCurrentControl" : 0,
 		"IClippingParameterCurrentControl" : 1000,
-		"MaximumVelocityToSetPositionRadPerSec" : 0.737463,
+		"MaximumVelocityToSetPositionMotorRPM" : 500,
 		"PositionTargetReachedDistance" : 5,
-		"VelocityThresholdForHallFX" : 2.94985225689182
+		"VelocityThresholdForHallFXMotorRPM" : 2000
 	}
 }
