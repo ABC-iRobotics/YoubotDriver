@@ -98,29 +98,50 @@ int main(int argc, char *argv[])
   YoubotManipulator man(config, center);
   
   man.ConfigJoints();
+  /*
   if (man.CheckJointConfigs())
     std::cout << "OK!!" << std::endl;
-  
+  */
  // return 0;
- 
-  int ind = 4;
+  if (0) {
+    int ind = 3;
 
-  if (man.GetJoint(ind).IsInitialized())
-    std::cout << "isInitialized" << std::endl;
-
-
-  man.GetJoint(ind).StartInitialization();
-
-  //return 0;
-
-  for (int i=0;i<300;i++)
     if (man.GetJoint(ind).IsInitialized())
       std::cout << "isInitialized" << std::endl;
-  for (int i = 0; i < 400; i++)
-    man.GetJoint(ind).RotateLeftViaMailbox(0.5);
 
-  man.GetJoint(ind).StopViaMailbox();
+    man.GetJoint(ind).StartInitialization();
 
+    for (int i = 0; i < 300; i++)
+      if (man.GetJoint(ind).IsInitialized()) {
+        std::cout << "isInitialized" << std::endl;
+        break;
+      }
+
+    return 0;
+  }
+  man.InitializeAllJoints();
+
+
+  return 0;
+  {
+    int ind = 4;
+
+    if (man.GetJoint(ind).IsInitialized())
+      std::cout << "isInitialized" << std::endl;
+
+
+    man.GetJoint(ind).StartInitialization();
+
+    //return 0;
+
+    for (int i = 0; i < 300; i++)
+      if (man.GetJoint(ind).IsInitialized())
+        std::cout << "isInitialized" << std::endl;
+    for (int i = 0; i < 100; i++)
+      man.GetJoint(ind).RotateLeftViaMailbox(0.5);
+
+    man.GetJoint(ind).StopViaMailbox();
+  }
   return 0;
 
 
