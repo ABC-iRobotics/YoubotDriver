@@ -1,6 +1,6 @@
 #include "TMCLMailboxMessage.hpp"
 
-GetFirmware::GetFirmware(int slaveIndex) : MailboxMessage(slaveIndex) {
+GetFirmware::GetFirmware(int slaveIndex) : MailboxMessage(slaveIndex, 8, 8) {
   uint8_t* buff = getToSlaveBuff();
   *buff = (uint8_t)TMCL::Module::DRIVE;
   *(buff + 1) = (uint8_t)TMCL::Cmd::FIRMWARE_VERSION;

@@ -119,7 +119,7 @@ std::string SOEMMessageCenter::getSlaveName(int cnt) const {
   return ec_slave[cnt + 1].name;
 }
 
-SOEMMessageCenter::MailboxStatus SOEMMessageCenter::SendMessage_(VMailboxMessage::MailboxMessagePtr ptr) {
+SOEMMessageCenter::MailboxStatus SOEMMessageCenter::SendMessage_(MailboxMessage::MailboxMessagePtr ptr) {
   //copy from buffer
   int i = ptr->getSlaveIndex();
   {

@@ -29,7 +29,7 @@ class SOEMMessageCenter : public VMessageCenter {
 public:
   SOEMMessageCenter() {};
 
-  virtual MailboxStatus SendMessage_(VMailboxMessage::MailboxMessagePtr ptr) override;
+  virtual MailboxStatus SendMessage_(MailboxMessage::MailboxMessagePtr ptr) override;
 
   virtual bool OpenConnection(const std::string& adapterName) override;
 

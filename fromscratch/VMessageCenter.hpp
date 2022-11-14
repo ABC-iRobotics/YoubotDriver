@@ -12,7 +12,7 @@ public:
     RECEIVED_SUCCESSFUL = 4
   };
 
-  virtual MailboxStatus SendMessage_(VMailboxMessage::MailboxMessagePtr ptr) = 0;
+  virtual MailboxStatus SendMessage_(MailboxMessage::MailboxMessagePtr ptr) = 0;
 
   virtual bool OpenConnection(const std::string& adapterName) = 0;
 

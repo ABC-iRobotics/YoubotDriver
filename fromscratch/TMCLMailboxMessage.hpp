@@ -5,7 +5,7 @@
 #include "TMCLDefinitions.hpp"
 
 
-class GetFirmware : public MailboxMessage<8, 8> {
+class GetFirmware : public MailboxMessage {
 public:
   GetFirmware(int slaveIndex);
 
@@ -17,7 +17,7 @@ public:
 template <typename ValueType, TMCL::Module module_, TMCL::Cmd cmd,
   TMCL::AxisParam param= TMCL::AxisParam(0), uint32_t defaultValue=0,
   TMCL::MotorBank bankNumber= TMCL::MotorBank(0)>
-class TMCLTemplate : public MailboxMessage<8, 8> {
+class TMCLTemplate : public MailboxMessage {
   uint8_t& _toModuleAddress = toSlaveBuff[0];
   uint8_t& _toCommandNumber = toSlaveBuff[1];
   uint8_t& _toTypeNumber = toSlaveBuff[2];
@@ -36,7 +36,7 @@ class TMCLTemplate : public MailboxMessage<8, 8> {
   };
 
 public:
-  TMCLTemplate(unsigned int slaveIndex) : MailboxMessage(slaveIndex) {
+  TMCLTemplate(unsigned int slaveIndex) : MailboxMessage(slaveIndex, 8, 8) {
     _fromStatus = 0;
     _toModuleAddress = (uint8_t)module_;
     _toCommandNumber = (uint8_t)cmd;
@@ -48,7 +48,7 @@ public:
     toSlaveBuff[7] = defaultValue & 0xff;
   }
 
-  TMCLTemplate(unsigned int slaveIndex, ValueType value) : MailboxMessage(slaveIndex) {
+  TMCLTemplate(unsigned int slaveIndex, ValueType value) : MailboxMessage(slaveIndex, 8, 8) {
     _fromStatus = 0;
     _toModuleAddress = (uint8_t)module_;
     _toCommandNumber = (uint8_t)cmd;
