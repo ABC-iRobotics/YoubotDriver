@@ -2,7 +2,6 @@
 set(SOURCES 
     findcica.cpp
 	SOEMMessageCenter.cpp
-	MailboxMessage.cpp
 	TMCLMailboxMessage.cpp
 	TMCLDefinitions.cpp
 	VMessageCenter.cpp
