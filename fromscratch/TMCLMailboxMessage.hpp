@@ -342,4 +342,10 @@ typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GGP,
 typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::SGP,
   TMCL::AxisParam(90), 100> SetControllerTimeoutMS; // Write protected!
 
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
+  TMCL::AxisParam::TARGET_CURRENT, 0> SetTargetCurrentmA;
+
+typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+  TMCL::AxisParam::TARGET_CURRENT> GetTargetCurrentmA;
+
 #endif
