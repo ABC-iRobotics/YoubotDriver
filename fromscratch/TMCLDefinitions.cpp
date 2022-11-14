@@ -54,3 +54,25 @@ std::string TMCL::StatusErrorFlagsToString(uint32_t in) {
 	ss << " I2T_EXCEEDED";
   return ss.str();
 }
+
+std::string TMCL::ControllerModeToString(ControllerMode mode) {
+  switch (mode)
+  {
+  case TMCL::MOTOR_STOP:
+	return "MOTOR_STOP";
+  case TMCL::POSITION_CONTROL:
+	return "POSITION_CONTROL";
+  case TMCL::VELOCITY_CONTROL:
+	return "VELOCITY_CONTROL";
+  case TMCL::NO_MORE_ACTION:
+	return "NO_MORE_ACTION";
+  case TMCL::SET_POSITION_TO_REFERENCE:
+	return "SET_POSITION_TO_REFERENCE";
+  case TMCL::CURRENT_MODE:
+	return "CURRENT_MODE";
+  case TMCL::INITIALIZE:
+	return "INITIALIZE";
+  default:
+	break;
+  }
+}

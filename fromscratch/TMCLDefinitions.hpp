@@ -127,8 +127,7 @@ namespace TMCL {
 	NEED_CALIBRATION = 17 
   };
 
-  /*
-  enum YouBotJointControllerMode {
+  enum ControllerMode : uint8_t {
 	MOTOR_STOP = 0,
 	POSITION_CONTROL = 1,
 	VELOCITY_CONTROL = 2,
@@ -138,10 +137,10 @@ namespace TMCL {
 	INITIALIZE = 7
   };
 
-  enum ParameterType {
-	MOTOR_CONTOLLER_PARAMETER,
-	API_PARAMETER
-  };
+  std::string ControllerModeToString(ControllerMode mode);
+
+  /*
+  
 
   enum GripperErrorFlags {
 	STALL_GUARD_STATUS = 0x1,
