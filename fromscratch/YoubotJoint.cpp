@@ -645,3 +645,61 @@ std::string YoubotJoint::JointStatus::toString() const {
     ss << " I2T_EXCEEDED";
   return ss.str();
 }
+
+void YoubotJoint::ProcessReturn::Print() const {
+  std::cout << "encoderPosition: " << (int)encoderPosition << " currentmA: " << (int)currentmA << " motorVelocityRPM: " << (int)motorVelocityRPM << " status: " << status.toString() << " motorPWM: " << (int)motorPWM << std::endl;
+}
+
+YoubotJoint::ProcessReturn::ProcessReturn() : status(0) {};
+
+const YoubotJoint::ProcessReturn& YoubotJoint::GetProcessReturnData() {
+  static ProcessBuffer buffer;
+  center->GetProcessMsg(buffer, slaveIndex);
+  processReturn.encoderPosition = _toInt32(&buffer.buffer[0]);
+  processReturn.currentmA = _toInt32(&buffer.buffer[4]);
+  processReturn.motorVelocityRPM = _toInt32(&buffer.buffer[8]);
+  processReturn.status = _toInt32(&buffer.buffer[12]);
+  processReturn.motorPWM = _toInt32(&buffer.buffer[16]);
+  return processReturn;
+}
+
+void YoubotJoint::ReqVelocityMotorRPM(int32_t value) {
+  static ProcessBuffer toSet(5);
+  toSet.buffer[3] = value >> 24;
+  toSet.buffer[2] = value >> 16;
+  toSet.buffer[1] = value >> 8;
+  toSet.buffer[0] = value & 0xff;
+  toSet.buffer[4] = TMCL::ControllerMode::VELOCITY_CONTROL;
+  center->SetProcessMsg(toSet, slaveIndex);
+}
+
+void YoubotJoint::ReqMotorStopViaProcess() {
+  static ProcessBuffer toSet(5);
+  for (int i = 0; i < 4; i++)
+    toSet.buffer[i] = 0;
+  toSet.buffer[4] = TMCL::ControllerMode::MOTOR_STOP;
+  center->SetProcessMsg(toSet, slaveIndex);
+}
+
+void YoubotJoint::ReqSetPositionToReferenceViaProcess() {
+  static ProcessBuffer toSet(5);
+  for (int i = 0; i < 4; i++)
+    toSet.buffer[i] = 0;
+  toSet.buffer[4] = TMCL::ControllerMode::SET_POSITION_TO_REFERENCE;
+  center->SetProcessMsg(toSet, slaveIndex);
+}
+
+void YoubotJoint::ReqInitializationViaProcess() {
+  static ProcessBuffer toSet(5);
+  for (int i = 0; i < 4; i++)
+    toSet.buffer[i] = 0;
+  toSet.buffer[4] = TMCL::ControllerMode::INITIALIZE;
+  center->SetProcessMsg(toSet, slaveIndex);
+}
+
+double YoubotJoint::GetCurrentAViaMailbox() {
+  auto ptr = GetCurrent::InitSharedPtr(slaveIndex);
+  center->SendMessage_(ptr);
+  std::cout << " GetCurrent[mA]: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  return double(ptr->GetReplyValue()) / 1000.;
+}

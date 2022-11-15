@@ -56,6 +56,26 @@ public:
 
   };
 
+  struct ProcessReturn {
+    int32_t encoderPosition;
+    int32_t currentmA;
+    int32_t motorVelocityRPM;
+    JointStatus status;
+    int32_t motorPWM;
+    // double jointAngle, jointVelocityRad/s, torque, ...
+
+    ProcessReturn();
+    void Print() const;
+  };
+
+  int32_t _toInt32(uint8_t* buff) {
+    return buff[3] << 24 | buff[2] << 16 | buff[1] << 8 | buff[0];
+  }
+
+private:
+  ProcessReturn processReturn;
+
+public:
   YoubotJoint(int slaveIndex, const NameValueMap& config, VMessageCenter* center);
 
   void ConfigParameters();
@@ -78,6 +98,17 @@ public:
 
   bool IsInitialized();
 
+  const ProcessReturn& GetProcessReturnData();
+
+  void ReqVelocityMotorRPM(int32_t value);
+
+  void ReqMotorStopViaProcess();
+
+  void ReqSetPositionToReferenceViaProcess();
+
+  void ReqInitializationViaProcess();
+
+  double GetCurrentAViaMailbox();
 };
 
 #endif
