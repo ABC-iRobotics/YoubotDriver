@@ -8,6 +8,7 @@ set(SOURCES
 	YoubotJoint.cpp
 	YoubotConfig.cpp
 	YoubotManipulator.cpp
+	ProcessBuffer.cpp
 	)
 
 set(HEADERS
@@ -19,6 +20,7 @@ set(HEADERS
 	YoubotJoint.hpp
 	YoubotConfig.hpp
 	YoubotManipulator.hpp
+	ProcessBuffer.hpp
 	)
 
 add_executable(fromscratch ${SOURCES} ${HEADERS})
