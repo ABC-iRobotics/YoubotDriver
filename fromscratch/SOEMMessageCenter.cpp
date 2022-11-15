@@ -167,19 +167,34 @@ int SOEMMessageCenter::SetProcessMsg(const ProcessBuffer& buffer, uint8_t slaveN
 }
 
 void SOEMMessageCenter::ExchangeProcessMsg() {
-  for (int i = 0; i < getSlaveNum(); i++) {
-    auto toSend = processBuffers[i].toSlave.Get();
-    toSend.CopyTo(ec_slave[i + 1].outputs, ec_slave[i + 1].Obytes);
-  }
+  for (int i = 0; i < getSlaveNum(); i++)
+    processBuffers[i].toSlave.Get().CopyTo(ec_slave[i + 1].outputs, ec_slave[i + 1].Obytes);
   {
+    static long communicationErrors = 0;
+    static long maxCommunicationErrors = 100;
     std::lock_guard<std::mutex> lock(ethercatComm);
-    int a = ec_send_processdata();
-    int b = ec_receive_processdata(EC_TIMEOUTRET);
+    ec_send_processdata();
+    if (ec_receive_processdata(EC_TIMEOUTRET)<=0) { //TODO error handling...
+      if (communicationErrors == 0)
+        LOG(warning) << "Receiving data failed"; 
+      communicationErrors++;
+    }
+    else
+      communicationErrors = 0;
+    if (communicationErrors > maxCommunicationErrors) {
+      LOG(error) << "Lost EtherCAT connection";
+      exit;
+    }
+    /*
+    if (ec_iserror()) {
+      std::cout << ec_iserror() << std::endl;
+      LOG(warning) << "there is an error in the soem driver" << std::endl;
+    }
+    */
   }
   for (int i = 0; i < getSlaveNum(); i++) {
     uint8_t buff_size = MIN((uint8_t)ec_slave[i + 1].Ibytes, processBuffers[i].fromMsgSize);
     ProcessBuffer saved(buff_size, ec_slave[i + 1].inputs);
     processBuffers[i].fromSlave.Set(saved);
-    //saved.Print();
   }
 }
