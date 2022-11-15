@@ -86,8 +86,7 @@ bool SOEMMessageCenter::OpenConnection(const std::string& adapterName) {
   else
     throw std::runtime_error("No EtherCAT slave could be found");
 
-  for (int i = 0; i < ec_slavecount; i++)
-    mailboxBuffers.push_back({});
+  mailboxBuffers = new MailboxBuffers[ec_slavecount];
 
   opened = true;
   return opened;
@@ -103,6 +102,8 @@ void SOEMMessageCenter::CloseConnection() {
   //stop SOEM, close socket
   ec_close();
 
+
+  delete[] mailboxBuffers;
   opened = false;
 }
 
