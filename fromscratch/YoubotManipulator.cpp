@@ -34,7 +34,8 @@ bool YoubotManipulator::CheckJointConfigs() {
 }
 
 void YoubotManipulator::InitializeAllJoints() {
-	for (auto& it : joints) {
+	for (auto& it : joints)
+	  if (!it.IsInitialized()) {
 		auto status = it.GetJointStatusViaMailbox();
 		std::cout << status.toString() << std::endl;
 		it.ResetTimeoutViaMailbox();
@@ -44,9 +45,11 @@ void YoubotManipulator::InitializeAllJoints() {
 		it.StartInitialization();
 
 		for (int i = 0; i < 300; i++)
-			if (it.IsInitialized()) {
-				std::cout << " joint isInitialized" << std::endl;
-				break;
-			}
+		  if (it.IsInitialized()) {
+			std::cout << " joint isInitialized" << std::endl;
+			break;
+		  }
+		if (!it.IsInitialized())
+		  throw std::runtime_error("One joint is not initialized and cannot be done it...");
 	}
 }
