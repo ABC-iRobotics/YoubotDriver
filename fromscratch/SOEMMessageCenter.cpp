@@ -87,6 +87,7 @@ bool SOEMMessageCenter::OpenConnection(const std::string& adapterName) {
     throw std::runtime_error("No EtherCAT slave could be found");
 
   mailboxBuffers = new MailboxBuffers[ec_slavecount];
+  processBuffers = new ProcessBuffers[ec_slavecount];
 
   opened = true;
   return opened;
@@ -104,6 +105,8 @@ void SOEMMessageCenter::CloseConnection() {
 
 
   delete[] mailboxBuffers;
+  delete[] processBuffers;
+
   opened = false;
 }
 
@@ -148,4 +151,35 @@ SOEMMessageCenter::MailboxStatus SOEMMessageCenter::SendMessage_(MailboxMessage:
       ptr->getFromSlaveBuffSize());
   }
   return status;
+}
+
+void SOEMMessageCenter::GetProcessMsg(ProcessBuffer& buff, uint8_t slaveNumber) const {
+  buff = processBuffers[slaveNumber].fromSlave.Get();
+}
+
+void SOEMMessageCenter::SetProcessFromSlaveSize(uint8_t size, uint8_t slaveNumber) {
+  processBuffers[slaveNumber].fromMsgSize = size;
+}
+
+int SOEMMessageCenter::SetProcessMsg(const ProcessBuffer& buffer, uint8_t slaveNumber) {
+  processBuffers[slaveNumber].toSlave.Set(buffer);
+  return buffer.Size();
+}
+
+void SOEMMessageCenter::ExchangeProcessMsg() {
+  for (int i = 0; i < getSlaveNum(); i++) {
+    auto toSend = processBuffers[i].toSlave.Get();
+    toSend.CopyTo(ec_slave[i + 1].outputs, ec_slave[i + 1].Obytes);
+  }
+  {
+    std::lock_guard<std::mutex> lock(ethercatComm);
+    int a = ec_send_processdata();
+    int b = ec_receive_processdata(EC_TIMEOUTRET);
+  }
+  for (int i = 0; i < getSlaveNum(); i++) {
+    uint8_t buff_size = MIN((uint8_t)ec_slave[i + 1].Ibytes, processBuffers[i].fromMsgSize);
+    ProcessBuffer saved(buff_size, ec_slave[i + 1].inputs);
+    processBuffers[i].fromSlave.Set(saved);
+    //saved.Print();
+  }
 }

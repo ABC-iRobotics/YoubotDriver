@@ -4,6 +4,7 @@
 #include <string>
 #include <mutex>
 #include <vector>
+#include "DataObjectLockFree.hpp"
 
 extern "C" {
 #include "ethercattype.h"
@@ -13,6 +14,10 @@ extern "C" {
 #include "MailboxMessage.hpp"
 #include "VMessageCenter.hpp"
 
+#include <iostream>
+
+#define MIN(a,b) a<b?a:b
+
 class SOEMMessageCenter : public VMessageCenter {
   // For mailbox messages
   std::mutex slaveBufferMutexes[50];
@@ -20,6 +25,13 @@ class SOEMMessageCenter : public VMessageCenter {
     ec_mbxbuft fromSlave, toSlave;
   };
   MailboxBuffers* mailboxBuffers;
+
+  // For process messages
+  struct ProcessBuffers {
+    DataObjectLockFree<ProcessBuffer> toSlave, fromSlave;
+    uint8_t fromMsgSize = 0;
+  };
+  ProcessBuffers* processBuffers;
 
   // Mutex for ethercat communications in general
   std::mutex ethercatComm;
@@ -44,6 +56,13 @@ public:
 
   virtual MailboxStatus SendMessage_(MailboxMessage::MailboxMessagePtr ptr) override;
 
+  virtual void GetProcessMsg(ProcessBuffer& buff, uint8_t slaveNumber) const override;
+
+  virtual void SetProcessFromSlaveSize(uint8_t size, uint8_t slaveNumber) override;
+
+  virtual int SetProcessMsg(const ProcessBuffer& buffer, uint8_t slaveNumber) override;
+
+  virtual void ExchangeProcessMsg() override;
 };
 
 #endif
