@@ -232,7 +232,7 @@ inline void DataObjectLockFree<T>::Set(const DataType& push)
   PtrType wrote_ptr = write_ptr;
   // if next field is occupied (by read_ptr or counter),
   // go to next and check again...
-  while (&write_ptr->next->counter_ != 0 || write_ptr->next == read_ptr)
+  while (write_ptr->next->counter_ != 0 || write_ptr->next == read_ptr)
   {
     write_ptr = write_ptr->next;
     if (write_ptr == wrote_ptr)
