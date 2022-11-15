@@ -148,9 +148,6 @@ public:
       * @param push The data which must be set.
       */
   virtual void Set(const DataType& push);
-
-private:
-  virtual void data_sample(const DataType& sample);
 };
 
 
@@ -169,7 +166,13 @@ inline DataObjectLockFree<T>::DataObjectLockFree(const T& initial_value, unsigne
   data = new DataBuf[BUF_LEN];
   read_ptr = &data[0];
   write_ptr = &data[1];
-  data_sample(initial_value);
+  // prepare the buffer.
+  for (unsigned int i = 0; i < BUF_LEN - 1; ++i) {
+    data[i].data = initial_value;
+    data[i].next = &data[i + 1];
+  }
+  data[BUF_LEN - 1].data = initial_value;
+  data[BUF_LEN - 1].next = &data[0];
 }
 
 template<class T>
@@ -239,17 +242,6 @@ inline void DataObjectLockFree<T>::Set(const DataType& push)
   // we will be able to move, so replace read_ptr
   read_ptr = wrote_ptr;
   write_ptr = write_ptr->next; // we checked this in the while loop
-}
-
-template<class T>
-inline void DataObjectLockFree<T>::data_sample(const DataType& sample) {
-  // prepare the buffer.
-  for (unsigned int i = 0; i < BUF_LEN - 1; ++i) {
-    data[i].data = sample;
-    data[i].next = &data[i + 1];
-  }
-  data[BUF_LEN - 1].data = sample;
-  data[BUF_LEN - 1].next = &data[0];
 }
 
 
