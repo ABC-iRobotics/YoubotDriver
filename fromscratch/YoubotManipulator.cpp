@@ -12,6 +12,10 @@ YoubotManipulator::YoubotManipulator(const YoubotConfig& config, VMessageCenter*
 	  throw std::runtime_error("Unknown module name " + center->getSlaveName(config.jointIndices[i]));
 	joints.push_back({ config.jointIndices[i], config.jointConfigs[i], center });
   }
+
+  // Set ProcessMsgFromSlave sizes
+  for (int i = 0; i < 5; i++)
+	center->SetProcessFromSlaveSize(20, config.jointIndices[i]);
 }
 
 YoubotJoint& YoubotManipulator::GetJoint(int i) {
