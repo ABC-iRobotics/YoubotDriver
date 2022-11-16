@@ -75,4 +75,5 @@ std::string TMCL::ControllerModeToString(ControllerMode mode) {
   default:
 	break;
   }
+  return "NOT_EXPECTED_INPUT";
 }
