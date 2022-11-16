@@ -8,10 +8,15 @@ GetFirmware::GetFirmware(int slaveIndex) : MailboxMessage(slaveIndex, 8, 8) {
   *(buff + 3) = 0;
 }
 
+#include <iostream>
+
 void GetFirmware::GetOutput(int& controllernum, int& firmwarenum) const {
   char* ptr, * ptr2;
   controllernum = strtol((const char*)getFromSlaveBuff(), &ptr, 10);
-  firmwarenum = strtol(ptr + 1, &ptr2, 10);
+  char buff[4];
+  memcpy(buff, ptr + 1, 3);
+  buff[3] = 'V';
+  firmwarenum = strtol(buff, &ptr2, 10);
 }
 
 std::shared_ptr<GetFirmware> GetFirmware::InitSharedPtr(int slaveIndex) {
