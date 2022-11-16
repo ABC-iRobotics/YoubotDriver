@@ -1,144 +1,104 @@
-/****************************************************************
- *
- * Copyright (c) 2011
- * All rights reserved.
- *
- * Hochschule Bonn-Rhein-Sieg
- * University of Applied Sciences
- * Computer Science Department
- *
- * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- *
- * Author:
- * Jan Paulus, Nico Hochgeschwender, Michael Reckhaus, Azamat Shakhimardanov
- * Supervised by:
- * Gerhard K. Kraetzschmar
- *
- * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- *
- * This sofware is published under a dual-license: GNU Lesser General Public
- * License LGPL 2.1 and BSD license. The dual-license implies that users of this
- * code may choose which terms they prefer.
- *
- * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Hochschule Bonn-Rhein-Sieg nor the names of its
- *       contributors may be used to endorse or promote products derived from
- *       this software without specific prior written permission.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License LGPL as
- * published by the Free Software Foundation, either version 2.1 of the
- * License, or (at your option) any later version or the BSD license.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License LGPL and the BSD license for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License LGPL and BSD license along with this program.
- *
- ****************************************************************/
-
+#include"spdlog/spdlog.h"
+#include"spdlog/async.h"
+#include"spdlog/sinks/basic_file_sink.h"
+#include"spdlog/details/os.h"
+#include"spdlog/details/fmt_helper.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
+#include <spdlog/fmt/ostr.h>
 #include "Logger.hpp"
 
-namespace youbot {
-  
-  bool Logger::toConsole = true;
-  bool Logger::toFile = false;
-  bool Logger::toROS = false;
-  severity_level Logger::logginLevel = info;
-
-  Logger::Logger(const std::string &funcName, const int &lineNo, const std::string &fileName, severity_level level) {
-    
-    this->level = level;
-    if (toConsole || toFile) {
-      if (level >= logginLevel) {
-        print = true;
-
-        switch (level) {
-          case trace:
-            out << "Trace" << ": ";
-            break;
-          case debug:
-            out << "Debug" << ": ";
-            break;
-          case info:
-            out << "Info" << ": ";
-            break;
-          case warning:
-            out << "Warning" << ": ";
-            break;
-          case error:
-            out << "Error" << ": ";
-            break;
-          case fatal:
-            out << "Fatal" << ": ";
-            break;
-          default:
-            break;
-        }
-        //  out << "function " << funcName << ": ";
-        //  out << "line " << lineNo << ": ";
-        //  out << "fileName " << fileName << ": ";
-        //  out << "time " << boost::posix_time::microsec_clock::local_time() << ": ";
-      } else {
-        print = false;
-      }
-    } else {
-      print = false;
-    }
-
+std::string toString(Log::LogLevel level) {
+  switch (level)
+  {
+  case Log::trace:
+    return "trace";
+  case Log::debug:
+    return "debug";
+  case Log::info:
+    return "info";
+  case Log::warning:
+    return "warning";
+  case Log::error:
+    return "error";
+  case Log::fatal:
+    return "fatal";
   }
+  return "nothing";
+};
 
-  Logger::~Logger() {
-    //end of message
-    if (toConsole && print) {
-      printf("%s\n", out.str().c_str());
-    //  std::cout << out.str() << std::endl;
-    }
+std::shared_ptr<spdlog::logger> spd_logger = NULL;
+std::shared_ptr<spdlog::sinks::sink> stdout_sink = NULL, file_sink = NULL;
 
-    if (toFile && print) {
-      std::fstream filestr;
-      filestr.open("log.txt", std::fstream::out | std::fstream::app);
-      filestr << out.str() << std::endl;
-      filestr.close();
-    }
-#ifdef USE_ROS_LOGGING
-    if (toROS) {
-      switch (level) {
-        case trace:
-          ROS_DEBUG(out.str().c_str());
-          break;
-        case debug:
-          ROS_DEBUG(out.str().c_str());
-          break;
-        case info:
-          ROS_INFO(out.str().c_str());
-          break;
-        case warning:
-          ROS_WARN(out.str().c_str());
-          break;
-        case error:
-          ROS_ERROR(out.str().c_str());
-          break;
-        case fatal:
-          ROS_FATAL(out.str().c_str());
-          break;
-        default:
-          break;
-      }
-    }
-#endif
-  }
+Log::LogLevel fromString(const std::string& name) {
+  if (name == "trace")
+    return Log::trace;
+  if (name == "debug")
+    return Log::debug;
+  if (name == "info")
+    return Log::info;
+  if (name == "warning")
+    return Log::warning;
+  if (name == "error")
+    return Log::error;
+  if (name == "fatal")
+    return Log::fatal;
+  if (name == "off")
+    return Log::off;
+  return Log::n_levels;
+}
 
-} // namespace youbot
+void Log::Setup(const std::map<std::string, std::string>& settings) {
+  std::string filename;
+  if (settings.find("LogFileName") != settings.end())
+    filename = settings.at("LogFileName");
+  else
+    filename = "log_output_" + std::to_string(
+      std::chrono::system_clock::now().time_since_epoch().count()) + ".log";
+  spdlog::init_thread_pool(8192, 1);
+  stdout_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt >();
+  file_sink = std::make_shared < spdlog::sinks::basic_file_sink_mt>(filename.c_str());
+  std::vector<spdlog::sink_ptr> sinks{ stdout_sink, file_sink };
+  spd_logger = std::make_shared<spdlog::async_logger>("youbot", sinks.begin(), sinks.end(), spdlog::thread_pool(), spdlog::async_overflow_policy::block);
+  spdlog::register_logger(spd_logger);
+  if (settings.find("ConsoleLevel") != settings.end())
+    Log::ConsoleSetup(fromString(settings.at("ConsoleLevel")));
+  else
+    Log::ConsoleSetup(Log::trace);
+  if (settings.find("LogFileLevel") != settings.end())
+    Log::FileSetup(fromString(settings.at("LogFileLevel")));
+  else
+    Log::FileSetup(Log::trace);
+}
+
+void Log::ConsoleSetup(Log::LogLevel print_over) {
+  if (stdout_sink)
+    stdout_sink->set_level(spdlog::level::level_enum(print_over));
+}
+
+void Log::FileSetup(Log::LogLevel print_over) {
+  if (file_sink)
+    file_sink->set_level(spdlog::level::level_enum(print_over));
+}
+
+void Log::DropLogger() {
+  spdlog::drop_all();
+  stdout_sink = NULL;
+  file_sink = NULL;
+  spd_logger = NULL;
+}
+
+void log(const std::string& funcName, const int& lineNo,
+  const std::string& fileName, Log::LogLevel level, const std::string& message) {
+  if (spd_logger)
+    spd_logger->log(spdlog::level::level_enum(level), "'{}' sent by '{}' at line {} of {}", message, funcName, lineNo, fileName);
+}
+
+void log(const std::string& funcName, Log::LogLevel level, const std::string& message) {
+  if (spd_logger)
+    spd_logger->log(spdlog::level::level_enum(level), "'{}' sent by '{}'}", message, funcName);
+}
+
+void log(Log::LogLevel level, const std::string& message) {
+  if (spd_logger)
+    spd_logger->log(spdlog::level::level_enum(level), "'{}'", message);
+}

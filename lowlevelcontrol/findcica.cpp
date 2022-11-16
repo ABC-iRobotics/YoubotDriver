@@ -6,8 +6,26 @@
 #include "Time.hpp"
 #include "YoubotManipulator.hpp"
 
+#include "Logger.hpp"
+
 int main(int argc, char *argv[])
 {
+  // Get Configfile
+  YoubotConfig config("C:/Users/kutij/Desktop/myYouBotDriver/src/lowlevelcontrol/youBotArmConfig_fromKeisler.json");
+    //youBotArmConfig_fromfactory.json");
+    //youBotArmConfig_fromMoveIt.json");
+    //youBotArmConfig_fromKeisler.json");
+  
+  // Initialize logger
+  Log::Setup(config.logConfig);
+
+  log(_A, _B, _C, Log::error, "asdfg");
+
+  std::cout << "done" << std::endl;
+  //drop();
+  
+  return 0;
+  // Find appropriate ethernet adapter and open connection
   {
     char name[1000];
     printf("sg\n");
@@ -21,10 +39,6 @@ int main(int argc, char *argv[])
       return -1;
   }
   auto center = VMessageCenter::GetSingleton();
-  YoubotConfig config("C:/Users/kutij/Desktop/myYouBotDriver/src/fromscratch/youBotArmConfig_fromKeisler.json");
-  //youBotArmConfig_fromfactory.json");
-  //youBotArmConfig_fromMoveIt.json");
-  //youBotArmConfig_fromKeisler.json");
  
   YoubotManipulator man(config, center);
   

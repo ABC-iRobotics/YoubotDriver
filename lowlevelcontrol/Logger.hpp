@@ -1,102 +1,53 @@
-/****************************************************************
- *
- * Copyright (c) 2011
- * All rights reserved.
- *
- * Hochschule Bonn-Rhein-Sieg
- * University of Applied Sciences
- * Computer Science Department
- *
- * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- *
- * Author:
- * Jan Paulus, Nico Hochgeschwender, Michael Reckhaus, Azamat Shakhimardanov
- * Supervised by:
- * Gerhard K. Kraetzschmar
- *
- * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- *
- * This sofware is published under a dual-license: GNU Lesser General Public
- * License LGPL 2.1 and BSD license. The dual-license implies that users of this
- * code may choose which terms they prefer.
- *
- * +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the Hochschule Bonn-Rhein-Sieg nor the names of its
- *       contributors may be used to endorse or promote products derived from
- *       this software without specific prior written permission.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License LGPL as
- * published by the Free Software Foundation, either version 2.1 of the
- * License, or (at your option) any later version or the BSD license.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License LGPL and the BSD license for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License LGPL and BSD license along with this program.
- *
- ****************************************************************/
-
-#ifndef YOUBOT_LOGGER_HPP
-#define	YOUBOT_LOGGER_HPP
+#ifndef LOGGER_HPP
+#define	LOGGER_HPP
 
 #include <iostream>
-#include <fstream>
-#include <sstream>
+#include <map>
 
-namespace youbot {
+#define _A __PRETTY_FUNCTION__
+#define _B __LINE__
+#define _C __FILE__
 
-    enum severity_level {
-        trace,
-        debug,
-        info,
-        warning,
-        error,
-        fatal
-    };
-    
-    ///////////////////////////////////////////////////////////////////////////////
-    /// Implementation logging to console and to a file
-    ///////////////////////////////////////////////////////////////////////////////
-    class Logger {
-    private:
-        std::stringstream out;
-        bool print;
-        severity_level level;
-    public:
+namespace Log {
 
-        Logger(const std::string &funcName, const int &lineNo, const std::string &fileName, severity_level level);
-        ~Logger();
-        
-        static bool toConsole;
-        static bool toFile;
-        static bool toROS;
-        static severity_level logginLevel;
+  enum LogLevel {
+	trace = 0,
+	debug = 1,
+	info = 2,
+	warning = 3,
+	error = 4,
+	fatal = 5,
+	off = 6,
+	n_levels = 7
+  };
 
-        template <class T>
-        Logger & operator<<(const T &v) {
-            out << v;
-            return *this;
-        }
-    };
+  void Setup(const std::map<std::string, std::string>& settings);
 
+  void ConsoleSetup(LogLevel print_over);
 
-#define LOG(level) Logger(__PRETTY_FUNCTION__, __LINE__ , __FILE__, level)
+  void FileSetup(LogLevel print_over);
 
+  void DropLogger();
+};
 
-} // namespace youbot
+void log(const std::string& funcName, const int& lineNo,
+  const std::string& fileName, Log::LogLevel level, const std::string& message);
 
-#endif	/* YOUBOT_LOGGER_HPP */
+void log(const std::string& funcName, Log::LogLevel level, const std::string& message);
+
+void log(Log::LogLevel level, const std::string& message);
+
+enum temp {
+  trace = 1,
+  debug = 2,
+  info = 3,
+  warning = 4,
+  error = 5,
+  fatal = 6,
+  nothing = 7
+};
+
+#define LOG(level) std::cout
+
+#endif
 
