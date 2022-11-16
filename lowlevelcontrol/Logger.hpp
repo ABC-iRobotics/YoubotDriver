@@ -1,8 +1,8 @@
 #ifndef LOGGER_HPP
 #define	LOGGER_HPP
 
-#include <iostream>
 #include <map>
+#include <string>
 
 #define _A __PRETTY_FUNCTION__
 #define _B __LINE__
@@ -36,18 +36,6 @@ void log(const std::string& funcName, const int& lineNo,
 void log(const std::string& funcName, Log::LogLevel level, const std::string& message);
 
 void log(Log::LogLevel level, const std::string& message);
-
-enum temp {
-  trace = 1,
-  debug = 2,
-  info = 3,
-  warning = 4,
-  error = 5,
-  fatal = 6,
-  nothing = 7
-};
-
-#define LOG(level) std::cout
 
 #endif
 

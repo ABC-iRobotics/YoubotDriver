@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <string.h>
+#include <string>
 
 #include "adapters.hpp"
 #include "Time.hpp"
@@ -26,9 +27,9 @@ int main(int argc, char *argv[])
     char name[1000];
     printf("sg\n");
     if (findYouBotEtherCatAdapter(name))
-      printf("\n\n\nAdapter found: %s\n", name);
+      log(Log::info, "Adapter found:" + std::string(name));
     else {
-      printf("\n\n\nAdapter with turned on youBot arm NOT found!\n");
+      log(Log::fatal, "Adapter with turned on youBot arm NOT found!");
       return -1;
     }
     if (!VMessageCenter::GetSingleton()->OpenConnection(name))
