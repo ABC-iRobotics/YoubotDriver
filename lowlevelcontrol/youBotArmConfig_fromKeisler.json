@@ -8,6 +8,12 @@
 		"Gripper" : 0
 	},
 	
+	"Logging" : {
+		"ConsoleLevel" : "warning",
+		"LogFileLevel" : "info",
+		"_comment" : "trace,debug,info,warning,error,fatal,off,n_levels can be added LogFileName"
+	},
+
 	"WaistJoint" : {
 		"GearRatio" : 0.006410256410256,
 		"TorqueConstant_NmPerAmpere" : 0.0335,

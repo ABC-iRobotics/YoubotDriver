@@ -74,4 +74,8 @@ YoubotConfig::YoubotConfig(const std::string& filename) {
       wristYawConfig.insert({ it.key(),it.value() });
   else
     throw std::runtime_error("WristYawJoint is not found.");
+
+  if (config.find("Logging") != config.end())
+    for (auto& it : config.at("Logging").items())
+      logConfig.insert({ it.key(),it.value() });
 }

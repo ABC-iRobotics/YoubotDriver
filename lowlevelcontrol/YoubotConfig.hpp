@@ -23,6 +23,8 @@ struct YoubotConfig {
   NameValueMap& wristPitchConfig = jointConfigs[3];
   NameValueMap& wristYawConfig = jointConfigs[4];
 
+  std::map<std::string, std::string> logConfig;
+
   YoubotConfig(const std::string& filename);
 };
 
