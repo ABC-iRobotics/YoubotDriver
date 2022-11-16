@@ -61,7 +61,5 @@ ELSE (Boost_FOUND)
   MESSAGE(STATUS "ERROR: Boost not found")
 ENDIF (Boost_FOUND)
 
-
-add_subdirectory(fromscratch)
 add_subdirectory(oldshit)
 

@@ -15,7 +15,7 @@ void YoubotJoint::_getFirmwareVersion() {
     throw std::runtime_error("Not supported joint controller/firmware type");
 }
 
-YoubotJoint::YoubotJoint(int slaveIndex, const NameValueMap& config, VMessageCenter* center)
+YoubotJoint::YoubotJoint(int slaveIndex, const std::map<std::string, double>& config, VMessageCenter* center)
     : slaveIndex(slaveIndex), center(center), config(config) {
   _getFirmwareVersion();
 }

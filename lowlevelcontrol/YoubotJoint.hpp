@@ -2,12 +2,12 @@
 #define YOUBOT_JOINT_HPP
 
 #include "VMessageCenter.hpp"
-#include "YoubotConfig.hpp"
+#include <map>
 
 class YoubotJoint {
   int slaveIndex;
   VMessageCenter* center;
-  const NameValueMap config;
+  std::map<std::string, double> config;
 
   // Read during configuration
   uint32_t ticksperround = -1;
@@ -70,7 +70,7 @@ private:
   ProcessReturn processReturn;
 
 public:
-  YoubotJoint(int slaveIndex, const NameValueMap& config, VMessageCenter* center);
+  YoubotJoint(int slaveIndex, const std::map<std::string, double>& config, VMessageCenter* center);
 
   void ConfigParameters();
 
