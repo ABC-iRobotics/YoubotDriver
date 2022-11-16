@@ -1,5 +1,9 @@
 #include "YoubotJoint.hpp"
+#include "TMCLMailboxMessage.hpp"
+#include "Time.hpp"
+#include <iostream>
 #include <sstream>
+#include <stdexcept>
 
 void YoubotJoint::_getFirmwareVersion() {
   auto ptr = GetFirmware::InitSharedPtr(slaveIndex);
@@ -476,14 +480,14 @@ bool YoubotJoint::CheckConfig() {
   return true;
 }
 
-void YoubotJoint::RotateRightViaMailbox(double speedJointRadPerSec) {
+void YoubotJoint::RotateJointRightViaMailbox(double speedJointRadPerSec) {
   auto ptr = RotateRightMotorRPM::InitSharedPtr(slaveIndex, speedJointRadPerSec / gearRatio / 2. / M_PI * 60.);
   center->SendMessage_(ptr);
   std::cout << " RotateRightMotorRPM: " << ptr->GetReplyValue() <<
     " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
 }
 
-void YoubotJoint::RotateLeftViaMailbox(double speedJointRadPerSec) {
+void YoubotJoint::RotateJointLeftViaMailbox(double speedJointRadPerSec) {
   auto ptr = RotateLeftMotorRPM::InitSharedPtr(slaveIndex, speedJointRadPerSec / gearRatio / 2. / M_PI * 60.);
   center->SendMessage_(ptr);
   std::cout << " RotateLeftMotorRPM: " << ptr->GetReplyValue() <<
@@ -702,4 +706,31 @@ double YoubotJoint::GetCurrentAViaMailbox() {
   center->SendMessage_(ptr);
   std::cout << " GetCurrent[mA]: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
   return double(ptr->GetReplyValue()) / 1000.;
+}
+
+void YoubotJoint::RotateMotorRightViaMailbox(int32_t speedMotorRPM) {
+  auto ptr = RotateRightMotorRPM::InitSharedPtr(slaveIndex, speedMotorRPM);
+  center->SendMessage_(ptr);
+  std::cout << " RotateRightMotorRPM: " << ptr->GetReplyValue() <<
+    " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+}
+
+void YoubotJoint::RotateMotorLeftViaMailbox(int32_t speedMotorRPM) {
+  auto ptr = RotateLeftMotorRPM::InitSharedPtr(slaveIndex, speedMotorRPM);
+  center->SendMessage_(ptr);
+  std::cout << " RotateLeftMotorRPM: " << ptr->GetReplyValue() <<
+    " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+}
+
+double YoubotJoint::GetJointVelocityRadPerSec() {
+  auto ptr = GetActualSpeedMotorRPM::InitSharedPtr(slaveIndex);
+  center->SendMessage_(ptr);
+  std::cout << " GetActualSpeedMotorRPM: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
+  return double(ptr->GetReplyValue()) * 2. * M_PI / 60. * gearRatio;
+}
+
+void YoubotJoint::SetTargetCurrentA(double current) {
+  auto ptr = SetTargetCurrentmA::InitSharedPtr(slaveIndex, int32_t(current * 1000.));
+  center->SendMessage_(ptr);
+  std::cout << " SetTargetCurrentmA[mA]: " << ptr->GetReplyValue() << " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
 }

@@ -1,4 +1,6 @@
 #include "YoubotManipulator.hpp"
+#include <iostream>
+#include <stdexcept>
 
 YoubotManipulator::YoubotManipulator(const YoubotConfig& config, VMessageCenter* center)
   : config(config), center(center) {

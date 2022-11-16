@@ -2,12 +2,7 @@
 #define YOUBOT_JOINT_HPP
 
 #include "VMessageCenter.hpp"
-#include "TMCLMailboxMessage.hpp"
-#include "Time.hpp"
-#include <iostream>
-
 #include "YoubotConfig.hpp"
-
 
 class YoubotJoint {
   int slaveIndex;
@@ -53,7 +48,6 @@ public:
     std::string toString() const;
 
     JointStatus(uint32_t value) : value(value) {}
-
   };
 
   struct ProcessReturn {
@@ -82,9 +76,9 @@ public:
 
   bool CheckConfig();
 
-  void RotateRightViaMailbox(double speedJointRadPerSec);
+  void RotateJointRightViaMailbox(double speedJointRadPerSec);
 
-  void RotateLeftViaMailbox(double speedJointRadPerSec);
+  void RotateJointLeftViaMailbox(double speedJointRadPerSec);
 
   void StopViaMailbox();
 
@@ -109,6 +103,14 @@ public:
   void ReqInitializationViaProcess();
 
   double GetCurrentAViaMailbox();
+
+  void RotateMotorRightViaMailbox(int32_t speedMotorRPM);
+
+  void RotateMotorLeftViaMailbox(int32_t speedMotorRPM);
+
+  double GetJointVelocityRadPerSec();
+
+  void SetTargetCurrentA(double current);
 };
 
 #endif
