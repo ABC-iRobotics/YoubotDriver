@@ -24,21 +24,21 @@ class SOEMMessageCenter : public VMessageCenter {
   struct MailboxBuffers {
     ec_mbxbuft fromSlave, toSlave;
   };
-  MailboxBuffers* mailboxBuffers;
+  MailboxBuffers* mailboxBuffers = NULL;
 
   // For process messages
   struct ProcessBuffers {
     DataObjectLockFree<ProcessBuffer> toSlave, fromSlave;
     uint8_t fromMsgSize = 0;
   };
-  ProcessBuffers* processBuffers;
+  ProcessBuffers* processBuffers = NULL;
 
   // Mutex for ethercat communications in general
   std::mutex ethercatComm;
 
   static bool opened;
 
-  char IOmap_[4096]; // used by soem
+  char IOmap_[4096] = { 0 }; // used by soem
 
 public:
   SOEMMessageCenter() {};

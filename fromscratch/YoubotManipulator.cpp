@@ -33,6 +33,7 @@ bool YoubotManipulator::CheckJointConfigs() {
   for (int i = 0; i < 5; i++)
 	if (!joints[i].CheckConfig())
 	  return false;
+  return true;
 }
 
 void YoubotManipulator::InitializeAllJoints() {

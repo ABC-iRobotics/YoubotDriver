@@ -19,7 +19,7 @@ class YoubotJoint {
   double calibrationmaxAmpere = -1;
 
 
-  bool calibratedposition = -1;
+  //bool calibratedposition = -1;
 
   void _getFirmwareVersion();
 

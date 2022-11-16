@@ -481,14 +481,14 @@ bool YoubotJoint::CheckConfig() {
 }
 
 void YoubotJoint::RotateJointRightViaMailbox(double speedJointRadPerSec) {
-  auto ptr = RotateRightMotorRPM::InitSharedPtr(slaveIndex, speedJointRadPerSec / gearRatio / 2. / M_PI * 60.);
+  auto ptr = RotateRightMotorRPM::InitSharedPtr(slaveIndex, int32_t(speedJointRadPerSec / gearRatio / 2. / M_PI * 60.));
   center->SendMessage_(ptr);
   std::cout << " RotateRightMotorRPM: " << ptr->GetReplyValue() <<
     " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
 }
 
 void YoubotJoint::RotateJointLeftViaMailbox(double speedJointRadPerSec) {
-  auto ptr = RotateLeftMotorRPM::InitSharedPtr(slaveIndex, speedJointRadPerSec / gearRatio / 2. / M_PI * 60.);
+  auto ptr = RotateLeftMotorRPM::InitSharedPtr(slaveIndex, int32_t(speedJointRadPerSec / gearRatio / 2. / M_PI * 60.));
   center->SendMessage_(ptr);
   std::cout << " RotateLeftMotorRPM: " << ptr->GetReplyValue() <<
     " (" << TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) << ")" << std::endl;
@@ -654,7 +654,8 @@ void YoubotJoint::ProcessReturn::Print() const {
   std::cout << "encoderPosition: " << (int)encoderPosition << " currentmA: " << (int)currentmA << " motorVelocityRPM: " << (int)motorVelocityRPM << " status: " << status.toString() << " motorPWM: " << (int)motorPWM << std::endl;
 }
 
-YoubotJoint::ProcessReturn::ProcessReturn() : status(0) {};
+YoubotJoint::ProcessReturn::ProcessReturn() : status(0), encoderPosition(-1),
+currentmA(-1), motorVelocityRPM(-1), motorPWM(-1) {};
 
 const YoubotJoint::ProcessReturn& YoubotJoint::GetProcessReturnData() {
   static ProcessBuffer buffer;
