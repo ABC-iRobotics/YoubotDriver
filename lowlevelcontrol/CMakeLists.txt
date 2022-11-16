@@ -18,6 +18,8 @@ add_library(lowlevelcontrol STATIC ${SOURCES} ${HEADERS})
 
 target_link_libraries(lowlevelcontrol soem)
 
+requires_spdlog(lowlevelcontrol)
+
 set_target_properties(lowlevelcontrol PROPERTIES LINKER_LANGUAGE CXX)
 
 target_compile_definitions(lowlevelcontrol PUBLIC WIN32
