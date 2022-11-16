@@ -8,27 +8,24 @@
 
 int main(int argc, char *argv[])
 {
-
-  char name[1000];
-  printf("sg\n");
-  if (findYouBotEtherCatAdapter(name)) {
-    printf("\n\n\nAdapter found: %s\n", name);
+  {
+    char name[1000];
+    printf("sg\n");
+    if (findYouBotEtherCatAdapter(name))
+      printf("\n\n\nAdapter found: %s\n", name);
+    else {
+      printf("\n\n\nAdapter with turned on youBot arm NOT found!\n");
+      return -1;
+    }
+    if (!VMessageCenter::GetSingleton()->OpenConnection(name))
+      return -1;
   }
-  else {
-    printf("\n\n\nAdapter with turned on youBot arm NOT found!\n");
-    return -1;
-  }
-
   auto center = VMessageCenter::GetSingleton();
-  if (!center->OpenConnection(name)) {
-    return -1;
-  }
-
   YoubotConfig config("C:/Users/kutij/Desktop/myYouBotDriver/src/fromscratch/youBotArmConfig_fromKeisler.json");
   //youBotArmConfig_fromfactory.json");
   //youBotArmConfig_fromMoveIt.json");
   //youBotArmConfig_fromKeisler.json");
-    
+ 
   YoubotManipulator man(config, center);
   
   man.ConfigJoints();
