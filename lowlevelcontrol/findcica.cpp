@@ -19,12 +19,8 @@ int main(int argc, char *argv[])
   // Initialize logger
   Log::Setup(config.logConfig);
 
-  log(_A, _B, _C, Log::error, "asdfg");
+  std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-  std::cout << "done" << std::endl;
-  //drop();
-  
-  return 0;
   // Find appropriate ethernet adapter and open connection
   {
     char name[1000];
@@ -38,11 +34,20 @@ int main(int argc, char *argv[])
     if (!VMessageCenter::GetSingleton()->OpenConnection(name))
       return -1;
   }
+
+  // Get Message center
   auto center = VMessageCenter::GetSingleton();
  
   YoubotManipulator man(config, center);
   
   man.ConfigJoints();
+
+  std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+
+  std::cout << "Time difference = " <<
+    std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
+
+  return 0;
   /*
   if (man.CheckJointConfigs())
     std::cout << "OK!!" << std::endl;
