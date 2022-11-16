@@ -25,7 +25,6 @@ int main(int argc, char *argv[])
   // Find appropriate ethernet adapter and open connection
   {
     char name[1000];
-    printf("sg\n");
     if (findYouBotEtherCatAdapter(name))
       log(Log::info, "Adapter found:" + std::string(name));
     else {

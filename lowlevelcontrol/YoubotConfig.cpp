@@ -1,19 +1,23 @@
 #include "YoubotConfig.hpp"
 #include <fstream>
 #include "json.hpp"
+#include "Logger.hpp"
 
 YoubotConfig::YoubotConfig(const std::string& filename) {
   std::ifstream configFile;
   configFile.open(filename, std::ios_base::in);
 
-  if (!configFile.is_open())
+  if (!configFile.is_open()) {
+    log(_A,_B,_C, Log::fatal, "FATAL ERROR: cannot open json file '" + filename);
     throw std::runtime_error("FATAL ERROR: cannot open json file '" + filename + "' (in YoubotConfig::YoubotConfig)");
+  }
 
   nlohmann::json config;
   try {
     configFile >> config;
   }
   catch (...) {
+    log(_A, _B, _C, Log::fatal, "FATAL ERROR: parsing config file '" + filename);
     std::throw_with_nested(std::runtime_error("FATAL ERROR: parsing config file '" + filename + "' (in YoubotConfig::YoubotConfig)"));
   }
   if (config.find("JointIndices") != config.end()) {
