@@ -24,10 +24,17 @@ set(SOURCES
     FourSwedishWheelOmniBaseKinematicConfiguration.cpp
     findcica.cpp
     EthercatMasterInterface.cpp
+	Logger.cpp
+	PidController.cpp
 	  )
 
 set(HEADERS
 	  YouBotSlaveMsg.hpp
+	  Exceptions.hpp
+	  PidController.hpp
+	  Time.hpp
+	  Logger.hpp
+	  DataObjectLockFree.hpp
 	  YouBotJointParameter.hpp
 	  JointData.hpp
 	  YouBotSlaveMailboxMsg.hpp
@@ -58,16 +65,16 @@ set(HEADERS
 
 add_executable(oldshit ${SOURCES} ${HEADERS})
 
-target_link_libraries(oldshit soem lowlevelcontrol Boost::thread Boost::date_time
+target_link_libraries(oldshit soem Boost::thread Boost::date_time
   Boost::filesystem Boost::system Boost::regex)
 
-target_include_directories(oldshit PUBLIC ${CMAKE_SOURCE_DIR}/lowlevelcontrol ${Boost_INCLUDE_DIRS})
+target_include_directories(oldshit PUBLIC ${Boost_INCLUDE_DIRS})
 
 set_target_properties(oldshit PROPERTIES LINKER_LANGUAGE CXX)
 
 target_compile_definitions(oldshit PUBLIC
-  #__STDC_LIMIT_MACROS
-  #__STDC_WANT_SECURE_LIB__=1
+  __STDC_LIMIT_MACROS
+  __STDC_WANT_SECURE_LIB__=1
   _USE_MATH_DEFINES
   _CRT_SECURE_NO_WARNINGS
   __PRETTY_FUNCTION__=__FUNCSIG__ #only on Windows
