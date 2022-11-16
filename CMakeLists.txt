@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.15)
 project(MyYouBotDriver
     DESCRIPTION "My YouBot Driver"
     VERSION 0.0.1
@@ -20,33 +20,8 @@ if (WIN32)
   ## Use folders in IDEs supporting it
   set_property(GLOBAL PROPERTY USE_FOLDERS ON)
   set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "")
-  ## ---------------------------------------------------------------------------------
-  ## Set /MT or /MD compiler flags
-  set(RUNTIME_LIBRARY_SETTINGS "/MT*" CACHE STRING "Code Generation: multi-threaded (/MT*) or multi threaded DLL (/MD*)")
-  set_property(CACHE RUNTIME_LIBRARY_SETTINGS PROPERTY STRINGS "/MT*" "/MD*")
-  set(CompilerFlags
-	  CMAKE_CXX_FLAGS
-	  CMAKE_CXX_FLAGS_DEBUG
-	  CMAKE_CXX_FLAGS_RELEASE
-	  CMAKE_CXX_FLAGS_RELWITHDEBINFO
-	  CMAKE_CXX_FLAGS_MINSIZEREL
-	  CMAKE_C_FLAGS
-	  CMAKE_C_FLAGS_DEBUG
-	  CMAKE_C_FLAGS_RELEASE
-	  CMAKE_C_FLAGS_RELWITHDEBINFO
-	  CMAKE_C_FLAGS_MINSIZEREL)
-  set(EXTERNAL_FLAG_SETTER "")
-  if (RUNTIME_LIBRARY_SETTINGS STREQUAL "/MT*")
-	set(REPLACE_ARGS "/MD" "/MT")
-	set(RUNTIME_INFO "mt")
-  else()
-	set(REPLACE_ARGS "/MT" "/MD")
-	set(RUNTIME_INFO "md")
-  endif()
-  foreach(CompilerFlag ${CompilerFlags})
-	string(REPLACE ${REPLACE_ARGS} ${CompilerFlag} "${${CompilerFlag}}")
-	list(APPEND EXTERNAL_FLAG_SETTER -D${CompilerFlag}="${${CompilerFlag}}" ) #produces a list like -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
-  endforeach()
+
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
   ## ---------------------------------------------------------------------------------
   ## Set configurations to be used
   set (CMAKE_CONFIGURATION_TYPES Debug;Release;MinSizeRel;RelWithDebInfo CACHE STRING "Configuration types" FORCE)
@@ -54,18 +29,17 @@ endif()
 
 ## Find or get SOEM
 set(SOEM_COMMAND "git clone https://github.com/kutij/SOEM.git")
-set(SOEM_CACHE_SETTINGS -DCMAKE_INSTALL_PREFIX="${3RDPARTY_INSTALL_PREFIX}")
-
+set(SOEM_CACHE_SETTINGS -DCMAKE_INSTALL_PREFIX="${3RDPARTY_INSTALL_PREFIX}";-DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded$<$<CONFIG:Debug>:Debug>")
 third_party_policy(soem ${SOEM_COMMAND} SOEM_CACHE_SETTINGS THIRD_PARTY_CONFIG true GIT_NAMES)
 macro(requires_soem NAME)
 	target_link_libraries (${NAME} soem)
 endmacro(requires_soem)
 
 ## Find or get SPDLOG
-set(SPDLOG_COMMAND "git clone https://github.com/gabime/spdlog.git -bv1.5.0")
+set(SPDLOG_COMMAND "git clone https://github.com/gabime/spdlog.git -bv1.11.0")
 set(SPDLOG_CACHE_SETTINGS -DSPDLOG_BUILD_BENCH=FALSE;-DSPDLOG_BUILD_EXAMPLE=FALSE;
 	-DSPDLOG_BUILD_EXAMPLE_HO=FALSE;-DSPDLOG_BUILD_TESTS=FALSE;-DSPDLOG_BUILD_TESTS_HO=FALSE;
-	-DSPDLOG_INSTALL=TRUE;-DCMAKE_INSTALL_PREFIX="${3RDPARTY_INSTALL_PREFIX}";${EXTERNAL_FLAG_SETTER})
+	-DSPDLOG_INSTALL=TRUE;-DCMAKE_INSTALL_PREFIX="${3RDPARTY_INSTALL_PREFIX}";-DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded$<$<CONFIG:Debug>:Debug>")
 third_party_policy(spdlog ${SPDLOG_COMMAND} SPDLOG_CACHE_SETTINGS THIRD_PARTY_CONFIG TRUE GIT_NAMES)
 if (spdlog_FOUND)
 	set_target_properties(spdlog::spdlog PROPERTIES MAP_IMPORTED_CONFIG_RELWITHDEBINFO RELEASE) #By default the debug libs are tried to use...
