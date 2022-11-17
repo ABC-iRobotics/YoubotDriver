@@ -10,7 +10,7 @@
 	
 	"Logging" : {
 		"ConsoleLevel" : "info",
-		"LogFileLevel" : "warning",
+		"LogFileLevel" : "info",
 		"_comment" : "trace,debug,info,warning,error,fatal,off,n_levels can be added LogFileName"
 	},
 
