@@ -672,6 +672,10 @@ const YoubotJoint::ProcessReturn& YoubotJoint::GetProcessReturnData() {
   return processReturn;
 }
 
+void YoubotJoint::ReqVelocityJointRadPerSec(double value) {
+  ReqVelocityMotorRPM(int32_t(value / 2. / M_PI * 60. / gearRatio));
+}
+
 void YoubotJoint::ReqVelocityMotorRPM(int32_t value) {
   static ProcessBuffer toSet(5);
   toSet.buffer[3] = value >> 24;
@@ -707,14 +711,6 @@ void YoubotJoint::ReqVoltagePWM(int32_t value) {
   toSet.buffer[1] = value >> 8;
   toSet.buffer[0] = value & 0xff;
   toSet.buffer[4] = TMCL::ControllerMode::PWM_MODE;
-  center->SetProcessMsg(toSet, slaveIndex);
-}
-
-void YoubotJoint::ReqSetPositionToReferenceViaProcess() {
-  static ProcessBuffer toSet(5);
-  for (int i = 0; i < 4; i++)
-    toSet.buffer[i] = 0;
-  toSet.buffer[4] = TMCL::ControllerMode::SET_POSITION_TO_REFERENCE;
   center->SetProcessMsg(toSet, slaveIndex);
 }
 

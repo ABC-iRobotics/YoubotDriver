@@ -20,6 +20,8 @@ public:
   bool CheckJointConfigs();
 
   void InitializeAllJoints();
+
+  void Calibrate();
 };
 
 #endif

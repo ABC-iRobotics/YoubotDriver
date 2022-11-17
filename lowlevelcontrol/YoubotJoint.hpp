@@ -94,6 +94,8 @@ public:
 
   const ProcessReturn& GetProcessReturnData();
 
+  void ReqVelocityJointRadPerSec(double value);
+
   void ReqVelocityMotorRPM(int32_t value);
 
   void ReqEncoderReference(int32_t value);
@@ -101,8 +103,6 @@ public:
   void ReqMotorStopViaProcess();
 
   void ReqVoltagePWM(int32_t value);
-
-  void ReqSetPositionToReferenceViaProcess();
 
   void ReqInitializationViaProcess();
 

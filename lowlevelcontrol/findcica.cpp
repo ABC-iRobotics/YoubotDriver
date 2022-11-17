@@ -59,7 +59,11 @@ int main(int argc, char *argv[])
     man.GetJoint(i).ResetI2TExceededViaMailbox();
   }
 
-  man.GetJoint(0).ReqVelocityMotorRPM(250);
+  man.Calibrate();
+
+  return 0;
+
+  man.GetJoint(0).ReqVelocityMotorRPM(400);
 
   for (int i = 0; i < 100; i++) {
     center->ExchangeProcessMsg();

@@ -9,16 +9,17 @@
 	},
 	
 	"Logging" : {
-		"ConsoleLevel" : "warning",
-		"LogFileLevel" : "info",
+		"ConsoleLevel" : "info",
+		"LogFileLevel" : "warning",
 		"_comment" : "trace,debug,info,warning,error,fatal,off,n_levels can be added LogFileName"
 	},
 
 	"WaistJoint" : {
 		"GearRatio" : 0.006410256410256,
+		"CalibrationCurrentmA" : 1500,
 		"TorqueConstant_NmPerAmpere" : 0.0335,
 		"InverseMovement" : 1,
-		"CalibrationDirection" : 0,
+		"CalibrationDirection" : 1,
 		"CalibrationMaxCurrentAmpere" : 0.5,
 		"MaximumPositioningVelocityMotorRPM": 4000, 
 		"MotorAccelerationMotorRPMPerSec": 2000,
@@ -52,9 +53,10 @@
 
 	"ShoulderJoint" : {
 		"GearRatio" : 0.006410256410256,
+		"CalibrationCurrentmA" : 1500,
 		"TorqueConstant_NmPerAmpere" : 0.0335,
 		"InverseMovement" : 1,
-		"CalibrationDirection" : 0,
+		"CalibrationDirection" : 1,
 		"CalibrationMaxCurrentAmpere" : 0.5,
 		"MaximumPositioningVelocityMotorRPM": 4000, 
 		"MotorAccelerationMotorRPMPerSec": 2000,
@@ -88,9 +90,10 @@
 	
 	"ElbowJoint" : {
 		"GearRatio" : 0.01,
+		"CalibrationCurrentmA" : 1500,
 		"TorqueConstant_NmPerAmpere" : 0.0335,
 		"InverseMovement" : 0,
-		"CalibrationDirection" : 0,
+		"CalibrationDirection" : 1,
 		"CalibrationMaxCurrentAmpere" : 0.5,
 		"MaximumPositioningVelocityMotorRPM": 4000, 
 		"MotorAccelerationMotorRPMPerSec": 2000,
@@ -124,9 +127,10 @@
 
 	"WristPitchJoint" : {
 		"GearRatio" : 0.014084507042254,
+		"CalibrationCurrentmA" : 500,
 		"TorqueConstant_NmPerAmpere" : 0.051,
 		"InverseMovement" : 1,
-		"CalibrationDirection" : 0,
+		"CalibrationDirection" : 1,
 		"CalibrationMaxCurrentAmpere" : 0.5,
 		"MaximumPositioningVelocityMotorRPM": 4000, 
 		"MotorAccelerationMotorRPMPerSec": 2000,
@@ -160,9 +164,10 @@
 
 	"WristYawJoint" : {
 		"GearRatio" : 0.014084507042254,
+		"CalibrationCurrentmA" : 100,
 		"TorqueConstant_NmPerAmpere" : 0.049,
 		"InverseMovement" : 1,
-		"CalibrationDirection" : 0,
+		"CalibrationDirection" : 1,
 		"CalibrationMaxCurrentAmpere" : 0.5,
 		"MaximumPositioningVelocityMotorRPM": 4000, 
 		"MotorAccelerationMotorRPMPerSec": 2000,
