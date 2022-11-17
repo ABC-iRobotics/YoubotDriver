@@ -1,7 +1,6 @@
 
 set(SOURCES
 		adapters.cpp
-		PidController.cpp
 		Logger.cpp
 		findcica.cpp
 		SOEMMessageCenter.cpp
@@ -16,8 +15,6 @@ set(SOURCES
 
 set(HEADERS
 		adapters.hpp
-		PidController.hpp
-		Exceptions.hpp
 		Time.hpp
 		Logger.hpp
 		VMessageCenter.hpp

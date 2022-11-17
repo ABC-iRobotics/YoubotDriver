@@ -1,5 +1,6 @@
 #include "SOEMMessageCenter.hpp"
-#include "Exceptions.hpp"
+#include <exception>
+#include <stdexcept>
 #include "Time.hpp"
 #include <string>
 
