@@ -44,10 +44,9 @@ int main(int argc, char *argv[])
 
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
-  std::cout << "Time difference = " <<
-    std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
+  //std::cout << "Time difference = " <<
+  //  std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
 
-  return 0;
   /*
   if (man.CheckJointConfigs())
     std::cout << "OK!!" << std::endl;
@@ -60,39 +59,21 @@ int main(int argc, char *argv[])
   }
 
   man.Calibrate();
-
-  return 0;
-
-  man.GetJoint(0).ReqVelocityMotorRPM(400);
-
-  for (int i = 0; i < 100; i++) {
-    center->ExchangeProcessMsg();
-    man.GetJoint(0).GetProcessReturnData().Print();
-    SLEEP_MILLISEC(10);
-  }
-
-  man.GetJoint(0).ReqMotorStopViaProcess();
-  std::cout << "STOP sent" << std::endl;
-  for (int i = 0; i < 100; i++) {
-    center->ExchangeProcessMsg();
-    man.GetJoint(0).GetProcessReturnData().Print();
-    SLEEP_MILLISEC(10);
-  }
-
-  std::cout << "Current via mailbox: " << man.GetJoint(0).GetCurrentAViaMailbox() << std::endl;
-  return 0;
-
-  for (int i = 0; i < 100; i++) {
-    SLEEP_MILLISEC(10);
-    center->ExchangeProcessMsg(); // TODO save timestamp
-  }
-
-  ProcessBuffer sg2(20);
-  center->GetProcessMsg(sg2, 2);
-  sg2.Print();
-
-  return 0;
   
+  SLEEP_SEC(1);
+
+  for (int i = 0; i < 5; i++)
+    man.GetJoint(i).ResetI2TExceededViaMailbox();
+  for (int i = 0; i < 5; i++)
+    man.GetJoint(i).ResetTimeoutViaMailbox();
+
+  man.ReqJointPosition(0, 0, 0, 0, 0);
+  while (1) {
+    center->ExchangeProcessMsg();
+    man.GetJoint(2).GetProcessReturnData().Print();
+    SLEEP_MILLISEC(10);
+  }
+
   center->CloseConnection();
 
   return 0;

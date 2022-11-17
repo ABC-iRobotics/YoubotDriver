@@ -28,14 +28,14 @@ void YoubotJoint::ConfigParameters() {
   {
     gearRatio = config.at("GearRatio");
     log(Log::info, " GearRatio: " + std::to_string(gearRatio));
+    qMinDeg = config.at("qMinDeg");
+    log(Log::info, " qMinDeg: " + std::to_string(qMinDeg));
+    qMaxDeg = config.at("qMaxDeg");
+    log(Log::info, " qMaxDeg: " + std::to_string(qMaxDeg));
     torqueconstant = config.at("TorqueConstant_NmPerAmpere");
     log(Log::info, " TorqueConstant_NmPerAmpere: " + std::to_string(torqueconstant));
-    directionreversed = config.at("InverseMovement");
-    log(Log::info, " InverseMovement: " + std::to_string(directionreversed));
     calibrationDirection = config.at("CalibrationDirection");
     log(Log::info, " CalibrationDirection: " + std::to_string(calibrationDirection));
-    calibrationmaxAmpere = config.at("CalibrationMaxCurrentAmpere");
-    log(Log::info, " CalibrationMaxCurrentAmpere: " + std::to_string(calibrationmaxAmpere));
   }
   // 1. Stop the motor
   StopViaMailbox();
@@ -45,6 +45,13 @@ void YoubotJoint::ConfigParameters() {
     center->SendMessage_(ptr);
     ticksperround = ptr->GetReplyValue();
     log(Log::info, " GetEncoderStepsPerRotation: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
+  }
+  {
+    bool qDirectionSameAsEnc = config.at("qDirectionSameAsEnc");
+    log(Log::info, " qDirectionSameAsEnc: " + std::to_string(int(qDirectionSameAsEnc)));
+    double qCalibrationDeg = config.at("qCalibrationDeg");
+    log(Log::info, " qCalibrationDeg: " + std::to_string(qCalibrationDeg));
+    conversion = Conversion(qDirectionSameAsEnc, ticksperround, gearRatio, qCalibrationDeg);
   }
   // SetMaxRampVelocity
   {
@@ -665,6 +672,7 @@ const YoubotJoint::ProcessReturn& YoubotJoint::GetProcessReturnData() {
   static ProcessBuffer buffer;
   center->GetProcessMsg(buffer, slaveIndex);
   processReturn.encoderPosition = _toInt32(&buffer.buffer[0]);
+  processReturn.qDeg = conversion.qDegFromTicks(processReturn.encoderPosition);
   processReturn.currentmA = _toInt32(&buffer.buffer[4]);
   processReturn.motorVelocityRPM = _toInt32(&buffer.buffer[8]);
   processReturn.status = _toInt32(&buffer.buffer[12]);
@@ -674,6 +682,18 @@ const YoubotJoint::ProcessReturn& YoubotJoint::GetProcessReturnData() {
 
 void YoubotJoint::ReqVelocityJointRadPerSec(double value) {
   ReqVelocityMotorRPM(int32_t(value / 2. / M_PI * 60. / gearRatio));
+}
+
+
+void YoubotJoint::ReqJointPositionDeg(double deg) {
+  static ProcessBuffer toSet(5);
+  int32_t ticks = conversion.ticksFromqDeg(deg);
+  toSet.buffer[3] = ticks >> 24;
+  toSet.buffer[2] = ticks >> 16;
+  toSet.buffer[1] = ticks >> 8;
+  toSet.buffer[0] = ticks & 0xff;
+  toSet.buffer[4] = TMCL::ControllerMode::POSITION_CONTROL;
+  center->SetProcessMsg(toSet, slaveIndex);
 }
 
 void YoubotJoint::ReqVelocityMotorRPM(int32_t value) {
@@ -754,4 +774,17 @@ void YoubotJoint::SetTargetCurrentA(double current) {
   auto ptr = SetTargetCurrentmA::InitSharedPtr(slaveIndex, int32_t(current * 1000.));
   center->SendMessage_(ptr);
   log(Log::info, " SetTargetCurrentmA[mA]: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
+}
+
+bool YoubotJoint::IsCalibrated() {
+  auto ptr = GetNeedCalibration::InitSharedPtr(slaveIndex);
+  center->SendMessage_(ptr);
+  log(Log::info, " GetNeedCalibration: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
+  return !ptr->GetReplyValue();
+}
+
+void YoubotJoint::SetCalibrated() {
+  auto ptr = SetIsCalibrated::InitSharedPtr(slaveIndex);
+  center->SendMessage_(ptr);
+  log(Log::info, " SetIsCalibrated: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
 }

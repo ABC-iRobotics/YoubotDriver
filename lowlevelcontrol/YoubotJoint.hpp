@@ -13,13 +13,32 @@ class YoubotJoint {
   uint32_t ticksperround = -1;
   int firmwareversion = -1, controllerNum = -1;
   double gearRatio = -1;
-  bool directionreversed = false;
   bool calibrationDirection = false;
   double torqueconstant = false;
-  double calibrationmaxAmpere = -1;
+  double qMinDeg, qMaxDeg;
 
+  struct Conversion {
+    double qCalibrationDeg;
+    double c;
+    bool intialized;
 
-  //bool calibratedposition = -1;
+    double qDegFromTicks(int32_t ticks) const {
+      return double(ticks) * c + qCalibrationDeg;
+    }
+
+    int32_t ticksFromqDeg(double qDeg) const {
+      return int32_t((qDeg - qCalibrationDeg) / c);
+    }
+
+    Conversion(bool qDirectionSameAsEnc, int32_t ticksPerRound,
+      double gearRatio, double qCalibrationDeg) : intialized(1),
+      qCalibrationDeg(qCalibrationDeg), c(360. * gearRatio / double(ticksPerRound)) {
+      if (!qDirectionSameAsEnc)
+        c = -c;
+    }
+
+    Conversion() :intialized(0) {};
+  } conversion;
 
   void _getFirmwareVersion();
 
@@ -56,6 +75,7 @@ public:
     int32_t motorVelocityRPM;
     JointStatus status;
     int32_t motorPWM;
+    double qDeg;
     // double jointAngle, jointVelocityRad/s, torque, ...
 
     ProcessReturn();
@@ -94,6 +114,8 @@ public:
 
   const ProcessReturn& GetProcessReturnData();
 
+  void ReqJointPositionDeg(double value);
+
   void ReqVelocityJointRadPerSec(double value);
 
   void ReqVelocityMotorRPM(int32_t value);
@@ -115,6 +137,10 @@ public:
   double GetJointVelocityRadPerSec();
 
   void SetTargetCurrentA(double current);
+
+  bool IsCalibrated();
+
+  void SetCalibrated();
 };
 
 #endif
