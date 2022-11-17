@@ -682,11 +682,31 @@ void YoubotJoint::ReqVelocityMotorRPM(int32_t value) {
   center->SetProcessMsg(toSet, slaveIndex);
 }
 
+void YoubotJoint::ReqEncoderReference(int32_t value) {
+  static ProcessBuffer toSet(5);
+  toSet.buffer[3] = value >> 24;
+  toSet.buffer[2] = value >> 16;
+  toSet.buffer[1] = value >> 8;
+  toSet.buffer[0] = value & 0xff;
+  toSet.buffer[4] = TMCL::ControllerMode::SET_POSITION_TO_REFERENCE;
+  center->SetProcessMsg(toSet, slaveIndex);
+}
+
 void YoubotJoint::ReqMotorStopViaProcess() {
   static ProcessBuffer toSet(5);
   for (int i = 0; i < 4; i++)
     toSet.buffer[i] = 0;
   toSet.buffer[4] = TMCL::ControllerMode::MOTOR_STOP;
+  center->SetProcessMsg(toSet, slaveIndex);
+}
+
+void YoubotJoint::ReqVoltagePWM(int32_t value) {
+  static ProcessBuffer toSet(5);
+  toSet.buffer[3] = value >> 24;
+  toSet.buffer[2] = value >> 16;
+  toSet.buffer[1] = value >> 8;
+  toSet.buffer[0] = value & 0xff;
+  toSet.buffer[4] = TMCL::ControllerMode::PWM_MODE;
   center->SetProcessMsg(toSet, slaveIndex);
 }
 

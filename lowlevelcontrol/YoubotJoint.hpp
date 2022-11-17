@@ -96,7 +96,11 @@ public:
 
   void ReqVelocityMotorRPM(int32_t value);
 
+  void ReqEncoderReference(int32_t value);
+
   void ReqMotorStopViaProcess();
+
+  void ReqVoltagePWM(int32_t value);
 
   void ReqSetPositionToReferenceViaProcess();
 
