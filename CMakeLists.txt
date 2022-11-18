@@ -49,6 +49,15 @@ macro(requires_spdlog NAME)
 	target_link_libraries (${NAME} spdlog::spdlog)
 endmacro(requires_spdlog)
 
+## Find or get Eigen
+set(EIGEN3_COMMAND "git clone https://gitlab.com/libeigen/eigen.git -b3.3.7")
+set(EIGEN3_CACHE_SETTINGS -DBUILD_TESTING=FALSE;-DCMAKE_INSTALL_PREFIX="${3RDPARTY_INSTALL_PREFIX}";
+	-DCMAKE_INSTALL_INCLUDEDIR="include";${EXTERNAL_FLAG_SETTER})
+third_party_policy(Eigen3 ${EIGEN3_COMMAND} EIGEN3_CACHE_SETTINGS ONLY_RELEASE false GIT_NAMES)
+macro(requires_eigen NAME)
+	target_link_libraries (${NAME} Eigen3::Eigen)
+endmacro(requires_eigen)
+
 ## ---------------------------------------------------------------
 add_subdirectory(slaveinfo)
 add_subdirectory(lowlevelcontrol)

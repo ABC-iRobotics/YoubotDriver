@@ -35,10 +35,10 @@ set(INTRINSIC_HEADERS
 add_executable(lowlevelcontrol ${SOURCES} ${HEADERS} ${INTRINSIC_HEADERS})
 
 source_group("Intrinsic headers" FILES ${INTRINSIC_HEADERS} )
-	
-target_link_libraries(lowlevelcontrol soem)
 
+requires_soem(lowlevelcontrol)
 requires_spdlog(lowlevelcontrol)
+requires_eigen(lowlevelcontrol)
 
 #target_include_directories(lowlevelcontrol PUBLIC ${CMAKE_SOURCE_DIR}/lowlevelcontrol)
 
