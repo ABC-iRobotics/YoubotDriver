@@ -1,0 +1,101 @@
+# @export_config_name@ project
+# The package provides you the list of targets as "@export_config_name@_Libs"
+# The installed targets are "@LIBS_TO_INSTALL@"
+
+message(STATUS "@export_config_name@ FOUND")
+
+list(GET CMAKE_CONFIGURATION_TYPES 1 _valid_config)
+string(TOUPPER ${_valid_config} _VALID_CONFIG)
+if(CMAKE_CXX_FLAGS_${_VALID_CONFIG} MATCHES "^.*/MT.*$")
+	message(STATUS "MT Runtime Library Settings FOUND")
+	set(RUNTIME_INFO "mt")
+endif()
+if(CMAKE_CXX_FLAGS_${_VALID_CONFIG} MATCHES "^.*/MD.*$")
+	message(STATUS "MD Runtime Library Settings FOUND")
+	set(RUNTIME_INFO "md")
+endif()
+
+# Get the installed and not installed configurations
+file(GLOB _CONFIG_FILES "${CMAKE_CURRENT_LIST_DIR}/cmake/@export_targets@-${CMAKE_GENERATOR_PLATFORM}-${RUNTIME_INFO}-*.cmake")
+foreach (_config ${CMAKE_CONFIGURATION_TYPES})
+	string(TOLOWER ${_config} __config)
+	set(_${__config}_installed false)
+	unset(__config)
+endforeach()
+foreach(f ${_CONFIG_FILES})
+	string(REGEX REPLACE ".*@export_targets@-${CMAKE_GENERATOR_PLATFORM}-${RUNTIME_INFO}-(.*)\\.cmake" "\\1" FOUND_CONFIGURATION "${f}")
+	message(STATUS "@export_config_name@ configuration: ${FOUND_CONFIGURATION}")
+	string(TOLOWER ${FOUND_CONFIGURATION} __config)
+	set(_${__config}_installed true)
+	include(${CMAKE_CURRENT_LIST_DIR}/cmake/@export_config_name@VersionCheck-${CMAKE_GENERATOR_PLATFORM}-${RUNTIME_INFO}-${FOUND_CONFIGURATION}.cmake)
+	unset(FOUND_CONFIGURATION)
+	unset(__config)
+endforeach()
+if (DEFINED _debug_installed AND NOT _debug_installed)
+	message(SEND_ERROR "Configuration Debug is not installed!")
+endif()
+
+#Find dependencies
+include(CMakeFindDependencyMacro)
+macro(find_dependency_in_install name version)
+	find_dependency(${name} ${version} QUIET PATHS "${CMAKE_CURRENT_LIST_DIR}/ThirdParties" NO_DEFAULT_PATH)
+	if (NOT ${name}_FOUND)
+		find_dependency(${name} ${version} REQUIRED)
+	endif()
+endmacro()
+#Find Eigen3
+find_dependency_in_install(Eigen3 3.3)
+#Find SOEM
+find_dependency_in_install(soem "")
+if (soem_FOUND)
+	set_target_properties(soem PROPERTIES MAP_IMPORTED_CONFIG_RELWITHDEBINFO RELEASE) #By default the debug libs are tried to use...
+	set_target_properties(soem PROPERTIES MAP_IMPORTED_CONFIG_MINSIZEREL RELEASE) #By default the debug libs are tried to use...
+endif()
+#Find spdlog
+find_dependency_in_install(spdlog "")
+if (spdlog_FOUND)
+	set_target_properties(spdlog::spdlog PROPERTIES MAP_IMPORTED_CONFIG_RELWITHDEBINFO RELEASE) #By default the debug libs are tried to use...
+	set_target_properties(spdlog::spdlog PROPERTIES MAP_IMPORTED_CONFIG_MINSIZEREL RELEASE) #By default the debug libs are tried to use...
+endif()
+
+#Create targets
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/@export_targets@-${CMAKE_GENERATOR_PLATFORM}-${RUNTIME_INFO}.cmake)
+
+#Map release configurations to an installed configuration
+if (_release_installed)
+	set(TO_MAP_RELEASE "RELEASE")
+elseif(_minsizerel_installed)
+	set(TO_MAP_RELEASE "MINSIZEREL")
+elseif(_relwithdebinfo_installed)
+	set(TO_MAP_RELEASE "RELWITHDEBINFO")
+else()
+	set(MISSING_RELEASE false)
+	foreach (_config ${CMAKE_CONFIGURATION_TYPES})
+		string(TOLOWER ${_config} __config)
+		if (${__config} STREQUAL "release" OR ${__config} STREQUAL "minsizerel" OR ${__config} STREQUAL "relwithdebinfo")
+			set(MISSING_RELEASE true)
+		endif()
+		unset(__config)
+	endforeach()
+	if (MISSING_RELEASE)
+		message(SEND_ERROR "The SensorFusion package to be installed does not have release configurations to be installed!")
+	endif()
+	unset(MISSING_RELEASE)
+endif()
+
+set(@export_config_name@_LIBS @LIBS_TO_INSTALL@)
+if(DEFINED TO_MAP_RELEASE)
+	foreach (_config RELEASE MINSIZEREL RELWITHDEBINFO)
+		string(TOLOWER ${_config} __config)
+		if (NOT _${__config}_installed)
+			message(STATUS "Configuration ${_config} not found: ${TO_MAP_RELEASE} will be linked")
+			foreach (_target ${@export_config_name@_LIBS})
+				set_target_properties(@export_config_name@::${_target} PROPERTIES MAP_IMPORTED_CONFIG_${_config} ${TO_MAP_RELEASE})
+			endforeach()
+		endif()
+	endforeach()
+endif()
+
+foreach (_config ${CMAKE_CONFIGURATION_TYPES})
+	unset(_${__config}_installed)
+endforeach()

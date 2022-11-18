@@ -108,3 +108,52 @@ install(EXPORT ${export_targets}
   FILE ${export_targets_name}.cmake
   DESTINATION "cmake"
   NAMESPACE ${export_config_name}::)
+# Howto install third parties:
+if(WIN32)
+	install(CODE "
+		set(LIBS_TO_INSTALL ${LIBS_TO_INSTALL})
+		set(RUNTIME_INFO ${RUNTIME_INFO})
+		set(export_config_name ${export_config_name})
+		set(export_targets ${export_targets})
+
+		configure_file(\"${CMAKE_CURRENT_LIST_DIR}/cmake/ConfigWindows.cmake.in\"
+		\"${CMAKE_INSTALL_PREFIX}/${export_config_name}Config.cmake\" @ONLY)
+	")
+else() #TODO!!
+	install(CODE "
+		include(\"${CMAKE_SOURCE_DIR}/cmake/GetGitVersion.cmake\")
+
+		set(LIBS_TO_INSTALL ${LIBS_TO_INSTALL})
+		set(export_config_name ${export_config_name})
+		set(export_targets ${export_targets})
+		set(export_targets_name ${export_targets_name})
+
+		#------------------------------------------------------------------------------
+		# Configure <export_config_name>ConfigVersion.cmake common to build and install tree
+		include(CMakePackageConfigHelpers)
+		write_basic_package_version_file(
+			\"${CMAKE_INSTALL_PREFIX}/${export_config_name}ConfigVersion.cmake\"
+			VERSION \${GIT_TAG_VERSION}
+			COMPATIBILITY ExactVersion)
+
+		configure_file(\"${CMAKE_CURRENT_LIST_DIR}/cmake/sf_version.h.in\"
+			\"${CMAKE_INSTALL_PREFIX}/include/sf_version.h\" @ONLY)
+
+		set(ADD_PLOTTER ${ADD_PLOTTER})
+		configure_file(\"${CMAKE_CURRENT_LIST_DIR}/cmake/ConfigLinux.cmake.in\"
+		\"${CMAKE_INSTALL_PREFIX}/${export_config_name}Config.cmake\" @ONLY)
+	")
+	# TODO install configs like:
+	install(CODE "
+		foreach(MSG_FILE msgcontent_generated.h
+			msgcontent_generated.js
+			msgstructure.txt
+			DataMsgContentNameSpace/__init__.py
+			DataMsgContentNameSpace/Msg.py
+			msgcontent.fbs)
+			message(\"\$\{MSG_FILE\}\")
+			file(COPY \"${CMAKE_SOURCE_DIR}/communication/\$\{MSG_FILE\}\" DESTINATION \"${CMAKE_INSTALL_PREFIX}/msgformat\" )
+		endforeach()
+		file(COPY \"${CMAKE_SOURCE_DIR}/communication/msgcontent_generated.js\" DESTINATION \"${CMAKE_INSTALL_PREFIX}/MsgFormat\" )
+	" )
+endif()

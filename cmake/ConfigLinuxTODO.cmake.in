@@ -1,0 +1,40 @@
+# @export_config_name@ project
+# The package provides you the list of targets as "@export_config_name@_Libs"
+# The installed targets are "@LIBS_TO_INSTALL@"
+
+#Check versions of targets to be installed
+set(SF_VERSION_FULL "@GIT_VERSION_FULL@")
+set(SF_VERSION "@GIT_TAG_VERSION@")
+
+message(STATUS "@export_config_name@ FOUND\n@export_config_name@ version: ${SF_VERSION_FULL}")
+
+#Find dependencies
+include(CMakeFindDependencyMacro)
+macro(find_dependency_in_install name version)
+	find_package(${name} ${version} QUIET PATHS "${CMAKE_CURRENT_LIST_DIR}/ThirdParties" NO_DEFAULT_PATH)
+	if (NOT ${name}_FOUND)
+		find_package(${name} ${version} REQUIRED)
+	endif()
+endmacro()
+#Find OpenCV
+set(SF_HAVE_PLOTTER @ADD_PLOTTER@)
+if (SF_HAVE_PLOTTER)
+	set(OpenCV_STATIC TRUE)
+	find_dependency_in_install(OpenCV "")
+endif()
+#Find Eigen3
+find_dependency_in_install(Eigen3 3.3)
+#Find FlatBuffers
+find_dependency_in_install(Flatbuffers "")
+if (FlatBuffers_FOUND)
+	find_path(FLATBUFFERS_INCLUDE_DIR NAMES flatbuffers/flatbuffers.h PATHS "${CMAKE_CURRENT_LIST_DIR}/ThirdParties/include")
+endif()
+#Find ZeroMQ
+find_dependency_in_install(ZeroMQ "")
+#Find CPPZMQ
+find_dependency_in_install(cppzmq "")
+#Find spdlog
+find_dependency_in_install(spdlog "")
+
+#Create targets
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/@export_targets_name@.cmake)
