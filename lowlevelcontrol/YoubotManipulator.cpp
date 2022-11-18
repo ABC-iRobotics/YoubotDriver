@@ -122,35 +122,9 @@ void YoubotManipulator::ReqJointPosition(double q0, double q1, double q2, double
   joints[4]->ReqJointPositionDeg(q4);
 }
 
-void YoubotManipulator::_processThreadFunc(int sleepMS) {
-  isRunning = true;
+void YoubotManipulator::ResetErrorFlags() {
   for (int i = 0; i < 5; i++)
 	joints[i]->ResetI2TExceededViaMailbox();
   for (int i = 0; i < 5; i++)
 	joints[i]->ResetTimeoutViaMailbox();
-
-  while (!toStopThread) {
-	center->ExchangeProcessMsg();
-	log(Log::info, "Thread running");
-	SLEEP_MILLISEC(sleepMS);
-  }
-  isRunning = false;
-}
-
-YoubotManipulator::~YoubotManipulator() {
-  StopProcessThread();
-}
-
-void YoubotManipulator::StartProcessThread(int sleepMS) {
-  toStopThread = false;
-  thread = std::thread([this, sleepMS] { _processThreadFunc(sleepMS); });
-  thread.detach();
-}
-
-void YoubotManipulator::StopProcessThread() {
-  toStopThread = true;
-  while (isRunning)
-	SLEEP_MILLISEC(1);
-  if (thread.joinable())
-	thread.join();
 }

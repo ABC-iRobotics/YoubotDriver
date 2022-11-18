@@ -4,9 +4,16 @@
 #include <string>
 #include "MailboxMessage.hpp"
 #include "ProcessBuffer.hpp"
+#include <thread>
 
 class VMessageCenter {
+  bool toStopThread, isRunning = false;
+  std::thread thread;
+
+  void _processThreadFunc(int sleepMS);
 public:
+  ~VMessageCenter();
+
   enum class MailboxStatus : uint8_t {
     INITIALIZED = 0,
     SENT_SUCCESSFUL = 2,
@@ -37,6 +44,10 @@ public:
   virtual int getSlaveNum() const = 0; // cnt: 0..N-1
 
   virtual std::string getSlaveName(int cnt) const = 0; // cnt: 0..N-1
+
+  void StartProcessThread(int sleepMS);
+
+  void StopProcessThread();
 };
 
 #endif

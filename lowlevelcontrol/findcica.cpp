@@ -29,23 +29,19 @@ int main(int argc, char *argv[])
   }
 
   YoubotManipulator man(config, VMessageCenter::GetSingleton());
-  
   man.ConfigJoints();
-  /*
-  if (man.CheckJointConfigs())
-    std::cout << "OK!!" << std::endl;
-  */
+  // if (man.CheckJointConfigs())  std::cout << "OK!!" << std::endl;
   man.InitializeAllJoints();
   man.Calibrate();
   
   SLEEP_SEC(1);
-
-  man.StartProcessThread(30);
+  man.ResetErrorFlags();
+  VMessageCenter::GetSingleton()->StartProcessThread(30);
 
   man.ReqJointPosition(-10, 10, 10, 10, 0);
   SLEEP_SEC(5);
 
-  man.StopProcessThread();
+  VMessageCenter::GetSingleton()->StopProcessThread();
 
   return 0;
 }
