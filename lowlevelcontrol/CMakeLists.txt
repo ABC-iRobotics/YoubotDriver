@@ -2,7 +2,6 @@
 set(SOURCES
 		adapters.cpp
 		Logger.cpp
-		findcica.cpp
 		SOEMMessageCenter.cpp
 		TMCLMailboxMessage.cpp
 		TMCLDefinitions.cpp
@@ -32,7 +31,7 @@ set(INTRINSIC_HEADERS
 		TMCLDefinitions.hpp
 )
 
-add_executable(lowlevelcontrol ${SOURCES} ${HEADERS} ${INTRINSIC_HEADERS})
+add_library(lowlevelcontrol STATIC ${SOURCES} ${HEADERS} ${INTRINSIC_HEADERS})
 
 source_group("Intrinsic headers" FILES ${INTRINSIC_HEADERS} )
 
@@ -40,7 +39,7 @@ requires_soem(lowlevelcontrol)
 requires_spdlog(lowlevelcontrol)
 requires_eigen(lowlevelcontrol)
 
-#target_include_directories(lowlevelcontrol PUBLIC ${CMAKE_SOURCE_DIR}/lowlevelcontrol)
+target_include_directories(lowlevelcontrol PUBLIC ${CMAKE_SOURCE_DIR}/lowlevelcontrol)
 
 set_target_properties(lowlevelcontrol PROPERTIES LINKER_LANGUAGE CXX)
 

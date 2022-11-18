@@ -61,5 +61,6 @@ endmacro(requires_eigen)
 ## ---------------------------------------------------------------
 add_subdirectory(slaveinfo)
 add_subdirectory(lowlevelcontrol)
+add_subdirectory(tester)
 add_subdirectory(oldshit)
 

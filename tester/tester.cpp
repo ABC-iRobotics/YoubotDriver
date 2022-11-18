@@ -2,7 +2,7 @@
 #include "YoubotManipulator.hpp"
 #include "Time.hpp"
 #include "Logger.hpp"
-#include "Eigen/dense"
+#include "Eigen/dense" // just to test it...
 
 int main(int argc, char *argv[])
 {
