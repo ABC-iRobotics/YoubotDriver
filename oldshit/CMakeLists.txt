@@ -1,3 +1,10 @@
+set(Boost_USE_STATIC_LIBS true)
+FIND_PACKAGE(Boost COMPONENTS thread date_time filesystem system regex REQUIRED)
+IF (Boost_FOUND)
+  MESSAGE(STATUS "SUCCESSFUL: Boost found")
+ELSE (Boost_FOUND)
+  MESSAGE(STATUS "ERROR: Boost not found")
+ENDIF (Boost_FOUND)
 
 set(SOURCES 
 	  YouBotJointParameter.cpp
