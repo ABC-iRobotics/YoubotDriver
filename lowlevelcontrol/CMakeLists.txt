@@ -39,11 +39,11 @@ requires_soem(lowlevelcontrol)
 requires_spdlog(lowlevelcontrol)
 requires_eigen(lowlevelcontrol)
 
-target_include_directories(lowlevelcontrol PUBLIC ${CMAKE_SOURCE_DIR}/lowlevelcontrol)
+#target_include_directories(lowlevelcontrol PUBLIC ${CMAKE_SOURCE_DIR}/lowlevelcontrol)
 
 set_target_properties(lowlevelcontrol PROPERTIES LINKER_LANGUAGE CXX)
 
-target_compile_definitions(lowlevelcontrol PUBLIC WIN32
+target_compile_definitions(lowlevelcontrol PUBLIC WIN32 #only on Windows
   __STDC_LIMIT_MACROS
   __STDC_WANT_SECURE_LIB__=1
   _USE_MATH_DEFINES
@@ -55,3 +55,5 @@ target_compile_definitions(lowlevelcontrol PUBLIC WIN32
 IF(MSVC)
     ADD_DEFINITIONS("/EHsc")
 ENDIF(MSVC)
+
+install_lib(lowlevelcontrol "${HEADERS}" ${CMAKE_CURRENT_SOURCE_DIR})
