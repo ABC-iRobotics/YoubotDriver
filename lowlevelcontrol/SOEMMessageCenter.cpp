@@ -23,7 +23,7 @@ bool SOEMMessageCenter::OpenConnection(const std::string& adapterName) {
   std::lock_guard<std::mutex> lock(ethercatComm);
 
   if (opened) {
-    log(_A, Log::fatal, "SOEMMessageCenter is already opened.");
+    log(__PRETTY_FUNCTION__, Log::fatal, "SOEMMessageCenter is already opened.");
     throw std::runtime_error("SOEMMessageCenter is already opened.");
   }
 
@@ -188,13 +188,13 @@ void SOEMMessageCenter::ExchangeProcessMsg() {
     ec_send_processdata();
     if (ec_receive_processdata(EC_TIMEOUTRET)<=0) { //TODO error handling...
       if (communicationErrors == 0)
-        log(_A, _B, _C, Log::warning, "Receiving data failed");
+        log(__PRETTY_FUNCTION__, __LINE__, __FILE__, Log::warning, "Receiving data failed");
       communicationErrors++;
     }
     else
       communicationErrors = 0;
     if (communicationErrors > maxCommunicationErrors) {
-      log(_A, _B, _C, Log::fatal, "Lost EtherCAT connection");
+      log(__PRETTY_FUNCTION__, __LINE__, __FILE__, Log::fatal, "Lost EtherCAT connection");
       exit(-1);
     }
     /*

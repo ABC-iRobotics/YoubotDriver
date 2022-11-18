@@ -8,7 +8,7 @@ YoubotConfig::YoubotConfig(const std::string& filename) {
   configFile.open(filename, std::ios_base::in);
 
   if (!configFile.is_open()) {
-    log(_A,_B,_C, Log::fatal, "FATAL ERROR: cannot open json file '" + filename);
+    log(__PRETTY_FUNCTION__,__LINE__,__FILE__, Log::fatal, "FATAL ERROR: cannot open json file '" + filename);
     throw std::runtime_error("FATAL ERROR: cannot open json file '" + filename + "' (in YoubotConfig::YoubotConfig)");
   }
 
@@ -17,7 +17,7 @@ YoubotConfig::YoubotConfig(const std::string& filename) {
     configFile >> config;
   }
   catch (...) {
-    log(_A, _B, _C, Log::fatal, "FATAL ERROR: parsing config file '" + filename);
+    log(__PRETTY_FUNCTION__, __LINE__, __FILE__, Log::fatal, "FATAL ERROR: parsing config file '" + filename);
     std::throw_with_nested(std::runtime_error("FATAL ERROR: parsing config file '" + filename + "' (in YoubotConfig::YoubotConfig)"));
   }
   if (config.find("JointIndices") != config.end()) {

@@ -4,10 +4,6 @@
 #include <map>
 #include <string>
 
-#define _A __PRETTY_FUNCTION__
-#define _B __LINE__
-#define _C __FILE__
-
 namespace Log {
 
   enum LogLevel {
