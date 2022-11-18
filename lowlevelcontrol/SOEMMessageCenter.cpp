@@ -17,8 +17,6 @@ extern "C" {
 
 #include "Logger.hpp"
 
-using namespace youbot;
-
 bool SOEMMessageCenter::opened = false;
 
 bool SOEMMessageCenter::OpenConnection(const std::string& adapterName) {
