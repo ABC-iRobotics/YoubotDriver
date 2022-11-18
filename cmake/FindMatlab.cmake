@@ -8,7 +8,7 @@ set(MATLAB_PATH "E.g. D:/Program Files/MATLAB/R2011a" CACHE STRING "Path to inst
 
 SET(MATLAB_FOUND 0)
 
-FIND_PATH(MATLAB_INCLUDE_DIR mex.h ${MATLAB_PATH}/extern/include)
+FIND_PATH(MATLAB_INCLUDE_DIR NO_CACHE mex.h ${MATLAB_PATH}/extern/include)
 
 IF(NOT MATLAB_INCLUDE_DIR)
   MESSAGE(STATUS "MATLAB has not been found." )
