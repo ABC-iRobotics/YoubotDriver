@@ -98,7 +98,7 @@ public:
 
   YoubotJoint(int slaveIndex, const std::map<std::string, double>& config, VMessageCenter* center);
 
-  void ConfigParameters();
+  void ConfigParameters(bool forceConfiguration = false);
 
   bool CheckConfig();
 

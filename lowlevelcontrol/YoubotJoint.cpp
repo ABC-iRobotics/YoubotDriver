@@ -19,40 +19,47 @@ void YoubotJoint::_getFirmwareVersion() {
       + std::to_string(controllerNum) + " Firmware: " + std::to_string(firmwareversion));
 }
 
-YoubotJoint::YoubotJoint(int slaveIndex, const std::map<std::string, double>& config, VMessageCenter* center)
+YoubotJoint::YoubotJoint(int slaveIndex, const std::map<std::string,
+  double>& config, VMessageCenter* center)
     : slaveIndex(slaveIndex), center(center), config(config) {
   _getFirmwareVersion();
-}
-
-void YoubotJoint::ConfigParameters() {
-  {
-    gearRatio = config.at("GearRatio");
-    log(Log::info, " GearRatio: " + std::to_string(gearRatio));
-    qMinDeg = config.at("qMinDeg");
-    log(Log::info, " qMinDeg: " + std::to_string(qMinDeg));
-    qMaxDeg = config.at("qMaxDeg");
-    log(Log::info, " qMaxDeg: " + std::to_string(qMaxDeg));
-    torqueconstant = config.at("TorqueConstant_NmPerAmpere");
-    log(Log::info, " TorqueConstant_NmPerAmpere: " + std::to_string(torqueconstant));
-    calibrationDirection = config.at("CalibrationDirection");
-    log(Log::info, " CalibrationDirection: " + std::to_string(calibrationDirection));
-  }
-  // 1. Stop the motor
-  StopViaMailbox();
   // GetTickPerRounds
   {
     auto ptr = GetEncoderStepsPerRotation::InitSharedPtr(slaveIndex);
     center->SendMessage_(ptr);
     ticksperround = ptr->GetReplyValue();
-    log(Log::info, " GetEncoderStepsPerRotation: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
+    log(Log::info, "Init joint " + std::to_string(slaveIndex) +
+      " GetEncoderStepsPerRotation: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
   }
-  {
-    bool qDirectionSameAsEnc = config.at("qDirectionSameAsEnc");
-    log(Log::info, " qDirectionSameAsEnc: " + std::to_string(int(qDirectionSameAsEnc)));
-    double qCalibrationDeg = config.at("qCalibrationDeg");
-    log(Log::info, " qCalibrationDeg: " + std::to_string(qCalibrationDeg));
-    conversion = Conversion(qDirectionSameAsEnc, ticksperround, gearRatio, qCalibrationDeg);
+  gearRatio = config.at("GearRatio");
+  log(Log::info, "Init joint " + std::to_string(slaveIndex) + " GearRatio: "
+    + std::to_string(gearRatio));
+  qMinDeg = config.at("qMinDeg");
+  log(Log::info, "Init joint " + std::to_string(slaveIndex) + " qMinDeg: "
+    + std::to_string(qMinDeg));
+  qMaxDeg = config.at("qMaxDeg");
+  log(Log::info, "Init joint " + std::to_string(slaveIndex) + " qMaxDeg: "
+    + std::to_string(qMaxDeg));
+  torqueconstant = config.at("TorqueConstant_NmPerAmpere");
+  log(Log::info, "Init joint " + std::to_string(slaveIndex) + " TorqueConstant_NmPerAmpere: "
+    + std::to_string(torqueconstant));
+  calibrationDirection = config.at("CalibrationDirection");
+  log(Log::info, "Init joint " + std::to_string(slaveIndex) + " CalibrationDirection: "
+    + std::to_string(calibrationDirection));
+  bool qDirectionSameAsEnc = config.at("qDirectionSameAsEnc");
+  log(Log::info, " qDirectionSameAsEnc: " + std::to_string(int(qDirectionSameAsEnc)));
+  double qCalibrationDeg = config.at("qCalibrationDeg");
+  log(Log::info, " qCalibrationDeg: " + std::to_string(qCalibrationDeg));
+  conversion = Conversion(qDirectionSameAsEnc, ticksperround, gearRatio, qCalibrationDeg);
+}
+
+void YoubotJoint::ConfigParameters(bool forceConfiguration) {
+  if (!forceConfiguration && IsConfigurated()) {
+    log(Log::info, "Joint " + std::to_string(slaveIndex) + " is already configurated");
+    return;
   }
+  // 1. Stop the motor
+  StopViaMailbox();
   // SetMaxRampVelocity
   {
     auto ptr = SetMaxRampVelocityRPM::InitSharedPtr(slaveIndex,
@@ -242,6 +249,7 @@ void YoubotJoint::ConfigParameters() {
     center->SendMessage_(ptr);
     log(Log::info, " SetVelThresholdHallFXRPM: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
   }
+  SetConfigurated();
 }
 
 bool YoubotJoint::CheckConfig() {

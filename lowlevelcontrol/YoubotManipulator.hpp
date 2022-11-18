@@ -21,7 +21,7 @@ public:
 
   YoubotJoint::Ptr GetJoint(int i);
 
-  void ConfigJoints();
+  void ConfigJoints(bool forceConfiguration = false);
 
   bool CheckJointConfigs();
 

@@ -25,9 +25,9 @@ YoubotJoint::Ptr YoubotManipulator::GetJoint(int i) {
   return joints[i];
 }
 
-void YoubotManipulator::ConfigJoints() {
+void YoubotManipulator::ConfigJoints(bool forceConfiguration) {
   for (int i = 0; i < 5; i++)
-	joints[i]->ConfigParameters();
+	joints[i]->ConfigParameters(forceConfiguration);
 }
 
 bool YoubotManipulator::CheckJointConfigs() {
