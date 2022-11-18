@@ -53,8 +53,6 @@ macro(requires_spdlog NAME)
 	target_link_libraries (${NAME} spdlog::spdlog)
 endmacro(requires_spdlog)
 
-find_package(EIGEN3 REQUIRED PATHS "D:/Desktop/bin-mydriver8/install/ThirdParties/eigen" NO_DEFAULT_PATH )
-
 ## Find or get Eigen
 set(EIGEN3_COMMAND "git clone https://gitlab.com/libeigen/eigen.git -b3.3.7")
 set(EIGEN3_CACHE_SETTINGS -DBUILD_TESTING=FALSE;-DCMAKE_INSTALL_INCLUDEDIR="include";${EXTERNAL_FLAG_SETTER})
