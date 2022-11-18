@@ -5,7 +5,7 @@
 #include <sstream>
 #include <stdexcept>
 
-void YoubotJoint::_getFirmwareVersion() {
+void YoubotJoint::_getFirmwareVersionViaMailbox() {
   auto ptr = GetFirmware::InitSharedPtr(slaveIndex);
   center->SendMessage_(ptr);
   ptr->GetOutput(controllerNum, firmwareversion);
@@ -22,7 +22,7 @@ void YoubotJoint::_getFirmwareVersion() {
 YoubotJoint::YoubotJoint(int slaveIndex, const std::map<std::string,
   double>& config, VMessageCenter* center)
     : slaveIndex(slaveIndex), center(center), config(config) {
-  _getFirmwareVersion();
+  _getFirmwareVersionViaMailbox();
   // GetTickPerRounds
   {
     auto ptr = GetEncoderStepsPerRotation::InitSharedPtr(slaveIndex);
@@ -54,7 +54,7 @@ YoubotJoint::YoubotJoint(int slaveIndex, const std::map<std::string,
 }
 
 void YoubotJoint::ConfigParameters(bool forceConfiguration) {
-  if (!forceConfiguration && IsConfigurated()) {
+  if (!forceConfiguration && IsConfiguratedViaMailbox()) {
     log(Log::info, "Joint " + std::to_string(slaveIndex) + " is already configurated");
     return;
   }
@@ -249,7 +249,7 @@ void YoubotJoint::ConfigParameters(bool forceConfiguration) {
     center->SendMessage_(ptr);
     log(Log::info, " SetVelThresholdHallFXRPM: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
   }
-  SetConfigurated();
+  SetConfiguratedViaMailbox();
 }
 
 bool YoubotJoint::CheckConfig() {
@@ -564,14 +564,14 @@ bool YoubotJoint::IsInitialized() {
   return ptr->GetReplyValue();
 }
 
-bool YoubotJoint::IsConfigurated() {
+bool YoubotJoint::IsConfiguratedViaMailbox() {
   auto ptr = GetNeedConfiguration::InitSharedPtr(slaveIndex);
   center->SendMessage_(ptr);
   log(Log::info, " GetNeedConfiguration: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
   return !ptr->GetReplyValue();
 }
 
-void YoubotJoint::SetConfigurated() {
+void YoubotJoint::SetConfiguratedViaMailbox() {
   auto ptr = SetIsConfigurated::InitSharedPtr(slaveIndex);
   center->SendMessage_(ptr);
   log(Log::info, " SetIsConfigurated: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
@@ -797,14 +797,14 @@ void YoubotJoint::SetTargetCurrentA(double current) {
   log(Log::info, " SetTargetCurrentmA[mA]: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
 }
 
-bool YoubotJoint::IsCalibrated() {
+bool YoubotJoint::IsCalibratedViaMailbox() {
   auto ptr = GetNeedCalibration::InitSharedPtr(slaveIndex);
   center->SendMessage_(ptr);
   log(Log::info, " GetNeedCalibration: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
   return !ptr->GetReplyValue();
 }
 
-void YoubotJoint::SetCalibrated() {
+void YoubotJoint::SetCalibratedViaMailbox() {
   auto ptr = SetIsCalibrated::InitSharedPtr(slaveIndex);
   center->SendMessage_(ptr);
   log(Log::info, " SetIsCalibrated: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
@@ -826,4 +826,19 @@ void YoubotJoint::Initialize() {
     if (!IsInitialized())
       throw std::runtime_error("One joint is not initialized and cannot be done it...");
   }
+}
+
+double YoubotJoint::Conversion::qDegFromTicks(int32_t ticks) const {
+  return double(ticks) * c + qCalibrationDeg;
+}
+
+int32_t YoubotJoint::Conversion::ticksFromqDeg(double qDeg) const {
+  return int32_t((qDeg - qCalibrationDeg) / c);
+}
+
+YoubotJoint::Conversion::Conversion(bool qDirectionSameAsEnc, int32_t ticksPerRound,
+  double gearRatio, double qCalibrationDeg) : intialized(1),
+  qCalibrationDeg(qCalibrationDeg), c(360. * gearRatio / double(ticksPerRound)) {
+  if (!qDirectionSameAsEnc)
+    c = -c;
 }

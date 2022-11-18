@@ -56,7 +56,7 @@ void YoubotManipulator::Calibrate(bool forceCalibration) {
 
   const double calJointRadPerSec = 0.2;
   for (int i = 0; i < 5; i++)
-	if (joints[i]->IsCalibrated() && !forceCalibration)
+	if (joints[i]->IsCalibratedViaMailbox() && !forceCalibration)
 	  jointcalstate[i] = IDLE;
 	else {
 	  jointcalstate[i] = TO_CALIBRATE;
@@ -106,9 +106,9 @@ void YoubotManipulator::Calibrate(bool forceCalibration) {
 	jointcalstate[2] < PEACE || jointcalstate[3] < PEACE || jointcalstate[4] < PEACE);
   for (int i = 0; i < 5; i++)
 	if (jointcalstate[i] == PEACE)
-	  joints[i]->SetCalibrated();
+	  joints[i]->SetCalibratedViaMailbox();
   for (int i = 0; i < 5; i++)
-	joints[i]->IsCalibrated();
+	joints[i]->IsCalibratedViaMailbox();
   log(Log::info, "After calibration:");
   for (auto& it : joints)
 	it->GetProcessReturnData().Print();

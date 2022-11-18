@@ -21,26 +21,14 @@ class YoubotJoint {
     double qCalibrationDeg;
     double c;
     bool intialized;
-
-    double qDegFromTicks(int32_t ticks) const {
-      return double(ticks) * c + qCalibrationDeg;
-    }
-
-    int32_t ticksFromqDeg(double qDeg) const {
-      return int32_t((qDeg - qCalibrationDeg) / c);
-    }
-
+    double qDegFromTicks(int32_t ticks) const;
+    int32_t ticksFromqDeg(double qDeg) const;
     Conversion(bool qDirectionSameAsEnc, int32_t ticksPerRound,
-      double gearRatio, double qCalibrationDeg) : intialized(1),
-      qCalibrationDeg(qCalibrationDeg), c(360. * gearRatio / double(ticksPerRound)) {
-      if (!qDirectionSameAsEnc)
-        c = -c;
-    }
-
+      double gearRatio, double qCalibrationDeg);
     Conversion() :intialized(0) {};
   } conversion;
 
-  void _getFirmwareVersion();
+  void _getFirmwareVersionViaMailbox();
 
 public:
   struct JointStatus {
@@ -102,6 +90,10 @@ public:
 
   bool CheckConfig();
 
+  bool IsConfiguratedViaMailbox();
+
+  void SetConfiguratedViaMailbox();
+
   void RotateJointRightViaMailbox(double speedJointRadPerSec);
 
   void RotateJointLeftViaMailbox(double speedJointRadPerSec);
@@ -146,13 +138,9 @@ public:
 
   void SetTargetCurrentA(double current);
 
-  bool IsCalibrated();
+  bool IsCalibratedViaMailbox();
 
-  void SetCalibrated();
-
-  bool IsConfigurated();
-
-  void SetConfigurated();
+  void SetCalibratedViaMailbox();
 
   typedef std::shared_ptr<YoubotJoint> Ptr;
 };
