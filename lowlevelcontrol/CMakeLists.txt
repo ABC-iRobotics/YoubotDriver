@@ -2,10 +2,10 @@
 set(SOURCES
 		adapters.cpp
 		Logger.cpp
-		SOEMMessageCenter.cpp
+		SimpleOpenEtherCATMaster.cpp
 		TMCLMailboxMessage.cpp
 		TMCLDefinitions.cpp
-		VMessageCenter.cpp
+		EtherCATMaster.cpp
 		YoubotJoint.cpp
 		YoubotConfig.cpp
 		YoubotManipulator.cpp
@@ -16,7 +16,7 @@ set(HEADERS
 		adapters.hpp
 		Time.hpp
 		Logger.hpp
-		VMessageCenter.hpp
+		EtherCATMaster.hpp
 		MailboxMessage.hpp
 		YoubotJoint.hpp
 		YoubotConfig.hpp
@@ -26,7 +26,7 @@ set(HEADERS
 
 set(INTRINSIC_HEADERS
 		DataObjectLockFree.hpp
-		SOEMMessageCenter.hpp
+		SimpleOpenEtherCATMaster.hpp
 		TMCLMailboxMessage.hpp
 		TMCLDefinitions.hpp
 )

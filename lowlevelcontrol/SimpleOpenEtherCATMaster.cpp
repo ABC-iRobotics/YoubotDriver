@@ -1,4 +1,4 @@
-#include "SOEMMessageCenter.hpp"
+#include "SimpleOpenEtherCATMaster.hpp"
 #include <exception>
 #include <stdexcept>
 #include "Time.hpp"
@@ -17,14 +17,14 @@ extern "C" {
 
 #include "Logger.hpp"
 
-bool SOEMMessageCenter::opened = false;
+bool SimpleOpenEtherCATMaster::opened = false;
 
-bool SOEMMessageCenter::OpenConnection(const std::string& adapterName) {
+bool SimpleOpenEtherCATMaster::OpenConnection(const std::string& adapterName) {
   std::lock_guard<std::mutex> lock(ethercatComm);
 
   if (opened) {
-    log(__PRETTY_FUNCTION__, Log::fatal, "SOEMMessageCenter is already opened.");
-    throw std::runtime_error("SOEMMessageCenter is already opened.");
+    log(__PRETTY_FUNCTION__, Log::fatal, "SimpleOpenEtherCATMaster is already opened.");
+    throw std::runtime_error("SimpleOpenEtherCATMaster is already opened.");
   }
 
   //initialize to zero
@@ -105,7 +105,7 @@ bool SOEMMessageCenter::OpenConnection(const std::string& adapterName) {
   return opened;
 }
 
-void SOEMMessageCenter::CloseConnection() {
+void SimpleOpenEtherCATMaster::CloseConnection() {
   // Request safe operational state for all slaves
   ec_slave[0].state = EC_STATE_SAFE_OP;
 
@@ -122,20 +122,20 @@ void SOEMMessageCenter::CloseConnection() {
   opened = false;
 }
 
-SOEMMessageCenter::~SOEMMessageCenter() {
+SimpleOpenEtherCATMaster::~SimpleOpenEtherCATMaster() {
   if (opened)
     CloseConnection();
 }
 
-int SOEMMessageCenter::getSlaveNum() const {
+int SimpleOpenEtherCATMaster::getSlaveNum() const {
   return ec_slavecount;
 }
 
-std::string SOEMMessageCenter::getSlaveName(int cnt) const {
+std::string SimpleOpenEtherCATMaster::getSlaveName(int cnt) const {
   return ec_slave[cnt + 1].name;
 }
 
-SOEMMessageCenter::MailboxStatus SOEMMessageCenter::SendMessage_(MailboxMessage::MailboxMessagePtr ptr) {
+SimpleOpenEtherCATMaster::MailboxStatus SimpleOpenEtherCATMaster::SendMessage_(MailboxMessage::MailboxMessagePtr ptr) {
   //copy from buffer
   int i = ptr->getSlaveIndex();
   {
@@ -165,20 +165,20 @@ SOEMMessageCenter::MailboxStatus SOEMMessageCenter::SendMessage_(MailboxMessage:
   return status;
 }
 
-void SOEMMessageCenter::GetProcessMsg(ProcessBuffer& buff, uint8_t slaveNumber) const {
+void SimpleOpenEtherCATMaster::GetProcessMsg(ProcessBuffer& buff, uint8_t slaveNumber) const {
   buff = processBuffers[slaveNumber].fromSlave.Get();
 }
 
-void SOEMMessageCenter::SetProcessFromSlaveSize(uint8_t size, uint8_t slaveNumber) {
+void SimpleOpenEtherCATMaster::SetProcessFromSlaveSize(uint8_t size, uint8_t slaveNumber) {
   processBuffers[slaveNumber].fromMsgSize = size;
 }
 
-int SOEMMessageCenter::SetProcessMsg(const ProcessBuffer& buffer, uint8_t slaveNumber) {
+int SimpleOpenEtherCATMaster::SetProcessMsg(const ProcessBuffer& buffer, uint8_t slaveNumber) {
   processBuffers[slaveNumber].toSlave.Set(buffer);
   return buffer.Size();
 }
 
-void SOEMMessageCenter::ExchangeProcessMsg() {
+void SimpleOpenEtherCATMaster::ExchangeProcessMsg() {
   for (int i = 0; i < getSlaveNum(); i++)
     processBuffers[i].toSlave.Get().CopyTo(ec_slave[i + 1].outputs, ec_slave[i + 1].Obytes);
   {

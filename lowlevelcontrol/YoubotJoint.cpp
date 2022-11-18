@@ -20,7 +20,7 @@ void YoubotJoint::_getFirmwareVersionViaMailbox() {
 }
 
 YoubotJoint::YoubotJoint(int slaveIndex, const std::map<std::string,
-  double>& config, VMessageCenter* center)
+  double>& config, EtherCATMaster* center)
     : slaveIndex(slaveIndex), center(center), config(config) {
   _getFirmwareVersionViaMailbox();
   // GetTickPerRounds

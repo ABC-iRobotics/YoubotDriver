@@ -1,18 +1,18 @@
-#ifndef V_MESSAGE_CENTER_HPP
-#define V_MESSAGE_CENTER_HPP
+#ifndef ETHERCATMASTER_HPP
+#define ETHERCATMASTER_HPP
 
 #include <string>
 #include "MailboxMessage.hpp"
 #include "ProcessBuffer.hpp"
 #include <thread>
 
-class VMessageCenter {
+class EtherCATMaster {
   bool toStopThread, isRunning = false;
   std::thread thread;
 
   void _processThreadFunc(int sleepMS);
 public:
-  ~VMessageCenter();
+  ~EtherCATMaster();
 
   enum class MailboxStatus : uint8_t {
     INITIALIZED = 0,
@@ -39,7 +39,7 @@ public:
 
   virtual void CloseConnection() = 0;
 
-  static VMessageCenter* GetSingleton();
+  static EtherCATMaster* GetSingleton();
 
   virtual int getSlaveNum() const = 0; // cnt: 0..N-1
 

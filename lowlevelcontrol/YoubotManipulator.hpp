@@ -7,7 +7,7 @@
 
 class YoubotManipulator {
   const YoubotConfig config;
-  VMessageCenter* center;
+  EtherCATMaster* center;
   std::vector<YoubotJoint::Ptr> joints;
 
 public:
@@ -17,7 +17,7 @@ public:
 
   YoubotManipulator(const YoubotManipulator&) = delete;
 
-  YoubotManipulator(const YoubotConfig& config, VMessageCenter* center);
+  YoubotManipulator(const YoubotConfig& config, EtherCATMaster* center);
 
   ~YoubotManipulator() {};
 

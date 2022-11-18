@@ -1,12 +1,12 @@
 #ifndef YOUBOT_JOINT_HPP
 #define YOUBOT_JOINT_HPP
 
-#include "VMessageCenter.hpp"
+#include "EtherCATMaster.hpp"
 #include <map>
 
 class YoubotJoint {
   int slaveIndex;
-  VMessageCenter* center;
+  EtherCATMaster* center;
   std::map<std::string, double> config;
 
   // Read during configuration
@@ -84,7 +84,7 @@ public:
 
   YoubotJoint(const YoubotJoint&) = delete;
 
-  YoubotJoint(int slaveIndex, const std::map<std::string, double>& config, VMessageCenter* center);
+  YoubotJoint(int slaveIndex, const std::map<std::string, double>& config, EtherCATMaster* center);
 
   void ConfigParameters(bool forceConfiguration = false);
 

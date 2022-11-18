@@ -3,7 +3,7 @@
 #include "Logger.hpp"
 #include "Time.hpp"
 
-YoubotManipulator::YoubotManipulator(const YoubotConfig& config, VMessageCenter* center)
+YoubotManipulator::YoubotManipulator(const YoubotConfig& config, EtherCATMaster* center)
   : config(config), center(center) {
   // Check slavenames
   if (center->getSlaveNum() < 6)

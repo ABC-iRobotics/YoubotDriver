@@ -12,13 +12,13 @@ extern "C" {
 #include "ethercatmain.h"
 }
 #include "MailboxMessage.hpp"
-#include "VMessageCenter.hpp"
+#include "EtherCATMaster.hpp"
 
 #include <iostream>
 
 #define MIN(a,b) a<b?a:b
 
-class SOEMMessageCenter : public VMessageCenter {
+class SimpleOpenEtherCATMaster : public EtherCATMaster {
   // For mailbox messages
   std::mutex slaveBufferMutexes[50];
   struct MailboxBuffers {
@@ -41,9 +41,9 @@ class SOEMMessageCenter : public VMessageCenter {
   char IOmap_[4096] = { 0 }; // used by soem
 
 public:
-  SOEMMessageCenter() {};
+  SimpleOpenEtherCATMaster() {};
 
-  ~SOEMMessageCenter();
+  ~SimpleOpenEtherCATMaster();
 
   // index: 0..(num-1)
   int getSlaveNum() const override;

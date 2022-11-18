@@ -1,14 +1,14 @@
-#include "VMessageCenter.hpp"
-#include "SOEMMessageCenter.hpp"
+#include "EtherCATMaster.hpp"
+#include "SimpleOpenEtherCATMaster.hpp"
 #include "Logger.hpp"
 #include "Time.hpp"
 
-VMessageCenter* VMessageCenter::GetSingleton() {
-  static SOEMMessageCenter center;
+EtherCATMaster* EtherCATMaster::GetSingleton() {
+  static SimpleOpenEtherCATMaster center;
   return &center;
 }
 
-void VMessageCenter::_processThreadFunc(int sleepMS) {
+void EtherCATMaster::_processThreadFunc(int sleepMS) {
   isRunning = true;
   while (!toStopThread) {
 	ExchangeProcessMsg();
@@ -18,17 +18,17 @@ void VMessageCenter::_processThreadFunc(int sleepMS) {
   isRunning = false;
 }
 
-VMessageCenter::~VMessageCenter() {
+EtherCATMaster::~EtherCATMaster() {
   StopProcessThread();
 }
 
-void VMessageCenter::StartProcessThread(int sleepMS) {
+void EtherCATMaster::StartProcessThread(int sleepMS) {
   toStopThread = false;
   thread = std::thread([this, sleepMS] { _processThreadFunc(sleepMS); });
   thread.detach();
 }
 
-void VMessageCenter::StopProcessThread() {
+void EtherCATMaster::StopProcessThread() {
   toStopThread = true;
   while (isRunning)
 	SLEEP_MILLISEC(1);
