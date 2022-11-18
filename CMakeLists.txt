@@ -143,17 +143,8 @@ else() #TODO!!
 		configure_file(\"${CMAKE_CURRENT_LIST_DIR}/cmake/ConfigLinux.cmake.in\"
 		\"${CMAKE_INSTALL_PREFIX}/${export_config_name}Config.cmake\" @ONLY)
 	")
-	# TODO install configs like:
-	install(CODE "
-		foreach(MSG_FILE msgcontent_generated.h
-			msgcontent_generated.js
-			msgstructure.txt
-			DataMsgContentNameSpace/__init__.py
-			DataMsgContentNameSpace/Msg.py
-			msgcontent.fbs)
-			message(\"\$\{MSG_FILE\}\")
-			file(COPY \"${CMAKE_SOURCE_DIR}/communication/\$\{MSG_FILE\}\" DESTINATION \"${CMAKE_INSTALL_PREFIX}/msgformat\" )
-		endforeach()
-		file(COPY \"${CMAKE_SOURCE_DIR}/communication/msgcontent_generated.js\" DESTINATION \"${CMAKE_INSTALL_PREFIX}/MsgFormat\" )
-	" )
 endif()
+
+# Copy config files
+file(GLOB config_files "config/*.*" )
+install(FILES ${config_files} DESTINATION "${CMAKE_INSTALL_PREFIX}/config")

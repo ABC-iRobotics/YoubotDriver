@@ -7,7 +7,7 @@
 int main(int argc, char *argv[])
 {
   // Get Configfile
-  YoubotConfig config("C:/Users/kutij/Desktop/myYouBotDriver/src/lowlevelcontrol/youBotArmConfig_fromKeisler.json");
+  YoubotConfig config("D:/Tresors/WORK/PROJECT - KUKA youbot/myYouBotDriver/config/youBotArmConfig_fromKeisler.json");
   //youBotArmConfig_fromfactory.json");
   //youBotArmConfig_fromMoveIt.json");
   //youBotArmConfig_fromKeisler.json");
