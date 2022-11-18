@@ -8,12 +8,18 @@
 class YoubotManipulator {
   const YoubotConfig config;
   VMessageCenter* center;
-  std::vector<YoubotJoint> joints;
+  std::vector<YoubotJoint::Ptr> joints;
 
 public:
+  YoubotManipulator() = delete;
+
+  YoubotManipulator(YoubotManipulator&) = delete;
+
+  YoubotManipulator(const YoubotManipulator&) = delete;
+
   YoubotManipulator(const YoubotConfig& config, VMessageCenter* center);;
 
-  YoubotJoint& GetJoint(int i);
+  YoubotJoint::Ptr GetJoint(int i);
 
   void ConfigJoints();
 

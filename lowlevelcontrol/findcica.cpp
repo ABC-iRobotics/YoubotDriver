@@ -54,8 +54,8 @@ int main(int argc, char *argv[])
 
   man.InitializeAllJoints();
   for (int i = 0; i < 2; i++) {
-    man.GetJoint(i).ResetTimeoutViaMailbox();
-    man.GetJoint(i).ResetI2TExceededViaMailbox();
+    man.GetJoint(i)->ResetTimeoutViaMailbox();
+    man.GetJoint(i)->ResetI2TExceededViaMailbox();
   }
 
   man.Calibrate();
@@ -63,14 +63,14 @@ int main(int argc, char *argv[])
   SLEEP_SEC(1);
 
   for (int i = 0; i < 5; i++)
-    man.GetJoint(i).ResetI2TExceededViaMailbox();
+    man.GetJoint(i)->ResetI2TExceededViaMailbox();
   for (int i = 0; i < 5; i++)
-    man.GetJoint(i).ResetTimeoutViaMailbox();
+    man.GetJoint(i)->ResetTimeoutViaMailbox();
 
   man.ReqJointPosition(0, 0, 0, 0, 0);
   while (1) {
     center->ExchangeProcessMsg();
-    man.GetJoint(2).GetProcessReturnData().Print();
+    man.GetJoint(2)->GetProcessReturnData().Print();
     SLEEP_MILLISEC(10);
   }
 

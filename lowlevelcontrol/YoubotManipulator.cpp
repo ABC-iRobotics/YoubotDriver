@@ -14,7 +14,7 @@ YoubotManipulator::YoubotManipulator(const YoubotConfig& config, VMessageCenter*
 	  throw std::runtime_error("Slave index " + std::to_string(config.jointIndices[i]) + " not found");
 	if (center->getSlaveName(config.jointIndices[i]).compare("TMCM-1610") != 0)
 	  throw std::runtime_error("Unknown module name " + center->getSlaveName(config.jointIndices[i]));
-	joints.push_back({ config.jointIndices[i], config.jointConfigs[i], center });
+	joints.push_back(std::make_shared<YoubotJoint>(config.jointIndices[i], config.jointConfigs[i], center));
   }
 
   // Set ProcessMsgFromSlave sizes
@@ -22,39 +22,39 @@ YoubotManipulator::YoubotManipulator(const YoubotConfig& config, VMessageCenter*
 	center->SetProcessFromSlaveSize(20, config.jointIndices[i]);
 }
 
-YoubotJoint& YoubotManipulator::GetJoint(int i) {
+YoubotJoint::Ptr YoubotManipulator::GetJoint(int i) {
   return joints[i];
 }
 
 void YoubotManipulator::ConfigJoints() {
   for (int i = 0; i < 5; i++)
-	joints[i].ConfigParameters();
+	joints[i]->ConfigParameters();
 }
 
 bool YoubotManipulator::CheckJointConfigs() {
   for (int i = 0; i < 5; i++)
-	if (!joints[i].CheckConfig())
+	if (!joints[i]->CheckConfig())
 	  return false;
   return true;
 }
 
 void YoubotManipulator::InitializeAllJoints() {
 	for (auto& it : joints)
-	  if (!it.IsInitialized()) {
-		auto status = it.GetJointStatusViaMailbox();
+	  if (!it->IsInitialized()) {
+		auto status = it->GetJointStatusViaMailbox();
 		std::cout << status.toString() << std::endl;
-		it.ResetTimeoutViaMailbox();
-		it.ResetI2TExceededViaMailbox();
-		status = it.GetJointStatusViaMailbox();
+		it->ResetTimeoutViaMailbox();
+		it->ResetI2TExceededViaMailbox();
+		status = it->GetJointStatusViaMailbox();
 		std::cout << status.toString() << std::endl;
-		it.StartInitialization();
+		it->StartInitialization();
 
 		for (int i = 0; i < 300; i++)
-		  if (it.IsInitialized()) {
+		  if (it->IsInitialized()) {
 			std::cout << " joint isInitialized" << std::endl;
 			break;
 		  }
-		if (!it.IsInitialized())
+		if (!it->IsInitialized())
 		  throw std::runtime_error("One joint is not initialized and cannot be done it...");
 	}
 }
@@ -71,18 +71,18 @@ void YoubotManipulator::Calibrate() {
 
   const double calJointRadPerSec = 0.2;
   for (int i = 0; i < 5; i++)
-	if (joints[i].IsCalibrated())
+	if (joints[i]->IsCalibrated())
 	  jointcalstate[i] = IDLE;
 	else {
 	  jointcalstate[i] = TO_CALIBRATE;
 	  bool forward = config.jointConfigs[i].at("CalibrationDirection");
-	  joints[i].ResetI2TExceededViaMailbox();
-	  joints[i].ReqVelocityJointRadPerSec(forward ? calJointRadPerSec : -calJointRadPerSec);
+	  joints[i]->ResetI2TExceededViaMailbox();
+	  joints[i]->ReqVelocityJointRadPerSec(forward ? calJointRadPerSec : -calJointRadPerSec);
 	  log(Log::info, "Calibration of joint " + std::to_string(i) + "started");
 	}
   for (int i = 0; i < 5; i++)
 	if (jointcalstate[i] != IDLE)
-	  joints[i].ResetTimeoutViaMailbox();
+	  joints[i]->ResetTimeoutViaMailbox();
 
   do {
 	center->ExchangeProcessMsg();
@@ -90,20 +90,20 @@ void YoubotManipulator::Calibrate() {
 	for (int i = 0; i < 5; i++)
 	  switch (jointcalstate[i]) {
 	  case TO_CALIBRATE: {
-		int curr = joints[i].GetProcessReturnData().currentmA;
+		int curr = joints[i]->GetProcessReturnData().currentmA;
 		str = str + std::to_string(curr) + " ";
 		if (abs(curr) >= config.jointConfigs[i].at("CalibrationCurrentmA")) {
 		  log(Log::info, "Joint " + std::to_string(i) + " calibrated");
-		  joints[i].ReqEncoderReference(0);
+		  joints[i]->ReqEncoderReference(0);
 		  jointcalstate[i] = ENCODER_SETTING;
 		}
 		break;
 	  }
 	  case ENCODER_SETTING: {
-		int enc = joints[i].GetProcessReturnData().encoderPosition;
+		int enc = joints[i]->GetProcessReturnData().encoderPosition;
 		if (enc == 0) {
 		  str = str + " to_set ";
-		  joints[i].ReqVoltagePWM(0);
+		  joints[i]->ReqVoltagePWM(0);
 		  jointcalstate[i] = PEACE;
 		}
 		else str = str + " under_set ";
@@ -121,18 +121,18 @@ void YoubotManipulator::Calibrate() {
 	jointcalstate[2] < PEACE || jointcalstate[3] < PEACE || jointcalstate[4] < PEACE);
   for (int i = 0; i < 5; i++)
 	if (jointcalstate[i] == PEACE)
-	  joints[i].SetCalibrated();
+	  joints[i]->SetCalibrated();
   for (int i = 0; i < 5; i++)
-	joints[i].IsCalibrated();
+	joints[i]->IsCalibrated();
   log(Log::info, "After calibration:");
   for (auto& it : joints)
-	it.GetProcessReturnData().Print();
+	it->GetProcessReturnData().Print();
 }
 
 void YoubotManipulator::ReqJointPosition(double q0, double q1, double q2, double q3, double q4) {
-  joints[0].ReqJointPositionDeg(q0);
-  joints[1].ReqJointPositionDeg(q1);
-  joints[2].ReqJointPositionDeg(q2);
-  joints[3].ReqJointPositionDeg(q3);
-  joints[4].ReqJointPositionDeg(q4);
+  joints[0]->ReqJointPositionDeg(q0);
+  joints[1]->ReqJointPositionDeg(q1);
+  joints[2]->ReqJointPositionDeg(q2);
+  joints[3]->ReqJointPositionDeg(q3);
+  joints[4]->ReqJointPositionDeg(q4);
 }

@@ -90,6 +90,12 @@ private:
   ProcessReturn processReturn;
 
 public:
+  YoubotJoint() = delete;
+
+  YoubotJoint(YoubotJoint&) = delete;
+
+  YoubotJoint(const YoubotJoint&) = delete;
+
   YoubotJoint(int slaveIndex, const std::map<std::string, double>& config, VMessageCenter* center);
 
   void ConfigParameters();
@@ -141,6 +147,8 @@ public:
   bool IsCalibrated();
 
   void SetCalibrated();
+
+  typedef std::shared_ptr<YoubotJoint> Ptr;
 };
 
 #endif
