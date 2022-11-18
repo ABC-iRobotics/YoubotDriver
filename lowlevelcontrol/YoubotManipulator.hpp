@@ -4,11 +4,16 @@
 #include <vector>
 #include "YoubotJoint.hpp"
 #include "YoubotConfig.hpp"
+#include <thread>
 
 class YoubotManipulator {
   const YoubotConfig config;
   VMessageCenter* center;
   std::vector<YoubotJoint::Ptr> joints;
+  bool toStopThread, isRunning;
+  std::thread thread;
+
+  void _processThreadFunc(int sleepMS);
 
 public:
   YoubotManipulator() = delete;
@@ -17,7 +22,9 @@ public:
 
   YoubotManipulator(const YoubotManipulator&) = delete;
 
-  YoubotManipulator(const YoubotConfig& config, VMessageCenter* center);;
+  YoubotManipulator(const YoubotConfig& config, VMessageCenter* center);
+
+  ~YoubotManipulator();
 
   YoubotJoint::Ptr GetJoint(int i);
 
@@ -30,6 +37,10 @@ public:
   void Calibrate(bool forceCalibration=false);
 
   void ReqJointPosition(double q0, double q1, double q2, double q3, double q4);
+
+  void StartProcessThread(int sleepMS);
+
+  void StopProcessThread();
 };
 
 #endif

@@ -8,10 +8,10 @@ int main(int argc, char *argv[])
 {
   // Get Configfile
   YoubotConfig config("C:/Users/kutij/Desktop/myYouBotDriver/src/lowlevelcontrol/youBotArmConfig_fromKeisler.json");
-    //youBotArmConfig_fromfactory.json");
-    //youBotArmConfig_fromMoveIt.json");
-    //youBotArmConfig_fromKeisler.json");
-  
+  //youBotArmConfig_fromfactory.json");
+  //youBotArmConfig_fromMoveIt.json");
+  //youBotArmConfig_fromKeisler.json");
+
   // Initialize logger
   Log::Setup(config.logConfig);
 
@@ -40,20 +40,12 @@ int main(int argc, char *argv[])
   
   SLEEP_SEC(1);
 
-  for (int i = 0; i < 5; i++)
-    man.GetJoint(i)->ResetI2TExceededViaMailbox();
-  for (int i = 0; i < 5; i++)
-    man.GetJoint(i)->ResetTimeoutViaMailbox();
+  man.StartProcessThread(30);
 
-  auto center = VMessageCenter::GetSingleton();
+  man.ReqJointPosition(-10, 10, 10, 10, 0);
+  SLEEP_SEC(5);
 
-  man.ReqJointPosition(0, 0, 0, 0, 0);
-  while (1) {
-    center->ExchangeProcessMsg();
-    man.GetJoint(2)->GetProcessReturnData().Print();
-    SLEEP_MILLISEC(10);
-  }
+  man.StopProcessThread();
 
-  center->CloseConnection();
   return 0;
 }
