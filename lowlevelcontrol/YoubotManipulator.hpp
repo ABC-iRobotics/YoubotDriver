@@ -27,7 +27,7 @@ public:
 
   void InitializeAllJoints();
 
-  void Calibrate();
+  void Calibrate(bool forceCalibration=false);
 
   void ReqJointPosition(double q0, double q1, double q2, double q3, double q4);
 };

@@ -51,12 +51,12 @@ enum CalibState : uint8_t {
   IDLE = 3
 };
 
-void YoubotManipulator::Calibrate() {
+void YoubotManipulator::Calibrate(bool forceCalibration) {
   CalibState jointcalstate[5];
 
   const double calJointRadPerSec = 0.2;
   for (int i = 0; i < 5; i++)
-	if (joints[i]->IsCalibrated())
+	if (joints[i]->IsCalibrated() && !forceCalibration)
 	  jointcalstate[i] = IDLE;
 	else {
 	  jointcalstate[i] = TO_CALIBRATE;
