@@ -118,6 +118,8 @@ public:
 
   bool IsInitialized();
 
+  void Initialize();
+
   const ProcessReturn& GetProcessReturnData();
 
   void ReqJointPositionDeg(double value);

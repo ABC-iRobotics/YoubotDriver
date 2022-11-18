@@ -1,5 +1,4 @@
 #include "YoubotManipulator.hpp"
-#include <iostream>
 #include <stdexcept>
 #include "Logger.hpp"
 #include "Time.hpp"
@@ -39,24 +38,10 @@ bool YoubotManipulator::CheckJointConfigs() {
 }
 
 void YoubotManipulator::InitializeAllJoints() {
-	for (auto& it : joints)
-	  if (!it->IsInitialized()) {
-		auto status = it->GetJointStatusViaMailbox();
-		std::cout << status.toString() << std::endl;
-		it->ResetTimeoutViaMailbox();
-		it->ResetI2TExceededViaMailbox();
-		status = it->GetJointStatusViaMailbox();
-		std::cout << status.toString() << std::endl;
-		it->StartInitialization();
-
-		for (int i = 0; i < 300; i++)
-		  if (it->IsInitialized()) {
-			std::cout << " joint isInitialized" << std::endl;
-			break;
-		  }
-		if (!it->IsInitialized())
-		  throw std::runtime_error("One joint is not initialized and cannot be done it...");
-	}
+  for (auto& it : joints) {
+	it->Initialize();
+	SLEEP_MILLISEC(200); // Wait to finish the moves - controller likes it
+  }
 }
 
 enum CalibState : uint8_t {

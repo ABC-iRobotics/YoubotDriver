@@ -788,3 +788,21 @@ void YoubotJoint::SetCalibrated() {
   center->SendMessage_(ptr);
   log(Log::info, " SetIsCalibrated: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
 }
+
+void YoubotJoint::Initialize() {
+  if (!IsInitialized()) {
+    auto status = GetJointStatusViaMailbox();
+    ResetTimeoutViaMailbox();
+    ResetI2TExceededViaMailbox();
+    status = GetJointStatusViaMailbox();
+    log(Log::info, "Joint " + std::to_string(slaveIndex) + " status before calibration: " + status.toString());
+    StartInitialization();
+    for (int i = 0; i < 300; i++)
+      if (IsInitialized()) {
+        log(Log::info, "Joint " + std::to_string(slaveIndex) + " is initialized");
+        return;
+      }
+    if (!IsInitialized())
+      throw std::runtime_error("One joint is not initialized and cannot be done it...");
+  }
+}
