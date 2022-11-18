@@ -125,7 +125,8 @@ namespace TMCL {
   };
 
   enum UserVariables : uint8_t {
-	NEED_CALIBRATION = 17 
+	NEED_CALIBRATION = 17,
+	NEED_CONFIGURATION = 18
   };
 
   enum ControllerMode : uint8_t {

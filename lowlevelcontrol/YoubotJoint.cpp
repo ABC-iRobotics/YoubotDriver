@@ -556,6 +556,19 @@ bool YoubotJoint::IsInitialized() {
   return ptr->GetReplyValue();
 }
 
+bool YoubotJoint::IsConfigurated() {
+  auto ptr = GetNeedConfiguration::InitSharedPtr(slaveIndex);
+  center->SendMessage_(ptr);
+  log(Log::info, " GetNeedConfiguration: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
+  return !ptr->GetReplyValue();
+}
+
+void YoubotJoint::SetConfigurated() {
+  auto ptr = SetIsConfigurated::InitSharedPtr(slaveIndex);
+  center->SendMessage_(ptr);
+  log(Log::info, " SetIsConfigurated: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
+}
+
 bool YoubotJoint::JointStatus::OverCurrent() const {
   return value & (uint32_t)TMCL::StatusErrorFlags::OVER_CURRENT;
 }

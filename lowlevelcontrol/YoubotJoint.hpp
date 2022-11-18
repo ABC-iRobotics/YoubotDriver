@@ -150,6 +150,10 @@ public:
 
   void SetCalibrated();
 
+  bool IsConfigurated();
+
+  void SetConfigurated();
+
   typedef std::shared_ptr<YoubotJoint> Ptr;
 };
 

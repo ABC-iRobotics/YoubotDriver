@@ -246,6 +246,15 @@ typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::GGP,
   TMCL::AxisParam(TMCL::UserVariables::NEED_CALIBRATION),
   0, TMCL::MotorBank::USER_VARIABLES> GetNeedCalibration;
 
+// Setting a user variables, that will allow to check if the motor is already calibrated
+typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::SGP,
+  TMCL::AxisParam(TMCL::UserVariables::NEED_CONFIGURATION),
+  0, TMCL::MotorBank::USER_VARIABLES> SetIsConfigurated; // by default it is one, after config can be set to zero
+
+typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::GGP,
+  TMCL::AxisParam(TMCL::UserVariables::NEED_CONFIGURATION),
+  0, TMCL::MotorBank::USER_VARIABLES> GetNeedConfiguration;
+
 typedef TMCLTemplate<bool, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
   TMCL::AxisParam::CLEAR_I2T_FLAG> ClearI2TFlag; // only command - no values
 
