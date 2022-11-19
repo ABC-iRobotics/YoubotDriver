@@ -75,7 +75,8 @@ macro(add_matlabexporter NAME files)
           SET_TARGET_PROPERTIES(${NAME} PROPERTIES SUFFIX .mexglx PREFIX "")
       endif (CMAKE_SIZEOF_VOID_P MATCHES "8")
     endif(WIN32)
-    target_compile_definitions(${NAME} PUBLIC /DMATLAB_MEX_FILE /DMX_COMPAT_32)
+    #target_compile_definitions(${NAME} PUBLIC /DMATLAB_MEX_FILE /DMX_COMPAT_32)
+    target_compile_definitions(${NAME} PUBLIC MATLAB_MEX_FILE MX_COMPAT_32)
     
     # install to /bin by default
     install(TARGETS ${NAME} DESTINATION ../bin/MATLAB)
