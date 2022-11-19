@@ -39,15 +39,11 @@ requires_soem(lowlevelcontrol)
 requires_spdlog(lowlevelcontrol)
 requires_eigen(lowlevelcontrol)
 
-#target_include_directories(lowlevelcontrol PUBLIC ${CMAKE_SOURCE_DIR}/lowlevelcontrol)
-
 set_target_properties(lowlevelcontrol PROPERTIES LINKER_LANGUAGE CXX)
 
 target_compile_definitions(lowlevelcontrol PUBLIC WIN32 #only on Windows
-  __STDC_LIMIT_MACROS
-  __STDC_WANT_SECURE_LIB__=1
-  _USE_MATH_DEFINES
-  _CRT_SECURE_NO_WARNINGS
+  __STDC_LIMIT_MACROS # for INT_MAX
+  _USE_MATH_DEFINES # for M_PI
   __PRETTY_FUNCTION__=__FUNCSIG__ #only on Windows
   _ALLOW_KEYWORD_MACROS #macroised inline...
   )

@@ -1,7 +1,5 @@
 #include "adapters.hpp"
 #include "ethercat.h"
-#include <string.h>
-#include <inttypes.h>
 #include "Logger.hpp"
 
 char jointdrivername1[] = "TMCM-1610";
@@ -191,7 +189,7 @@ char* SDO2string(uint16 slave, uint16 index, uint8 subidx, uint16 dtype)
       break;
     case ECT_INTEGER64:
       i64 = (int64*)&usdo[0];
-      sprintf(str, "0x%16.16 / %", *i64, *i64);
+      sprintf(str, "0x%16.16 / %u", *i64, *i64);
       break;
     case ECT_UNSIGNED8:
       u8 = (uint8*)&usdo[0];
