@@ -7,6 +7,10 @@ classdef YoubotManager < handle
     end
     
     methods
+        function out = IsSetup(obj)
+            out = obj.arm_setup;
+        end
+        
         function obj = YoubotManager(configfilename)
             if (nargin==0)
                 configfilename = 'D:\Tresors\WORK\PROJECT - KUKA youbot\myYouBotDriver\config/youBotArmConfig_fromKeisler.json';
