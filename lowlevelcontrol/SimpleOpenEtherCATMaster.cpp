@@ -106,20 +106,23 @@ bool SimpleOpenEtherCATMaster::OpenConnection(const std::string& adapterName) {
 }
 
 void SimpleOpenEtherCATMaster::CloseConnection() {
-  // Request safe operational state for all slaves
-  ec_slave[0].state = EC_STATE_SAFE_OP;
+  if (opened) {
+    // Request safe operational state for all slaves
+    ec_slave[0].state = EC_STATE_SAFE_OP;
 
-  /* request SAFE_OP state for all slaves */
-  ec_writestate(0);
+    /* request SAFE_OP state for all slaves */
+    ec_writestate(0);
 
-  //stop SOEM, close socket
-  ec_close();
+    //stop SOEM, close socket
+    ec_close();
 
+    if (mailboxBuffers)
+      delete[] mailboxBuffers;
+    if (processBuffers)
+      delete[] processBuffers;
 
-  delete[] mailboxBuffers;
-  delete[] processBuffers;
-
-  opened = false;
+    opened = false;
+  }
 }
 
 SimpleOpenEtherCATMaster::~SimpleOpenEtherCATMaster() {
