@@ -717,6 +717,10 @@ void YoubotJoint::ReqJointPositionDeg(double deg) {
   center->SetProcessMsg(toSet, slaveIndex);
 }
 
+double YoubotJoint::GetJointPositionDeg() {
+  return GetProcessReturnData().qDeg;
+}
+
 void YoubotJoint::ReqVelocityMotorRPM(int32_t value) {
   static ProcessBuffer toSet(5);
   toSet.buffer[3] = value >> 24;

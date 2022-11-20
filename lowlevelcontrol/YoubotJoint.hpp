@@ -116,6 +116,8 @@ public:
 
   void ReqJointPositionDeg(double value);
 
+  double GetJointPositionDeg();
+
   void ReqVelocityJointRadPerSec(double value);
 
   void ReqVelocityMotorRPM(int32_t value);

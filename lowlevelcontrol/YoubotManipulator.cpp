@@ -114,12 +114,22 @@ void YoubotManipulator::Calibrate(bool forceCalibration) {
 	it->GetProcessReturnData().Print();
 }
 
-void YoubotManipulator::ReqJointPosition(double q0, double q1, double q2, double q3, double q4) {
+void YoubotManipulator::ReqJointPosition(double q0,
+  double q1, double q2, double q3, double q4) {
   joints[0]->ReqJointPositionDeg(q0);
   joints[1]->ReqJointPositionDeg(q1);
   joints[2]->ReqJointPositionDeg(q2);
   joints[3]->ReqJointPositionDeg(q3);
   joints[4]->ReqJointPositionDeg(q4);
+}
+
+void YoubotManipulator::GetJointPosition(double& q0,
+  double& q1, double& q2, double& q3, double& q4) {
+  q0 = joints[0]->GetJointPositionDeg();
+  q1 = joints[1]->GetJointPositionDeg();
+  q2 = joints[2]->GetJointPositionDeg();
+  q3 = joints[3]->GetJointPositionDeg();
+  q4 = joints[4]->GetJointPositionDeg();
 }
 
 void YoubotManipulator::ResetErrorFlags() {
