@@ -53,8 +53,6 @@ ENDIF()
 macro(add_matlabexporter NAME files)
   IF(MATLAB_FOUND)
     message(STATUS "MATLAB Found, MATLAB MEX will be compiled.")
-    # compile mex
-    set(CPP_FILE mexAdd)
 
     # set up matlab libraries
     INCLUDE_DIRECTORIES(${MATLAB_INCLUDE_DIR})
@@ -75,7 +73,6 @@ macro(add_matlabexporter NAME files)
           SET_TARGET_PROPERTIES(${NAME} PROPERTIES SUFFIX .mexglx PREFIX "")
       endif (CMAKE_SIZEOF_VOID_P MATCHES "8")
     endif(WIN32)
-    #target_compile_definitions(${NAME} PUBLIC /DMATLAB_MEX_FILE /DMX_COMPAT_32)
     target_compile_definitions(${NAME} PUBLIC MATLAB_MEX_FILE MX_COMPAT_32)
     
     # install to /bin by default
