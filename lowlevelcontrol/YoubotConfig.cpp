@@ -3,6 +3,8 @@
 #include "json.hpp"
 #include "Logger.hpp"
 
+using namespace youbot;
+
 YoubotConfig::YoubotConfig(const std::string& filename) {
   std::ifstream configFile;
   configFile.open(filename, std::ios_base::in);

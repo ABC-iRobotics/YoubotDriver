@@ -5,37 +5,39 @@
 #include "YoubotJoint.hpp"
 #include "YoubotConfig.hpp"
 
-class YoubotManipulator {
-  const YoubotConfig config;
-  EtherCATMaster* center;
-  std::vector<YoubotJoint::Ptr> joints;
+namespace youbot {
 
-public:
-  YoubotManipulator() = delete;
+  class YoubotManipulator {
+	const YoubotConfig config;
+	EtherCATMaster* center;
+	std::vector<YoubotJoint::Ptr> joints;
 
-  YoubotManipulator(YoubotManipulator&) = delete;
+  public:
+	YoubotManipulator() = delete;
 
-  YoubotManipulator(const YoubotManipulator&) = delete;
+	YoubotManipulator(YoubotManipulator&) = delete;
 
-  YoubotManipulator(const YoubotConfig& config, EtherCATMaster* center);
+	YoubotManipulator(const YoubotManipulator&) = delete;
 
-  ~YoubotManipulator() {};
+	YoubotManipulator(const YoubotConfig& config, EtherCATMaster* center);
 
-  YoubotJoint::Ptr GetJoint(int i);
+	~YoubotManipulator() {};
 
-  void ConfigJoints(bool forceConfiguration = false);
+	YoubotJoint::Ptr GetJoint(int i);
 
-  bool CheckJointConfigs();
+	void ConfigJoints(bool forceConfiguration = false);
 
-  void InitializeAllJoints();
+	bool CheckJointConfigs();
 
-  void Calibrate(bool forceCalibration=false);
+	void InitializeAllJoints();
 
-  void ReqJointPosition(double q0, double q1, double q2, double q3, double q4);
+	void Calibrate(bool forceCalibration = false);
 
-  void GetJointPosition(double& q0, double& q1, double& q2, double& q3, double& q4);
+	void ReqJointPosition(double q0, double q1, double q2, double q3, double q4);
 
-  void ResetErrorFlags();
-};
+	void GetJointPosition(double& q0, double& q1, double& q2, double& q3, double& q4);
 
+	void ResetErrorFlags();
+  };
+}
 #endif

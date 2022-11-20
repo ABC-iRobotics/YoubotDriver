@@ -16,6 +16,8 @@
 #include "Time.hpp"
 #include "Logger.hpp"
 
+using namespace youbot;
+
 struct Manager {
   YoubotConfig config;
 

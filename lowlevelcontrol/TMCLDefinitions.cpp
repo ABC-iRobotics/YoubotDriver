@@ -1,6 +1,7 @@
 #include "TMCLDefinitions.hpp"
 #include <sstream>
 
+using namespace youbot;
 using namespace youbot::intrinsic;
 using namespace youbot::intrinsic::TMCL;
 

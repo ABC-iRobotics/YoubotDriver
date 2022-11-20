@@ -1,5 +1,6 @@
 #include "TMCLMailboxMessage.hpp"
 
+using namespace youbot;
 using namespace youbot::intrinsic;
 
 GetFirmware::GetFirmware(int slaveIndex) : MailboxMessage(slaveIndex, 8, 8) {

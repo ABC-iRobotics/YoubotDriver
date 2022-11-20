@@ -4,6 +4,8 @@
 #include "Logger.hpp"
 #include "Eigen/dense" // just to test it...
 
+using namespace youbot;
+
 int main(int argc, char *argv[])
 {
   // Get Configfile

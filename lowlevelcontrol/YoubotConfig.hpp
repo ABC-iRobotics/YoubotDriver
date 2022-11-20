@@ -4,28 +4,30 @@
 #include <string>
 #include <map>
 
-typedef std::map<std::string, double> NameValueMap;
+namespace youbot {
 
-struct YoubotConfig {
-  int gripperIndex, jointIndices[5];
+  typedef std::map<std::string, double> NameValueMap;
 
-  int& waistIndex = jointIndices[0];
-  int& shoulderIndex = jointIndices[1];
-  int& elbowIndex = jointIndices[2];
-  int& wristPitchIndex = jointIndices[3];
-  int& wristYawIndex = jointIndices[4];
+  struct YoubotConfig {
+	int gripperIndex, jointIndices[5];
 
-  NameValueMap jointConfigs[5];
+	int& waistIndex = jointIndices[0];
+	int& shoulderIndex = jointIndices[1];
+	int& elbowIndex = jointIndices[2];
+	int& wristPitchIndex = jointIndices[3];
+	int& wristYawIndex = jointIndices[4];
 
-  NameValueMap& waistConfig = jointConfigs[0];
-  NameValueMap& shoulderConfig = jointConfigs[1];
-  NameValueMap& elbowConfig = jointConfigs[2];
-  NameValueMap& wristPitchConfig = jointConfigs[3];
-  NameValueMap& wristYawConfig = jointConfigs[4];
+	NameValueMap jointConfigs[5];
 
-  std::map<std::string, std::string> logConfig;
+	NameValueMap& waistConfig = jointConfigs[0];
+	NameValueMap& shoulderConfig = jointConfigs[1];
+	NameValueMap& elbowConfig = jointConfigs[2];
+	NameValueMap& wristPitchConfig = jointConfigs[3];
+	NameValueMap& wristYawConfig = jointConfigs[4];
 
-  YoubotConfig(const std::string& filename);
-};
+	std::map<std::string, std::string> logConfig;
 
+	YoubotConfig(const std::string& filename);
+  };
+}
 #endif

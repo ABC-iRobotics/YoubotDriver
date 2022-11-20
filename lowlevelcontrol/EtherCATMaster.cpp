@@ -3,6 +3,7 @@
 #include "Logger.hpp"
 #include "Time.hpp"
 
+using namespace youbot;
 using namespace youbot::intrinsic;
 
 EtherCATMaster* EtherCATMaster::GetSingleton() {

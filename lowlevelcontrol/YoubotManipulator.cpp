@@ -3,6 +3,8 @@
 #include "Logger.hpp"
 #include "Time.hpp"
 
+using namespace youbot;
+
 YoubotManipulator::YoubotManipulator(const YoubotConfig& config, EtherCATMaster* center)
   : config(config), center(center) {
   // Check slavenames

@@ -3,33 +3,35 @@
 
 #include <memory>
 
-class ProcessBuffer {
-  uint8_t size;
+namespace youbot {
 
-public:
-  uint8_t* buffer;
+  class ProcessBuffer {
+	uint8_t size;
 
-  ProcessBuffer();
+  public:
+	uint8_t* buffer;
 
-  ProcessBuffer(uint8_t size);
+	ProcessBuffer();
 
-  ProcessBuffer(uint8_t size, uint8_t* buff);
+	ProcessBuffer(uint8_t size);
 
-  ProcessBuffer(ProcessBuffer& in);
+	ProcessBuffer(uint8_t size, uint8_t* buff);
 
-  ProcessBuffer(const ProcessBuffer& in);
+	ProcessBuffer(ProcessBuffer& in);
 
-  ~ProcessBuffer();
+	ProcessBuffer(const ProcessBuffer& in);
 
-  ProcessBuffer& operator=(const ProcessBuffer& in);
+	~ProcessBuffer();
 
-  uint8_t operator[](uint8_t i) const;
+	ProcessBuffer& operator=(const ProcessBuffer& in);
 
-  void CopyTo(uint8_t* dest, uint8_t maxSize) const;
+	uint8_t operator[](uint8_t i) const;
 
-  void Print() const;
+	void CopyTo(uint8_t* dest, uint8_t maxSize) const;
 
-  int Size() const;
-};
+	void Print() const;
 
+	int Size() const;
+  };
+}
 #endif

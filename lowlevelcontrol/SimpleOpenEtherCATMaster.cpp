@@ -16,6 +16,7 @@ extern "C" {
 }
 #include "Logger.hpp"
 
+using namespace youbot;
 using namespace youbot::intrinsic;
 
 bool SimpleOpenEtherCATMaster::opened = false;

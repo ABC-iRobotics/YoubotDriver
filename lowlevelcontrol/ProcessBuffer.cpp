@@ -1,6 +1,8 @@
 #include "ProcessBuffer.hpp"
 #include <iostream>
 
+using namespace youbot;
+
 ProcessBuffer::ProcessBuffer() : size(0) {}
 
 ProcessBuffer::ProcessBuffer(uint8_t size) : size(size), buffer(new uint8_t[size]) {}

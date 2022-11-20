@@ -2,6 +2,8 @@
 #include "ethercat.h"
 #include "Logger.hpp"
 
+using namespace youbot;
+
 char jointdrivername1[] = "TMCM-1610";
 char jointdrivername2[] = "TMCM-174";
 char jointdrivername3[] = "TMCM-1632";
@@ -594,7 +596,7 @@ void si_sdo(int cnt)
   }
 }
 
-void slaveinfo(char* ifname) {
+void youbot::slaveinfo(char* ifname) {
   int cnt, i, j, nSM;
   uint16 ssigen;
   int expectedWKC;
@@ -716,7 +718,7 @@ void slaveinfo(char* ifname) {
 // Tries to find an adapter of of youBot arm
 //
 //
-bool findYouBotEtherCatAdapter(char* name) {
+bool youbot::findYouBotEtherCatAdapter(char* name) {
     log(Log::info, "Available adapters");
     ec_adaptert* adapter0 = ec_find_adapters();
     ec_adaptert* adapter = adapter0;
@@ -736,7 +738,7 @@ bool findYouBotEtherCatAdapter(char* name) {
     return false;
 }
 
-bool checkIfYouBotEtherCatAdapter(char* ifname, bool printSDO, bool printMAP) {
+bool youbot::checkIfYouBotEtherCatAdapter(char* ifname, bool printSDO, bool printMAP) {
 
   char IOmap[4096];
   int cnt, i, j, nSM;

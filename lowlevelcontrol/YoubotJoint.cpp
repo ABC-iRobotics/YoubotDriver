@@ -5,6 +5,7 @@
 #include <sstream>
 #include <stdexcept>
 
+using namespace youbot;
 using namespace youbot::intrinsic;
 
 void YoubotJoint::_getFirmwareVersionViaMailbox() {
