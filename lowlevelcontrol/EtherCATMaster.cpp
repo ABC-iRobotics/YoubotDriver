@@ -3,6 +3,8 @@
 #include "Logger.hpp"
 #include "Time.hpp"
 
+using namespace youbot::intrinsic;
+
 EtherCATMaster* EtherCATMaster::GetSingleton() {
   static SimpleOpenEtherCATMaster center;
   return &center;

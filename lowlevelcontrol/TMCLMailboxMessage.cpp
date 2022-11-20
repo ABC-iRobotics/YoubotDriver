@@ -1,5 +1,7 @@
 #include "TMCLMailboxMessage.hpp"
 
+using namespace youbot::intrinsic;
+
 GetFirmware::GetFirmware(int slaveIndex) : MailboxMessage(slaveIndex, 8, 8) {
   uint8_t* buff = getToSlaveBuff();
   *buff = (uint8_t)TMCL::Module::DRIVE;
@@ -7,8 +9,6 @@ GetFirmware::GetFirmware(int slaveIndex) : MailboxMessage(slaveIndex, 8, 8) {
   *(buff + 2) = 0;
   *(buff + 3) = 0;
 }
-
-#include <iostream>
 
 void GetFirmware::GetOutput(int& controllernum, int& firmwarenum) const {
   char* ptr, * ptr2;

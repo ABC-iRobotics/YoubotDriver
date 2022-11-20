@@ -5,6 +5,8 @@
 #include <sstream>
 #include <stdexcept>
 
+using namespace youbot::intrinsic;
+
 void YoubotJoint::_getFirmwareVersionViaMailbox() {
   auto ptr = GetFirmware::InitSharedPtr(slaveIndex);
   center->SendMessage_(ptr);

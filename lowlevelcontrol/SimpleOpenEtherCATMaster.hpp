@@ -18,51 +18,56 @@ extern "C" {
 
 #define MIN(a,b) a<b?a:b
 
-class SimpleOpenEtherCATMaster : public EtherCATMaster {
-  // For mailbox messages
-  std::mutex slaveBufferMutexes[50];
-  struct MailboxBuffers {
-    ec_mbxbuft fromSlave, toSlave;
-  };
-  MailboxBuffers* mailboxBuffers = NULL;
+namespace youbot {
+  namespace intrinsic {
 
-  // For process messages
-  struct ProcessBuffers {
-    DataObjectLockFree<ProcessBuffer> toSlave, fromSlave;
-    uint8_t fromMsgSize = 0;
-  };
-  ProcessBuffers* processBuffers = NULL;
+    class SimpleOpenEtherCATMaster : public EtherCATMaster {
+      // For mailbox messages
+      std::mutex slaveBufferMutexes[50];
+      struct MailboxBuffers {
+        ec_mbxbuft fromSlave, toSlave;
+      };
+      MailboxBuffers* mailboxBuffers = NULL;
 
-  // Mutex for ethercat communications in general
-  std::mutex ethercatComm;
+      // For process messages
+      struct ProcessBuffers {
+        DataObjectLockFree<ProcessBuffer> toSlave, fromSlave;
+        uint8_t fromMsgSize = 0;
+      };
+      ProcessBuffers* processBuffers = NULL;
 
-  static bool opened;
+      // Mutex for ethercat communications in general
+      std::mutex ethercatComm;
 
-  char IOmap_[4096] = { 0 }; // used by soem
+      static bool opened;
 
-public:
-  SimpleOpenEtherCATMaster() {};
+      char IOmap_[4096] = { 0 }; // used by soem
 
-  ~SimpleOpenEtherCATMaster();
+    public:
+      SimpleOpenEtherCATMaster() {};
 
-  // index: 0..(num-1)
-  int getSlaveNum() const override;
+      ~SimpleOpenEtherCATMaster();
 
-  std::string getSlaveName(int cnt) const override;
+      // index: 0..(num-1)
+      int getSlaveNum() const override;
 
-  virtual bool OpenConnection(const std::string& adapterName) override;
+      std::string getSlaveName(int cnt) const override;
 
-  virtual void CloseConnection() override;
+      virtual bool OpenConnection(const std::string& adapterName) override;
 
-  virtual MailboxStatus SendMessage_(MailboxMessage::MailboxMessagePtr ptr) override;
+      virtual void CloseConnection() override;
 
-  virtual void GetProcessMsg(ProcessBuffer& buff, uint8_t slaveNumber) const override;
+      virtual MailboxStatus SendMessage_(MailboxMessage::MailboxMessagePtr ptr) override;
 
-  virtual void SetProcessFromSlaveSize(uint8_t size, uint8_t slaveNumber) override;
+      virtual void GetProcessMsg(ProcessBuffer& buff, uint8_t slaveNumber) const override;
 
-  virtual int SetProcessMsg(const ProcessBuffer& buffer, uint8_t slaveNumber) override;
+      virtual void SetProcessFromSlaveSize(uint8_t size, uint8_t slaveNumber) override;
 
-  virtual void ExchangeProcessMsg() override;
-};
+      virtual int SetProcessMsg(const ProcessBuffer& buffer, uint8_t slaveNumber) override;
+
+      virtual void ExchangeProcessMsg() override;
+    };
+  }
+}
 
 #endif

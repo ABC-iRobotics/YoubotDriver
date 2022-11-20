@@ -1,7 +1,8 @@
 #include "TMCLDefinitions.hpp"
 #include <sstream>
 
-using namespace TMCL;
+using namespace youbot::intrinsic;
+using namespace youbot::intrinsic::TMCL;
 
 std::string TMCL::RecvStatusToString(ReplyStatus in) {
   std::stringstream ss;

@@ -14,8 +14,9 @@ extern "C" {
 #include "ethercatdc.h"
 #include "ethercatprint.h"
 }
-
 #include "Logger.hpp"
+
+using namespace youbot::intrinsic;
 
 bool SimpleOpenEtherCATMaster::opened = false;
 
