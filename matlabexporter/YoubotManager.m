@@ -3,7 +3,7 @@ classdef YoubotManager < handle
 
     properties (Access=private)
         ptr;
-        arm_found, arm_setup;
+        arm_setup;
     end
     
     methods
@@ -19,7 +19,6 @@ classdef YoubotManager < handle
                 configfilename = convertStringsToChars(configfilename);
             end
             obj.ptr = youbotarmmanager(0,configfilename);
-            obj.arm_found = 0;
             obj.arm_setup = 0;
         end
         
@@ -31,35 +30,19 @@ classdef YoubotManager < handle
             end
         end
         
-        function findRobot(obj)
+        function setupRobot(obj)
             try 
-                youbotarmmanager(0.5,obj.ptr);
-                obj.arm_found = 1;
+                youbotarmmanager(2,obj.ptr);
+                obj.arm_setup = 1;
             catch ME
                 disp(['Error: ' ME.message])
-                obj.arm_found = 0;
+                obj.arm_setup = 0;
             end
         end
         
-        function setupRobot(obj)
-            if obj.arm_found
-                try 
-                    youbotarmmanager(2,obj.ptr); %config
-                    youbotarmmanager(3,obj.ptr); %commute
-                    youbotarmmanager(4,obj.ptr); %calibrate
-                    obj.arm_setup = 1;
-                catch
-                    obj.arm_found = 0;
-                    obj.arm_setup = 0;
-                end
-            else
-                disp('First find the robot...')
-            end
-        end
-        
-        function StartProcessCommunication(obj)
+        function StartProcessCommunication(obj,Ts)
             if obj.arm_setup
-                youbotarmmanager(5,obj.ptr);
+                youbotarmmanager(5,obj.ptr,Ts);
             end
         end
         

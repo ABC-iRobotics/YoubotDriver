@@ -61,8 +61,8 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
     return;
   }
 
-  // Find youbotArm (1,ptr)
-  if (*mode == 0.5) {
+  // Setup youbotArm (2,ptr)
+  if (*mode == 2) {
     if (nrhs != 2) {
       mexErrMsgIdAndTxt("MATLAB:youBot:inputmismatch",
         "Input arguments must be 2 in find arm (mode==0.5) mode!");
@@ -70,7 +70,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
     Manager* manager = convertMat2Ptr<Manager>(prhs[1]);
 
     // Find appropriate ethernet adapter and open connection
-    {
+    if (!EtherCATMaster::GetSingleton()->isOpened()) {
       char name[1000];
       if (findYouBotEtherCatAdapter(name))
         log(Log::info, "Adapter found:" + std::string(name));
@@ -82,8 +82,11 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
         mexErrMsgTxt("EtherCATMaster::GetSingleton()->OpenConnection was not successful");
     }
 
-    manager->arm = new YoubotManipulator(manager->config, EtherCATMaster::GetSingleton());
-
+    if (!manager->arm)
+      manager->arm = new YoubotManipulator(manager->config, EtherCATMaster::GetSingleton());
+    manager->arm->ConfigJoints();
+    manager->arm->InitializeAllJoints();
+    manager->arm->Calibrate();
     // Check parameters
     if (nlhs != 0)
       mexErrMsgTxt("Find arm: No output expected.");
@@ -105,48 +108,6 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
       mexErrMsgTxt("Delete: Zero output expected.");
   }
 
-  // Config (2,ptr)
-  if (*mode == 2) {
-    if (nrhs != 2) {
-      mexErrMsgIdAndTxt("MATLAB:youBot:inputmismatch",
-        "Input arguments must be 2 in config (mode==2) mode!");
-    }
-    Manager* man = convertMat2Ptr<Manager>(prhs[1]);
-    man->arm->ConfigJoints();
-    // Check parameters
-    if (nlhs != 0)
-      mexErrMsgTxt("Config: Zero output expected.");
-    return;
-  }
-
-  // Commute (3,ptr)
-  if (*mode == 3) {
-    if (nrhs != 2) {
-      mexErrMsgIdAndTxt("MATLAB:youBot:inputmismatch",
-        "Input arguments must be 2 in commutation (mode==3) mode!");
-    }
-    Manager* man = convertMat2Ptr<Manager>(prhs[0]);
-    man->arm->InitializeAllJoints();
-    // Check parameters
-    if (nlhs != 0)
-      mexErrMsgTxt("Commute: Zero output expected.");
-    return;
-  }
-
-  // Calibrate (4,ptr)
-  if (*mode == 4) {
-    if (nrhs != 2) {
-      mexErrMsgIdAndTxt("MATLAB:youBot:inputmismatch",
-        "Input arguments must be 2 in calibration (mode==4) mode!");
-    }
-    Manager* man = convertMat2Ptr<Manager>(prhs[1]);
-    man->arm->Calibrate();
-    // Check parameters
-    if (nlhs != 0)
-      mexErrMsgTxt("Calibrate: Zero output expected.");
-    return;
-  }
-
   // Start process thread (5,ptr,Ts)
   if (*mode == 5) {
     if (nrhs != 3) {
@@ -154,6 +115,8 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
         "Input arguments must be 3 in start process msgs (mode==5) mode!");
     }
     Manager* man = convertMat2Ptr<Manager>(prhs[1]);
+    if (!man->arm)
+      mexErrMsgTxt("Arm not initialized.");
     SLEEP_SEC(1);
     man->arm->ResetErrorFlags();
     double* Ts = mxGetPr(prhs[2]);
@@ -171,6 +134,8 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
         "Input arguments must be 3 in set joints (mode==6) mode!");
     }
     Manager* man = convertMat2Ptr<Manager>(prhs[1]);
+    if (!man->arm)
+      mexErrMsgTxt("Arm not initialized.");
     
     if (mxGetN(prhs[2])*mxGetM(prhs[2]) != 5) {
       mexErrMsgIdAndTxt("MATLAB:youBot:inputmismatch",
@@ -186,7 +151,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
     return;
   }
 
-  // Stop process thread (7,ptr)
+  // Stop process thread (7)
   if (*mode == 7) {
     if (nrhs != 2) {
       mexErrMsgIdAndTxt("MATLAB:youBot:inputmismatch",
@@ -206,6 +171,8 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
         "Input arguments must be 2 in get joints (mode==8) mode!");
     }
     Manager* man = convertMat2Ptr<Manager>(prhs[1]);
+    if (!man->arm)
+      mexErrMsgTxt("Arm not initialized.");
     // Check parameters
     if (nlhs == 1) {
       plhs[0] = mxCreateDoubleMatrix(5, 1, mxREAL);
