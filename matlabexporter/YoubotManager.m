@@ -41,6 +41,9 @@ classdef YoubotManager < handle
         end
         
         function StartProcessCommunication(obj,Ts)
+            if nargin == 1
+                Ts = 40;
+            end
             if obj.arm_setup
                 youbotarmmanager(5,obj.ptr,Ts);
             end

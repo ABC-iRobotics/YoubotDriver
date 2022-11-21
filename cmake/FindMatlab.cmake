@@ -79,7 +79,7 @@ macro(add_matlabexporter NAME files)
     install(TARGETS ${NAME} DESTINATION ../bin/MATLAB)
     
     # Copy config files
-    file(GLOB matlab_files "${CMAKE_CURRENT_SOURCE_DIR}/*.m" "${CMAKE_CURRENT_SOURCE_DIR}/*.mlx")
+    file(GLOB matlab_files "${CMAKE_CURRENT_SOURCE_DIR}/*.m" "${CMAKE_CURRENT_SOURCE_DIR}/*.mlapp")
     install(FILES ${matlab_files} DESTINATION "${CMAKE_BINARY_DIR}/bin/MATLAB")
     set_target_properties(${NAME} PROPERTIES FOLDER "App")
   ELSE(MATLAB_FOUND)
