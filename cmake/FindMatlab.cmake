@@ -76,12 +76,15 @@ macro(add_matlabexporter NAME files)
     target_compile_definitions(${NAME} PUBLIC MATLAB_MEX_FILE MX_COMPAT_32)
     
     # install to /bin by default
-    install(TARGETS ${NAME} DESTINATION ../bin/MATLAB)
+    install(TARGETS ${NAME} DESTINATION MATLAB)
     
     # Copy config files
     file(GLOB matlab_files "${CMAKE_CURRENT_SOURCE_DIR}/*.m" "${CMAKE_CURRENT_SOURCE_DIR}/*.mlx")
-    install(FILES ${matlab_files} DESTINATION "${CMAKE_BINARY_DIR}/bin/MATLAB")
+    file(COPY ${matlab_files} DESTINATION "${CMAKE_BINARY_DIR}/bin/MATLAB")
+    install(FILES ${matlab_files} DESTINATION MATLAB)
     set_target_properties(${NAME} PROPERTIES FOLDER "App")
+    set_target_properties(${NAME} PROPERTIES
+      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/MATLAB")
   ELSE(MATLAB_FOUND)
       MESSAGE("MATLAB not found...nothing will be built.")
   ENDIF(MATLAB_FOUND)
