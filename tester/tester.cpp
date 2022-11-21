@@ -9,7 +9,7 @@ using namespace youbot;
 int main(int argc, char *argv[])
 {
   // Get Configfile
-  YoubotConfig config("D:/Tresors/WORK/PROJECT - KUKA youbot/myYouBotDriver/config/youBotArmConfig_fromKeisler.json");
+  YoubotConfig config(std::string(CONFIG_FOLDER) + "youBotArmConfig_fromKeisler.json");
   //youBotArmConfig_fromfactory.json");
   //youBotArmConfig_fromMoveIt.json");
   //youBotArmConfig_fromKeisler.json");

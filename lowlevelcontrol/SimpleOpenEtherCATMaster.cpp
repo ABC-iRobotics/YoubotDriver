@@ -31,7 +31,7 @@ bool SimpleOpenEtherCATMaster::OpenConnection(const std::string& adapterName) {
 
   if (opened) {
     log(__PRETTY_FUNCTION__, Log::fatal, "SimpleOpenEtherCATMaster is already opened.");
-    throw std::runtime_error("SimpleOpenEtherCATMaster is already opened.");
+    return true;
   }
 
   //initialize to zero
