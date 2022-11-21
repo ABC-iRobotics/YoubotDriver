@@ -50,6 +50,8 @@ namespace youbot {
     void StartProcessThread(int sleepMS);
 
     void StopProcessThread();
+
+    virtual bool isOpened() const = 0;
   };
 }
 #endif

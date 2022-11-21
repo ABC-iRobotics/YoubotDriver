@@ -66,6 +66,8 @@ namespace youbot {
       virtual int SetProcessMsg(const ProcessBuffer& buffer, uint8_t slaveNumber) override;
 
       virtual void ExchangeProcessMsg() override;
+
+      virtual bool isOpened() const override;
     };
   }
 }

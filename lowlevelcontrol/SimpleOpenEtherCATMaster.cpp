@@ -21,6 +21,11 @@ using namespace youbot::intrinsic;
 
 bool SimpleOpenEtherCATMaster::opened = false;
 
+
+bool SimpleOpenEtherCATMaster::isOpened() const {
+  return opened;
+}
+
 bool SimpleOpenEtherCATMaster::OpenConnection(const std::string& adapterName) {
   std::lock_guard<std::mutex> lock(ethercatComm);
 
