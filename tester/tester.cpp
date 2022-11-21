@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
   man.ResetErrorFlags();
   EtherCATMaster::GetSingleton()->StartProcessThread(30);
 
-  man.ReqJointPosition(-10, 10, 10, 10, 0);
+  man.ReqJointPosition(0, 0, 0, 0, 0);
   SLEEP_SEC(5);
 
   EtherCATMaster::GetSingleton()->StopProcessThread();
