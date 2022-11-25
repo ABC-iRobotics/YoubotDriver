@@ -1,4 +1,4 @@
-# myYouBotDriver
+# New Driver for KUKA YouBot manipulator - under development
 
 Usage on Windows
 
