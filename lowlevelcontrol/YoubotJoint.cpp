@@ -544,9 +544,13 @@ void YoubotJoint::ResetTimeoutViaMailbox() {
 
 void YoubotJoint::ResetI2TExceededViaMailbox() {
   auto ptr = ClearI2TFlag::InitSharedPtr(slaveIndex);
+  log(Log::info, "  ClearI2TFlag: waiting");
+
+  SLEEP_MILLISEC(long(cooldowntime_sec * 1000))
+
   center->SendMessage_(ptr);
-  log(Log::info, "  ClearI2TFlag: " + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()));
-  SLEEP_MILLISEC(6)
+  log(Log::info, "  ClearI2TFlag: " + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + " waiting done");
+  
 }
 
 void YoubotJoint::StartInitialization() {
@@ -842,6 +846,37 @@ bool YoubotJoint::IsCalibratedViaMailbox() {
   return !ptr->GetReplyValue();
 }
 
+void YoubotJoint::I2tResetTest() {
+  auto status = GetJointStatusViaMailbox();
+  log(Log::info, status.toString());
+  if (status.I2TExceeded())
+    ResetI2TExceededViaMailbox();
+  bool forward = config.at("CalibrationDirection");
+  const double calJointRadPerSec = 0.2;
+  
+  int limit = GetI2tLimitValue();
+  
+  ResetTimeoutViaMailbox();
+  SetJointVelocityRadPerSec(forward ? calJointRadPerSec : -calJointRadPerSec);
+  do
+  {
+    auto current = GetCurrentI2tValue();
+    status = GetJointStatusViaMailbox();
+    auto str = status.toString();
+  } while (!status.I2TExceeded());
+
+  if (status.I2TExceeded())
+    ResetI2TExceededViaMailbox();
+
+  status = GetJointStatusViaMailbox();
+  
+  if (status.I2TExceeded())
+    log(Log::error, "Para...");
+  else
+    log(Log::info, "OK...");
+  SLEEP_SEC(1)
+}
+
 void YoubotJoint::SetCalibratedViaMailbox() {
   auto ptr = SetIsCalibrated::InitSharedPtr(slaveIndex);
   center->SendMessage_(ptr);
@@ -851,8 +886,14 @@ void YoubotJoint::SetCalibratedViaMailbox() {
 void YoubotJoint::Initialize() {
   if (!IsInitialized()) {
     auto status = GetJointStatusViaMailbox();
-    ResetTimeoutViaMailbox();
-    ResetI2TExceededViaMailbox();
+    log(Log::info, status.toString());
+    if (status.I2TExceeded()) {
+      ResetI2TExceededViaMailbox();
+      ResetTimeoutViaMailbox();
+    }
+    else
+      if(status.Timeout())
+        ResetTimeoutViaMailbox();
     status = GetJointStatusViaMailbox();
     log(Log::info, "Joint " + std::to_string(slaveIndex) + " status before calibration: " + status.toString());
     StartInitialization();

@@ -156,6 +156,9 @@ namespace youbot {
     void SetCalibratedViaMailbox();
 
     typedef std::shared_ptr<YoubotJoint> Ptr;
+
+    // Only for test purposes
+    void I2tResetTest();
   };
 }
 #endif

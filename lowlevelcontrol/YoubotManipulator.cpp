@@ -62,14 +62,18 @@ void YoubotManipulator::Calibrate(bool forceCalibration) {
 	  jointcalstate[i] = IDLE;
 	else {
 	  jointcalstate[i] = TO_CALIBRATE;
+	  auto status = joints[i]->GetJointStatusViaMailbox();
+	  log(Log::info, status.toString());
+	  if (status.I2TExceeded())
+		joints[i]->ResetI2TExceededViaMailbox();
+	}
+  for (int i = 0; i < 5; i++)
+	if (jointcalstate[i] != IDLE) {
+	  joints[i]->ResetTimeoutViaMailbox();
 	  bool forward = config.jointConfigs[i].at("CalibrationDirection");
-	  joints[i]->ResetI2TExceededViaMailbox();
 	  joints[i]->ReqVelocityJointRadPerSec(forward ? calJointRadPerSec : -calJointRadPerSec);
 	  log(Log::info, "Calibration of joint " + std::to_string(i) + "started");
 	}
-  for (int i = 0; i < 5; i++)
-	if (jointcalstate[i] != IDLE)
-	  joints[i]->ResetTimeoutViaMailbox();
 
   do {
 	center->ExchangeProcessMsg();
@@ -135,8 +139,11 @@ void YoubotManipulator::GetJointPosition(double& q0,
 }
 
 void YoubotManipulator::ResetErrorFlags() {
-  for (int i = 0; i < 5; i++)
-	joints[i]->ResetI2TExceededViaMailbox();
+  for (int i = 0; i < 5; i++) {
+	auto status = joints[i]->GetJointStatusViaMailbox();
+	if (status.I2TExceeded())
+	  joints[i]->ResetI2TExceededViaMailbox();
+  }
   for (int i = 0; i < 5; i++)
 	joints[i]->ResetTimeoutViaMailbox();
 }
