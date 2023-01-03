@@ -22,7 +22,7 @@ namespace youbot {
       RECEIVED_SUCCESSFUL = 4
     };
 
-    // Copy recieved rocess message of slavenumber (0..(N-1)) into the buffer
+    // Copy recieved process message of slavenumber (0..(N-1)) into the buffer
     virtual void GetProcessMsg(ProcessBuffer& buff, uint8_t slaveNumber) const = 0;
 
     // Set the useful size of recieved process messages to be copyied (by default zero)

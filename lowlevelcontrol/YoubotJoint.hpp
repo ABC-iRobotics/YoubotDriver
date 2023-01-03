@@ -14,6 +14,7 @@ namespace youbot {
     // Read during configuration
     uint32_t ticksperround = -1;
     int firmwareversion = -1, controllerNum = -1;
+    double cooldowntime_sec = -1;
     double gearRatio = -1;
     bool calibrationDirection = false;
     double torqueconstant = false;
@@ -124,6 +125,8 @@ namespace youbot {
 
     void ReqVelocityMotorRPM(int32_t value);
 
+    double GetThermalWindingTimeSec();
+
     void ReqEncoderReference(int32_t value);
 
     void ReqMotorStopViaProcess();
@@ -140,6 +143,12 @@ namespace youbot {
 
     double GetJointVelocityRadPerSec();
 
+    long GetI2tLimitValue();
+
+    long GetCurrentI2tValue();
+
+    void SetJointVelocityRadPerSec(double value);
+
     void SetTargetCurrentA(double current);
 
     bool IsCalibratedViaMailbox();
@@ -147,6 +156,9 @@ namespace youbot {
     void SetCalibratedViaMailbox();
 
     typedef std::shared_ptr<YoubotJoint> Ptr;
+
+    // Only for test purposes
+    void I2tResetTest();
   };
 }
 #endif
