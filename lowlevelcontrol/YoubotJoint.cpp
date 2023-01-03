@@ -802,6 +802,20 @@ double YoubotJoint::GetJointVelocityRadPerSec() {
   return double(ptr->GetReplyValue()) * 2. * M_PI / 60. * gearRatio;
 }
 
+long youbot::YoubotJoint::GetI2tLimitValue() {
+  auto ptr = GetI2tLimitValue::InitSharedPtr(slaveIndex);
+  center->SendMessage_(ptr);
+  log(Log::info, " GetI2tLimitValue: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
+  return ptr->GetReplyValue();
+}
+
+long youbot::YoubotJoint::GetCurrentI2tValue() {
+  auto ptr = GetCurrentI2tValue::InitSharedPtr(slaveIndex);
+  center->SendMessage_(ptr);
+  log(Log::info, " GetCurrentI2tValue: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
+  return ptr->GetReplyValue();
+}
+
 void YoubotJoint::SetJointVelocityRadPerSec(double value) {
   auto ptr = RotateRightMotorRPM::InitSharedPtr(slaveIndex, value / gearRatio * 60. / M_PI / 2.);
   center->SendMessage_(ptr);

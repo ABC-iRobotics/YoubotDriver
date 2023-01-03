@@ -143,6 +143,10 @@ namespace youbot {
 
     double GetJointVelocityRadPerSec();
 
+    long GetI2tLimitValue();
+
+    long GetCurrentI2tValue();
+
     void SetJointVelocityRadPerSec(double value);
 
     void SetTargetCurrentA(double current);

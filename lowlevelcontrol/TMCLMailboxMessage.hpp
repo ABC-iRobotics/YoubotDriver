@@ -363,6 +363,11 @@ namespace youbot {
     typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
       TMCL::AxisParam::THERMAL_WINDING_TIME> GetThermalWindingTimeMs;
 
+    typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+      TMCL::AxisParam::I2T_LIMIT_VALUE> GetI2tLimitValue;
+
+    typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+      TMCL::AxisParam::CURRENT_I2T_VALUE> GetCurrentI2tValue;
   }
 }
 
