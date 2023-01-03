@@ -41,7 +41,20 @@ int main(int argc, char *argv[])
   EtherCATMaster::GetSingleton()->StartProcessThread(30);
 
   man.ReqJointPosition(0, 0, 0, 0, 0);
-  SLEEP_SEC(5);
+  SLEEP_SEC(3);
+  for (int j = 0; j < 1000;j++) {
+
+    man.ReqJointPosition(10. * sin(2. * M_PI / 100. * double(j)),
+      12. * sin(2. * M_PI / 150. * double(j)),
+      14. * sin(2. * M_PI / 200. * double(j)),
+      16. * sin(2. * M_PI / 250. * double(j)),
+      18. * sin(2. * M_PI / 500. * double(j)));
+
+    log(Log::debug,"new data\n");
+    for (int i = 0; i < 5; i++)
+      man.GetJoint(i)->GetProcessReturnData().Print();
+    SLEEP_MILLISEC(10);
+  }
 
   EtherCATMaster::GetSingleton()->StopProcessThread();
 
