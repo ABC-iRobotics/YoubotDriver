@@ -360,6 +360,9 @@ namespace youbot {
     typedef TMCLTemplate<int32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
       TMCL::AxisParam::TARGET_CURRENT> GetTargetCurrentmA;
 
+    typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+      TMCL::AxisParam::THERMAL_WINDING_TIME> GetThermalWindingTimeMs;
+
   }
 }
 

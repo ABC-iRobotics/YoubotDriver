@@ -34,6 +34,10 @@ YoubotJoint::YoubotJoint(int slaveIndex, const std::map<std::string,
     log(Log::info, "Init joint " + std::to_string(slaveIndex) +
       " GetEncoderStepsPerRotation: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
   }
+  // Get cooldowntime_sec
+  {
+    cooldowntime_sec = GetThermalWindingTimeSec();
+  }
   gearRatio = config.at("GearRatio");
   log(Log::info, "Init joint " + std::to_string(slaveIndex) + " GearRatio: "
     + std::to_string(gearRatio));
@@ -796,6 +800,13 @@ double YoubotJoint::GetJointVelocityRadPerSec() {
   center->SendMessage_(ptr);
   log(Log::info, " GetActualSpeedMotorRPM: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
   return double(ptr->GetReplyValue()) * 2. * M_PI / 60. * gearRatio;
+}
+
+double YoubotJoint::GetThermalWindingTimeSec() {
+  auto ptr = GetThermalWindingTimeMs::InitSharedPtr(slaveIndex);
+  center->SendMessage_(ptr);
+  log(Log::info, " GetThermalWindingTimeMs: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
+  return double(ptr->GetReplyValue()) / 1000.;
 }
 
 void YoubotJoint::SetTargetCurrentA(double current) {
