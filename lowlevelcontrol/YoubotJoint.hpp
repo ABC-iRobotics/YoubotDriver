@@ -143,6 +143,8 @@ namespace youbot {
 
     double GetJointVelocityRadPerSec();
 
+    void SetJointVelocityRadPerSec(double value);
+
     void SetTargetCurrentA(double current);
 
     bool IsCalibratedViaMailbox();
