@@ -10,8 +10,15 @@ using namespace youbot::intrinsic;
 
 void YoubotJoint::_getFirmwareVersionViaMailbox() {
   auto ptr = GetFirmware::InitSharedPtr(slaveIndex);
-  center->SendMessage_(ptr);
-  ptr->GetOutput(controllerNum, firmwareversion);
+  int n_try = 0;
+  do {
+    SLEEP_MILLISEC(5)
+    center->SendMessage_(ptr);
+    ptr->GetOutput(controllerNum, firmwareversion);
+    n_try++;
+    if (n_try>=50)
+      throw std::runtime_error("Controller/firmware type zeros returned again and again");
+  } while (controllerNum == 0 && firmwareversion == 0);
   if (controllerNum != 1610 || firmwareversion != 148) {
     log(Log::fatal, "Not supported joint with slaveindex " + std::to_string(slaveIndex) + ". Controller: "
       + std::to_string(controllerNum) + " Firmware: " + std::to_string(firmwareversion));
