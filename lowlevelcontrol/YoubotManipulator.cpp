@@ -67,8 +67,9 @@ void YoubotManipulator::Calibrate(bool forceCalibration) {
 	  jointcalstate[i] = IDLE;
 	else {
 	  jointcalstate[i] = TO_CALIBRATE;
-	  bool forward = config.jointConfigs[i].at("CalibrationDirection");
-	  joints[i]->ReqVelocityJointRadPerSec(forward ? calJointRadPerSec : -calJointRadPerSec);
+	  bool backward = bool(config.jointConfigs[i].at("CalibrationDirection"))
+		^ bool(config.jointConfigs[i].at("qDirectionSameAsEnc"));
+	  joints[i]->ReqVelocityJointRadPerSec(backward ? -calJointRadPerSec : calJointRadPerSec);
 	  log(Log::info, "Calibration of joint " + std::to_string(i) + "started");
 	}
   }
@@ -150,24 +151,23 @@ void YoubotManipulator::Calibrate(bool forceCalibration) {
 	it->GetProcessReturnData().Print();
 }
 
-void YoubotManipulator::ReqJointPosition(double q0,
+void YoubotManipulator::ReqJointPositionRad(double q0,
   double q1, double q2, double q3, double q4) {
-  joints[0]->ReqJointPositionDeg(q0);
-  joints[1]->ReqJointPositionDeg(q1);
-  joints[2]->ReqJointPositionDeg(q2);
-  joints[3]->ReqJointPositionDeg(q3);
-  joints[4]->ReqJointPositionDeg(q4);
+  joints[0]->ReqJointPositionRad(q0);
+  joints[1]->ReqJointPositionRad(q1);
+  joints[2]->ReqJointPositionRad(q2);
+  joints[3]->ReqJointPositionRad(q3);
+  joints[4]->ReqJointPositionRad(q4);
 }
 
-void YoubotManipulator::GetJointPosition(double& q0,
+void YoubotManipulator::GetJointPositionRad(double& q0,
   double& q1, double& q2, double& q3, double& q4) {
-  q0 = joints[0]->GetJointPositionDeg();
-  q1 = joints[1]->GetJointPositionDeg();
-  q2 = joints[2]->GetJointPositionDeg();
-  q3 = joints[3]->GetJointPositionDeg();
-  q4 = joints[4]->GetJointPositionDeg();
+  q0 = joints[0]->GetJointPositionRad();
+  q1 = joints[1]->GetJointPositionRad();
+  q2 = joints[2]->GetJointPositionRad();
+  q3 = joints[3]->GetJointPositionRad();
+  q4 = joints[4]->GetJointPositionRad();
 }
-
 
 void YoubotManipulator::ReqManipulatorStop() {
   for (auto& it : joints)

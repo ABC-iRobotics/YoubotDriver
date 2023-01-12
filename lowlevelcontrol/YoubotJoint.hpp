@@ -22,14 +22,10 @@ namespace youbot {
 
     struct Conversion {
       int ticksperround;
-      double qCalibrationDeg, qCalibrationRad, gearRatio;
+      double qCalibrationRad, gearRatio;
       bool intialized;
-      double Ticks2qDeg(int32_t ticks) const;
-      int32_t qDeg2Ticks(double qDeg) const;
       double Ticks2qRad(int32_t ticks) const;
       int32_t qRad2Ticks(double qDeg) const;
-      double RPM2qDegPerSec(int32_t RPM) const;
-      int32_t qDegPerSec2RPM(double degpersec) const;
       double RPM2qRadPerSec(int32_t RPM) const;
       int32_t qRadPerSec2RPM(double degpersec) const;
       Conversion(bool qDirectionSameAsEnc, int32_t ticksPerRound,
@@ -72,7 +68,7 @@ namespace youbot {
       int32_t motorVelocityRPM;
       JointStatus status;
       int32_t motorPWM;
-      double qDeg,qRad;
+      double qRad;
       // double jointAngle, jointVelocityRad/s, torque, ...
 
       ProcessReturn();
@@ -147,11 +143,7 @@ namespace youbot {
     // Process message-based req/get methods will be sent with the next ExcangeMessage/show the results of the latest one
     const ProcessReturn& GetProcessReturnData();
 
-    void ReqJointPositionDeg(double value);
-
     void ReqJointPositionRad(double value);
-
-    double GetJointPositionDeg();
 
     double GetJointPositionRad();
 

@@ -40,15 +40,15 @@ int main(int argc, char *argv[])
   man.ResetErrorFlags();
   EtherCATMaster::GetSingleton()->StartProcessThread(30);
 
-  man.ReqJointPosition(0, 0, 0, 0, 0);
+  man.ReqJointPositionRad(0, 0, 0, 0, 0);
   SLEEP_SEC(3);
   for (int j = 0; j < 1000;j++) {
 
-    man.ReqJointPosition(10. * sin(2. * M_PI / 100. * double(j)),
-      12. * sin(2. * M_PI / 150. * double(j)),
-      14. * sin(2. * M_PI / 200. * double(j)),
-      16. * sin(2. * M_PI / 250. * double(j)),
-      18. * sin(2. * M_PI / 500. * double(j)));
+    man.ReqJointPositionRad(10./180.*M_PI * sin(2. * M_PI / 100. * double(j)),
+      12. / 180. * M_PI * sin(2. * M_PI / 150. * double(j)),
+      14. / 180. * M_PI * sin(2. * M_PI / 200. * double(j)),
+      16. / 180. * M_PI * sin(2. * M_PI / 250. * double(j)),
+      18. / 180. * M_PI * sin(2. * M_PI / 300. * double(j)));
 
     log(Log::debug,"new data\n");
     for (int i = 0; i < 5; i++)

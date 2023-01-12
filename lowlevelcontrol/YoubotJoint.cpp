@@ -710,7 +710,6 @@ const YoubotJoint::ProcessReturn& YoubotJoint::GetProcessReturnData() {
   static ProcessBuffer buffer;
   center->GetProcessMsg(buffer, slaveIndex);
   processReturn.encoderPosition = _toInt32(&buffer.buffer[0]);
-  processReturn.qDeg = conversion.Ticks2qDeg(processReturn.encoderPosition);
   processReturn.currentmA = _toInt32(&buffer.buffer[4]);
   processReturn.motorVelocityRPM = _toInt32(&buffer.buffer[8]);
   processReturn.status = _toInt32(&buffer.buffer[12]);
@@ -719,19 +718,7 @@ const YoubotJoint::ProcessReturn& YoubotJoint::GetProcessReturnData() {
 }
 
 void YoubotJoint::ReqVelocityJointRadPerSec(double value) {
-  ReqVelocityMotorRPM(int32_t(value / 2. / M_PI * 60. / gearRatio));
-}
-
-
-void YoubotJoint::ReqJointPositionDeg(double deg) {
-  static ProcessBuffer toSet(5);
-  int32_t ticks = conversion.qDeg2Ticks(deg);
-  toSet.buffer[3] = ticks >> 24;
-  toSet.buffer[2] = ticks >> 16;
-  toSet.buffer[1] = ticks >> 8;
-  toSet.buffer[0] = ticks & 0xff;
-  toSet.buffer[4] = TMCL::ControllerMode::POSITION_CONTROL;
-  center->SetProcessMsg(toSet, slaveIndex);
+  ReqVelocityMotorRPM(conversion.qRadPerSec2RPM(value));
 }
 
 void YoubotJoint::ReqJointPositionRad(double rad) {
@@ -743,10 +730,6 @@ void YoubotJoint::ReqJointPositionRad(double rad) {
   toSet.buffer[0] = ticks & 0xff;
   toSet.buffer[4] = TMCL::ControllerMode::POSITION_CONTROL;
   center->SetProcessMsg(toSet, slaveIndex);
-}
-
-double YoubotJoint::GetJointPositionDeg() {
-  return GetProcessReturnData().qDeg;
 }
 
 double YoubotJoint::GetJointPositionRad() {
@@ -935,14 +918,6 @@ void YoubotJoint::Initialize() {
   }
 }
 
-double YoubotJoint::Conversion::Ticks2qDeg(int32_t ticks) const {
-  return double(ticks) * 360. * gearRatio / double(ticksperround) + qCalibrationDeg;
-}
-
-int32_t YoubotJoint::Conversion::qDeg2Ticks(double qDeg) const {
-  return int32_t((qDeg - qCalibrationDeg) / (360. * gearRatio / double(ticksperround)));
-}
-
 double YoubotJoint::Conversion::Ticks2qRad(int32_t ticks) const {
   return double(ticks) * 2. * M_PI * gearRatio / double(ticksperround) + qCalibrationRad;
 }
@@ -951,24 +926,16 @@ int32_t YoubotJoint::Conversion::qRad2Ticks(double qDeg) const {
   return int32_t((qDeg - qCalibrationRad) / (2. * M_PI * gearRatio / double(ticksperround)));
 }
 
-double youbot::YoubotJoint::Conversion::RPM2qDegPerSec(int32_t RPM) const {
-  return double(RPM) * 60. * gearRatio;
-}
-
-int32_t youbot::YoubotJoint::Conversion::qDegPerSec2RPM(double degpersec) const {
-  return degpersec / 60. / gearRatio;
-}
-
 double youbot::YoubotJoint::Conversion::RPM2qRadPerSec(int32_t RPM) const {
   return double(RPM) / 60. * gearRatio * 2. * M_PI;
 }
 
-int32_t youbot::YoubotJoint::Conversion::qRadPerSec2RPM(double degpersec) const {
-  return degpersec * 60. / gearRatio / (2. * M_PI);
+int32_t youbot::YoubotJoint::Conversion::qRadPerSec2RPM(double radpersec) const {
+  return radpersec * 60. / gearRatio / (2. * M_PI);
 }
 
 YoubotJoint::Conversion::Conversion(bool qDirectionSameAsEnc, int32_t ticksPerRound,
   double gearRatio, double qCalibrationDeg) : intialized(1), ticksperround(ticksPerRound),
-  gearRatio(gearRatio* (qDirectionSameAsEnc ? 1. : -1.)), qCalibrationDeg(qCalibrationDeg),
+  gearRatio(gearRatio* (qDirectionSameAsEnc ? 1. : -1.)),
   qCalibrationRad(qCalibrationDeg / 180. * M_PI) {
 }

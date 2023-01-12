@@ -33,9 +33,9 @@ namespace youbot {
 
 	void Calibrate(bool forceCalibration = false);
 
-	void ReqJointPosition(double q0, double q1, double q2, double q3, double q4);
+	void ReqJointPositionRad(double q0, double q1, double q2, double q3, double q4);
 
-	void GetJointPosition(double& q0, double& q1, double& q2, double& q3, double& q4);
+	void GetJointPositionRad(double& q0, double& q1, double& q2, double& q3, double& q4);
 
 	void ReqManipulatorStop();
 
