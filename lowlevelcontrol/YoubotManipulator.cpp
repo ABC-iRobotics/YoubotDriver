@@ -85,16 +85,17 @@ void YoubotManipulator::Calibrate(bool forceCalibration) {
   do {
 	// Send out velocity requests
 	center->ExchangeProcessMsg();
-	for (int i = 0; i < 5; i++) {
-	  auto status = joints[i]->GetProcessReturnData().status;
-	  if (status.I2TExceeded())
-		throw std::runtime_error("I2t exceeded during calibration");
-	  if (status.Timeout()) {
-		log(Log::info, "i:" + std::to_string(i) + " " + status.toString());
-		SLEEP_MILLISEC(10);
-		throw std::runtime_error("Timeout during calibration");
+	for (int i = 0; i < 5; i++)
+	  if (jointcalstate[i] != IDLE) {
+		auto status = joints[i]->GetProcessReturnData().status;
+		if (status.I2TExceeded())
+		  throw std::runtime_error("I2t exceeded during calibration");
+		if (status.Timeout()) {
+		  log(Log::info, "i:" + std::to_string(i) + " " + status.toString());
+		  SLEEP_MILLISEC(10);
+		  throw std::runtime_error("Timeout during calibration");
+		}
 	  }
-	}
 	end = std::chrono::steady_clock::now();
   } while (std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() < 200);
   int cycles_in_zero_speed[5] = { 0,0,0,0,0 };
