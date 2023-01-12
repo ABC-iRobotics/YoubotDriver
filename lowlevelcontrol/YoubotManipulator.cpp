@@ -42,7 +42,7 @@ bool YoubotManipulator::CheckJointConfigs() {
 void YoubotManipulator::InitializeAllJoints() {
   for (auto& it : joints) {
 	it->Initialize();
-	SLEEP_MILLISEC(200); // Wait to finish the moves - controller likes it
+	SLEEP_MILLISEC(500); // Wait to finish the moves - controller likes it
   }
 }
 
@@ -55,7 +55,6 @@ enum CalibState : uint8_t {
 
 void YoubotManipulator::Calibrate(bool forceCalibration) {
   CalibState jointcalstate[5];
-
   const double calJointRadPerSec = 0.35;
   for (int i = 0; i < 5; i++) {
 	// RESET I2t flags
@@ -77,29 +76,34 @@ void YoubotManipulator::Calibrate(bool forceCalibration) {
   for (int i = 0; i < 5; i++)
 	if (jointcalstate[i] != IDLE)
 	  joints[i]->ResetTimeoutViaMailbox();
-  // Wait enough time (now 200 ms) to start the mechanics and send messages to avoid timout and check status
+  // Main calibration loop: move with constant speed and check if it has stopped
   auto start = std::chrono::steady_clock::now();
-  std::chrono::steady_clock::time_point end;
   center->ExchangeProcessMsg(); // do sg to avoid a new timout
   SLEEP_MILLISEC(2) // Wait until the status flag of process messages will be refreshed (without timeout flag)
+  int cycles_in_zero_speed[5] = { 0,0,0,0,0 }; // counters for ~speed
   do {
-	// Send out velocity requests
 	center->ExchangeProcessMsg();
-	for (int i = 0; i < 5; i++) {
-	  auto status = joints[i]->GetProcessReturnData().status;
-	  if (status.I2TExceeded())
-		throw std::runtime_error("I2t exceeded during calibration");
-	  if (status.Timeout()) {
-		log(Log::info, "i:" + std::to_string(i) + " " + status.toString());
-		SLEEP_MILLISEC(10);
-		throw std::runtime_error("Timeout during calibration");
+	// Check status
+	for (int i = 0; i < 5; i++)
+	  if (jointcalstate[i] != IDLE) {
+		auto status = joints[i]->GetProcessReturnData().status;
+		if (status.I2TExceeded()) {
+		  log(Log::fatal, "I2t exceeded during calibration in joint " + std::to_string(i) + " (" + status.toString() + ")");
+		  SLEEP_MILLISEC(10);
+		  throw std::runtime_error("I2t exceeded during calibration");
+		}
+		if (status.Timeout()) {
+		  log(Log::fatal, "Timeout during calibration in joint " + std::to_string(i) + " (" + status.toString() + ")");
+		  SLEEP_MILLISEC(10);
+		  throw std::runtime_error("Timeout during calibration");
+		}
 	  }
-	}
-	end = std::chrono::steady_clock::now();
-  } while (std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() < 200);
-  int cycles_in_zero_speed[5] = { 0,0,0,0,0 };
-  do {
-	center->ExchangeProcessMsg();
+	// Check if enough time elapsed (in the first 200ms, the joints can start to move)
+	SLEEP_MILLISEC(3);
+	auto end = std::chrono::steady_clock::now();
+	if (std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() < 200)
+	  continue;
+	// Do calibration
 	std::string str = "Calibration vel: ";
 	for (int i = 0; i < 5; i++)
 	  switch (jointcalstate[i]) {
@@ -134,7 +138,6 @@ void YoubotManipulator::Calibrate(bool forceCalibration) {
 		break;
 	  }
 	log(Log::info, str);
-	SLEEP_MILLISEC(3);
   } while (jointcalstate[0] < PEACE || jointcalstate[1] < PEACE ||
 	jointcalstate[2] < PEACE || jointcalstate[3] < PEACE || jointcalstate[4] < PEACE);
   for (int i = 0; i < 5; i++)

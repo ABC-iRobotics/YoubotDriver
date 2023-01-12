@@ -903,13 +903,20 @@ void YoubotJoint::Initialize() {
     status = GetJointStatusViaMailbox();
     log(Log::info, "Joint " + std::to_string(slaveIndex) + " status before calibration: " + status.toString());
     StartInitialization();
-    for (int i = 0; i < 300; i++)
+    auto start = std::chrono::steady_clock::now();
+    std::chrono::steady_clock::time_point end;
+    SLEEP_MILLISEC(10); // test
+    do {
       if (IsInitialized()) {
         log(Log::info, "Joint " + std::to_string(slaveIndex) + " is initialized");
         return;
       }
-    if (!IsInitialized())
-      throw std::runtime_error("One joint is not initialized and cannot be done it...");
+      end = std::chrono::steady_clock::now();
+    } while (std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() < 2000);
+    StopViaMailbox();
+    log(Log::fatal, "Joint " + std::to_string(slaveIndex) + " error during initialization (possible causes: it is in the problematic end position, on windows: other processes take too much processor resource)");
+    SLEEP_MILLISEC(10);
+    throw std::runtime_error("One joint is not initialized and cannot be done it... ");
   }
 }
 
