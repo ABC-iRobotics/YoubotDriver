@@ -95,6 +95,9 @@ namespace youbot {
 
     bool CheckConfig();
 
+    void Initialize();
+
+    // Mailbox-based Set/Get mothods
     bool IsConfiguratedViaMailbox();
 
     void SetConfiguratedViaMailbox();
@@ -111,12 +114,33 @@ namespace youbot {
 
     void ResetI2TExceededViaMailbox();
 
-    void StartInitialization();
+    void StartInitializationViaMailbox();
 
-    bool IsInitialized();
+    bool IsInitializedViaMailbox();
 
-    void Initialize();
+    double GetThermalWindingTimeSecViaMailbox();
 
+    double GetCurrentAViaMailbox();
+
+    void RotateMotorRightViaMailbox(int32_t speedMotorRPM);
+
+    void RotateMotorLeftViaMailbox(int32_t speedMotorRPM);
+    
+    void SetTargetCurrentAViaMailbox(double current);
+
+    bool IsCalibratedViaMailbox();
+
+    void SetCalibratedViaMailbox();
+
+    long GetI2tLimitValueViaMailbox();
+
+    long GetCurrentI2tValueViaMailbox();
+
+    double GetJointVelocityRadPerSecViaMailbox();
+
+    void SetJointVelocityRadPerSecViaMailbox(double value);
+
+    // Process message-based req/get methods will be sent with the next ExcangeMessage/show the results of the latest one
     const ProcessReturn& GetProcessReturnData();
 
     void ReqJointPositionDeg(double value);
@@ -127,8 +151,6 @@ namespace youbot {
 
     void ReqVelocityMotorRPM(int32_t value);
 
-    double GetThermalWindingTimeSec();
-
     void ReqEncoderReference(int32_t value);
 
     void ReqMotorStopViaProcess();
@@ -136,26 +158,6 @@ namespace youbot {
     void ReqVoltagePWM(int32_t value);
 
     void ReqInitializationViaProcess();
-
-    double GetCurrentAViaMailbox();
-
-    void RotateMotorRightViaMailbox(int32_t speedMotorRPM);
-
-    void RotateMotorLeftViaMailbox(int32_t speedMotorRPM);
-
-    double GetJointVelocityRadPerSec();
-
-    long GetI2tLimitValue();
-
-    long GetCurrentI2tValue();
-
-    void SetJointVelocityRadPerSec(double value);
-
-    void SetTargetCurrentA(double current);
-
-    bool IsCalibratedViaMailbox();
-
-    void SetCalibratedViaMailbox();
 
     typedef std::shared_ptr<YoubotJoint> Ptr;
 

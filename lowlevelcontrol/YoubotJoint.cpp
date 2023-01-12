@@ -43,7 +43,7 @@ YoubotJoint::YoubotJoint(int slaveIndex, const std::map<std::string,
   }
   // Get cooldowntime_sec
   {
-    cooldowntime_sec = GetThermalWindingTimeSec();
+    cooldowntime_sec = GetThermalWindingTimeSecViaMailbox();
   }
   gearRatio = config.at("GearRatio");
   log(Log::info, "Init joint " + std::to_string(slaveIndex) + " GearRatio: "
@@ -559,7 +559,7 @@ void YoubotJoint::ResetI2TExceededViaMailbox() {
   
 }
 
-void YoubotJoint::StartInitialization() {
+void YoubotJoint::StartInitializationViaMailbox() {
   StopViaMailbox();
   auto status = GetJointStatusViaMailbox();
   log(Log::info, status.toString());
@@ -574,7 +574,7 @@ void YoubotJoint::StartInitialization() {
   log(Log::info, "  SetInitialize: " + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()));
 }
 
-bool YoubotJoint::IsInitialized() {
+bool YoubotJoint::IsInitializedViaMailbox() {
   auto ptr = GetInitialized::InitSharedPtr(slaveIndex);
   center->SendMessage_(ptr);
   log(Log::info, "  GetInitialized: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
@@ -805,41 +805,41 @@ void YoubotJoint::RotateMotorLeftViaMailbox(int32_t speedMotorRPM) {
     " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
 }
 
-double YoubotJoint::GetJointVelocityRadPerSec() {
+double YoubotJoint::GetJointVelocityRadPerSecViaMailbox() {
   auto ptr = GetActualSpeedMotorRPM::InitSharedPtr(slaveIndex);
   center->SendMessage_(ptr);
   log(Log::info, " GetActualSpeedMotorRPM: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
   return double(ptr->GetReplyValue()) * 2. * M_PI / 60. * gearRatio;
 }
 
-long youbot::YoubotJoint::GetI2tLimitValue() {
+long youbot::YoubotJoint::GetI2tLimitValueViaMailbox() {
   auto ptr = GetI2tLimitValue::InitSharedPtr(slaveIndex);
   center->SendMessage_(ptr);
   log(Log::info, " GetI2tLimitValue: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
   return ptr->GetReplyValue();
 }
 
-long youbot::YoubotJoint::GetCurrentI2tValue() {
+long youbot::YoubotJoint::GetCurrentI2tValueViaMailbox() {
   auto ptr = GetCurrentI2tValue::InitSharedPtr(slaveIndex);
   center->SendMessage_(ptr);
   log(Log::info, " GetCurrentI2tValue: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
   return ptr->GetReplyValue();
 }
 
-void YoubotJoint::SetJointVelocityRadPerSec(double value) {
+void YoubotJoint::SetJointVelocityRadPerSecViaMailbox(double value) {
   auto ptr = RotateRightMotorRPM::InitSharedPtr(slaveIndex, value / gearRatio * 60. / M_PI / 2.);
   center->SendMessage_(ptr);
   log(Log::info, " GetActualSpeedMotorRPM: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
 }
 
-double YoubotJoint::GetThermalWindingTimeSec() {
+double YoubotJoint::GetThermalWindingTimeSecViaMailbox() {
   auto ptr = GetThermalWindingTimeMs::InitSharedPtr(slaveIndex);
   center->SendMessage_(ptr);
   log(Log::info, " GetThermalWindingTimeMs: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
   return double(ptr->GetReplyValue()) / 1000.;
 }
 
-void YoubotJoint::SetTargetCurrentA(double current) {
+void YoubotJoint::SetTargetCurrentAViaMailbox(double current) {
   auto ptr = SetTargetCurrentmA::InitSharedPtr(slaveIndex, int32_t(current * 1000.));
   center->SendMessage_(ptr);
   log(Log::info, " SetTargetCurrentmA[mA]: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
@@ -860,13 +860,13 @@ void YoubotJoint::I2tResetTest() {
   bool forward = config.at("CalibrationDirection");
   const double calJointRadPerSec = 0.2;
   
-  int limit = GetI2tLimitValue();
+  int limit = GetI2tLimitValueViaMailbox();
   
   ResetTimeoutViaMailbox();
-  SetJointVelocityRadPerSec(forward ? calJointRadPerSec : -calJointRadPerSec);
+  SetJointVelocityRadPerSecViaMailbox(forward ? calJointRadPerSec : -calJointRadPerSec);
   do
   {
-    auto current = GetCurrentI2tValue();
+    auto current = GetCurrentI2tValueViaMailbox();
     status = GetJointStatusViaMailbox();
     auto str = status.toString();
   } while (!status.I2TExceeded());
@@ -890,7 +890,7 @@ void YoubotJoint::SetCalibratedViaMailbox() {
 }
 
 void YoubotJoint::Initialize() {
-  if (!IsInitialized()) {
+  if (!IsInitializedViaMailbox()) {
     auto status = GetJointStatusViaMailbox();
     log(Log::info, status.toString());
     if (status.I2TExceeded()) {
@@ -902,12 +902,12 @@ void YoubotJoint::Initialize() {
         ResetTimeoutViaMailbox();
     status = GetJointStatusViaMailbox();
     log(Log::info, "Joint " + std::to_string(slaveIndex) + " status before calibration: " + status.toString());
-    StartInitialization();
+    StartInitializationViaMailbox();
     auto start = std::chrono::steady_clock::now();
     std::chrono::steady_clock::time_point end;
     SLEEP_MILLISEC(10); // test
     do {
-      if (IsInitialized()) {
+      if (IsInitializedViaMailbox()) {
         log(Log::info, "Joint " + std::to_string(slaveIndex) + " is initialized");
         return;
       }
