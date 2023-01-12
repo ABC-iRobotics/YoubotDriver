@@ -168,6 +168,11 @@ void YoubotManipulator::GetJointPosition(double& q0,
   q4 = joints[4]->GetJointPositionDeg();
 }
 
+
+void YoubotManipulator::ReqManipulatorStop() {
+  for (auto& it : joints)
+	it->ReqMotorStopViaProcess();
+}
 void YoubotManipulator::ResetErrorFlags() {
   for (int i = 0; i < 5; i++) {
 	auto status = joints[i]->GetJointStatusViaMailbox();

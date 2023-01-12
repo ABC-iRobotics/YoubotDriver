@@ -37,6 +37,8 @@ namespace youbot {
 
 	void GetJointPosition(double& q0, double& q1, double& q2, double& q3, double& q4);
 
+	void ReqManipulatorStop();
+
 	void ResetErrorFlags();
   };
 }
