@@ -546,7 +546,6 @@ void YoubotJoint::ResetTimeoutViaMailbox() {
   auto ptr = ClearMotorControllerTimeoutFlag::InitSharedPtr(slaveIndex);
   center->SendMessage_(ptr);
   log(Log::info, "  ClearMotorControllerTimeoutFlag: " + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()));
-  SLEEP_MILLISEC(6)
 }
 
 void YoubotJoint::ResetI2TExceededViaMailbox() {
@@ -564,10 +563,10 @@ void YoubotJoint::StartInitialization() {
   StopViaMailbox();
   auto status = GetJointStatusViaMailbox();
   log(Log::info, status.toString());
-  if (status.Timeout())
-    ResetTimeoutViaMailbox();
   if (status.I2TExceeded())
     ResetI2TExceededViaMailbox();
+  if (status.Timeout())
+    ResetTimeoutViaMailbox();
   status = GetJointStatusViaMailbox();
   log(Log::info, status.toString());
   auto ptr = SetInitialize::InitSharedPtr(slaveIndex, 1);
