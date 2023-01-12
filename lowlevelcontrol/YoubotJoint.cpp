@@ -905,7 +905,7 @@ void YoubotJoint::Initialize() {
     StartInitialization();
     auto start = std::chrono::steady_clock::now();
     std::chrono::steady_clock::time_point end;
-    SLEEP_MILLISEC(3); // test
+    SLEEP_MILLISEC(10); // test
     do {
       if (IsInitialized()) {
         log(Log::info, "Joint " + std::to_string(slaveIndex) + " is initialized");

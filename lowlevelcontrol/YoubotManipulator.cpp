@@ -42,7 +42,7 @@ bool YoubotManipulator::CheckJointConfigs() {
 void YoubotManipulator::InitializeAllJoints() {
   for (auto& it : joints) {
 	it->Initialize();
-	SLEEP_MILLISEC(200); // Wait to finish the moves - controller likes it
+	SLEEP_MILLISEC(500); // Wait to finish the moves - controller likes it
   }
 }
 
