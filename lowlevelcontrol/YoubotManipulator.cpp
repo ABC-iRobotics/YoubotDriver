@@ -57,16 +57,19 @@ void YoubotManipulator::Calibrate(bool forceCalibration) {
   CalibState jointcalstate[5];
 
   const double calJointRadPerSec = 0.2;
-  for (int i = 0; i < 5; i++)
+  for (int i = 0; i < 5; i++) {
+	// RESET I2t flags
+	auto status = joints[i]->GetJointStatusViaMailbox();
+	log(Log::info, status.toString());
+	if (status.I2TExceeded())
+	  joints[i]->ResetI2TExceededViaMailbox();
+	// Check which joints needs calibration
 	if (joints[i]->IsCalibratedViaMailbox() && !forceCalibration)
 	  jointcalstate[i] = IDLE;
-	else {
+	else
 	  jointcalstate[i] = TO_CALIBRATE;
-	  auto status = joints[i]->GetJointStatusViaMailbox();
-	  log(Log::info, status.toString());
-	  if (status.I2TExceeded())
-		joints[i]->ResetI2TExceededViaMailbox();
-	}
+  }
+  // Reset timeouts (after all possible i2t reset or it can go to timeout again)
   for (int i = 0; i < 5; i++)
 	if (jointcalstate[i] != IDLE) {
 	  joints[i]->ResetTimeoutViaMailbox();
