@@ -734,8 +734,23 @@ void YoubotJoint::ReqJointPositionDeg(double deg) {
   center->SetProcessMsg(toSet, slaveIndex);
 }
 
+void YoubotJoint::ReqJointPositionRad(double rad) {
+  static ProcessBuffer toSet(5);
+  int32_t ticks = conversion.qRad2Ticks(rad);
+  toSet.buffer[3] = ticks >> 24;
+  toSet.buffer[2] = ticks >> 16;
+  toSet.buffer[1] = ticks >> 8;
+  toSet.buffer[0] = ticks & 0xff;
+  toSet.buffer[4] = TMCL::ControllerMode::POSITION_CONTROL;
+  center->SetProcessMsg(toSet, slaveIndex);
+}
+
 double YoubotJoint::GetJointPositionDeg() {
   return GetProcessReturnData().qDeg;
+}
+
+double YoubotJoint::GetJointPositionRad() {
+  return GetProcessReturnData().qRad;
 }
 
 void YoubotJoint::ReqVelocityMotorRPM(int32_t value) {
@@ -928,6 +943,14 @@ int32_t YoubotJoint::Conversion::qDeg2Ticks(double qDeg) const {
   return int32_t((qDeg - qCalibrationDeg) / (360. * gearRatio / double(ticksperround)));
 }
 
+double YoubotJoint::Conversion::Ticks2qRad(int32_t ticks) const {
+  return double(ticks) * 2. * M_PI * gearRatio / double(ticksperround) + qCalibrationRad;
+}
+
+int32_t YoubotJoint::Conversion::qRad2Ticks(double qDeg) const {
+  return int32_t((qDeg - qCalibrationRad) / (2. * M_PI * gearRatio / double(ticksperround)));
+}
+
 double youbot::YoubotJoint::Conversion::RPM2qDegPerSec(int32_t RPM) const {
   return double(RPM) * 60. * gearRatio;
 }
@@ -936,7 +959,16 @@ int32_t youbot::YoubotJoint::Conversion::qDegPerSec2RPM(double degpersec) const 
   return degpersec / 60. / gearRatio;
 }
 
+double youbot::YoubotJoint::Conversion::RPM2qRadPerSec(int32_t RPM) const {
+  return double(RPM) / 60. * gearRatio * 2. * M_PI;
+}
+
+int32_t youbot::YoubotJoint::Conversion::qRadPerSec2RPM(double degpersec) const {
+  return degpersec * 60. / gearRatio / (2. * M_PI);
+}
+
 YoubotJoint::Conversion::Conversion(bool qDirectionSameAsEnc, int32_t ticksPerRound,
   double gearRatio, double qCalibrationDeg) : intialized(1), ticksperround(ticksPerRound),
-  gearRatio(gearRatio* (qDirectionSameAsEnc ? 1. : -1.)), qCalibrationDeg(qCalibrationDeg) {
+  gearRatio(gearRatio* (qDirectionSameAsEnc ? 1. : -1.)), qCalibrationDeg(qCalibrationDeg),
+  qCalibrationRad(qCalibrationDeg / 180. * M_PI) {
 }
