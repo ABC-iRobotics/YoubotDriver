@@ -56,7 +56,7 @@ enum CalibState : uint8_t {
 void YoubotManipulator::Calibrate(bool forceCalibration) {
   CalibState jointcalstate[5];
 
-  const double calJointRadPerSec = 0.2;
+  const double calJointRadPerSec = 0.35;
   for (int i = 0; i < 5; i++) {
 	// RESET I2t flags
 	auto status = joints[i]->GetJointStatusViaMailbox();
@@ -66,27 +66,51 @@ void YoubotManipulator::Calibrate(bool forceCalibration) {
 	// Check which joints needs calibration
 	if (joints[i]->IsCalibratedViaMailbox() && !forceCalibration)
 	  jointcalstate[i] = IDLE;
-	else
+	else {
 	  jointcalstate[i] = TO_CALIBRATE;
-  }
-  // Reset timeouts (after all possible i2t reset or it can go to timeout again)
-  for (int i = 0; i < 5; i++)
-	if (jointcalstate[i] != IDLE) {
-	  joints[i]->ResetTimeoutViaMailbox();
 	  bool forward = config.jointConfigs[i].at("CalibrationDirection");
 	  joints[i]->ReqVelocityJointRadPerSec(forward ? calJointRadPerSec : -calJointRadPerSec);
 	  log(Log::info, "Calibration of joint " + std::to_string(i) + "started");
 	}
-
+  }
+  // Reset timeouts (after all possible i2t reset or it can go to timeout again)
+  for (int i = 0; i < 5; i++)
+	if (jointcalstate[i] != IDLE)
+	  joints[i]->ResetTimeoutViaMailbox();
+  // Wait enough time (now 200 ms) to start the mechanics and send messages to avoid timout and check status
+  auto start = std::chrono::steady_clock::now();
+  std::chrono::steady_clock::time_point end;
+  center->ExchangeProcessMsg(); // do sg to avoid a new timout
+  SLEEP_MILLISEC(2) // Wait until the status flag of process messages will be refreshed (without timeout flag)
+  do {
+	// Send out velocity requests
+	center->ExchangeProcessMsg();
+	for (int i = 0; i < 5; i++) {
+	  auto status = joints[i]->GetProcessReturnData().status;
+	  if (status.I2TExceeded())
+		throw std::runtime_error("I2t exceeded during calibration");
+	  if (status.Timeout()) {
+		log(Log::info, "i:" + std::to_string(i) + " " + status.toString());
+		SLEEP_MILLISEC(10);
+		throw std::runtime_error("Timeout during calibration");
+	  }
+	}
+	end = std::chrono::steady_clock::now();
+  } while (std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() < 200);
+  int cycles_in_zero_speed[5] = { 0,0,0,0,0 };
   do {
 	center->ExchangeProcessMsg();
-	std::string str = "Calibration currents: ";
+	std::string str = "Calibration vel: ";
 	for (int i = 0; i < 5; i++)
 	  switch (jointcalstate[i]) {
 	  case TO_CALIBRATE: {
-		int curr = joints[i]->GetProcessReturnData().currentmA;
-		str = str + std::to_string(curr) + " ";
-		if (abs(curr) >= config.jointConfigs[i].at("CalibrationCurrentmA")) {
+		int vel = joints[i]->GetProcessReturnData().motorVelocityRPM;
+		str = str + std::to_string(vel) + "RPM ";
+		if (vel<5 && vel>-5)
+		  cycles_in_zero_speed[i]++;
+		else
+		  cycles_in_zero_speed[i] = 0;
+		if (cycles_in_zero_speed[i]>=5) {
 		  log(Log::info, "Joint " + std::to_string(i) + " calibrated");
 		  joints[i]->ReqEncoderReference(0);
 		  jointcalstate[i] = ENCODER_SETTING;
