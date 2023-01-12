@@ -147,9 +147,9 @@ namespace youbot {
 
     double GetJointPositionRad();
 
-    void ReqVelocityJointRadPerSec(double value);
+    void ReqJointVelocityRadPerSec(double value);
 
-    void ReqVelocityMotorRPM(int32_t value);
+    void ReqMotorVelocityRPM(int32_t value);
 
     void ReqEncoderReference(int32_t value);
 

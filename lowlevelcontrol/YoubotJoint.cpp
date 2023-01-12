@@ -717,8 +717,8 @@ const YoubotJoint::ProcessReturn& YoubotJoint::GetProcessReturnData() {
   return processReturn;
 }
 
-void YoubotJoint::ReqVelocityJointRadPerSec(double value) {
-  ReqVelocityMotorRPM(conversion.qRadPerSec2RPM(value));
+void YoubotJoint::ReqJointVelocityRadPerSec(double value) {
+  ReqMotorVelocityRPM(conversion.qRadPerSec2RPM(value));
 }
 
 void YoubotJoint::ReqJointPositionRad(double rad) {
@@ -736,7 +736,7 @@ double YoubotJoint::GetJointPositionRad() {
   return GetProcessReturnData().qRad;
 }
 
-void YoubotJoint::ReqVelocityMotorRPM(int32_t value) {
+void YoubotJoint::ReqMotorVelocityRPM(int32_t value) {
   static ProcessBuffer toSet(5);
   toSet.buffer[3] = value >> 24;
   toSet.buffer[2] = value >> 16;
