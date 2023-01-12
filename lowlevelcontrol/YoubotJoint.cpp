@@ -710,7 +710,7 @@ const YoubotJoint::ProcessReturn& YoubotJoint::GetProcessReturnData() {
   static ProcessBuffer buffer;
   center->GetProcessMsg(buffer, slaveIndex);
   processReturn.encoderPosition = _toInt32(&buffer.buffer[0]);
-  processReturn.qDeg = conversion.qDegFromTicks(processReturn.encoderPosition);
+  processReturn.qDeg = conversion.Ticks2qDeg(processReturn.encoderPosition);
   processReturn.currentmA = _toInt32(&buffer.buffer[4]);
   processReturn.motorVelocityRPM = _toInt32(&buffer.buffer[8]);
   processReturn.status = _toInt32(&buffer.buffer[12]);
@@ -725,7 +725,7 @@ void YoubotJoint::ReqVelocityJointRadPerSec(double value) {
 
 void YoubotJoint::ReqJointPositionDeg(double deg) {
   static ProcessBuffer toSet(5);
-  int32_t ticks = conversion.ticksFromqDeg(deg);
+  int32_t ticks = conversion.qDeg2Ticks(deg);
   toSet.buffer[3] = ticks >> 24;
   toSet.buffer[2] = ticks >> 16;
   toSet.buffer[1] = ticks >> 8;
@@ -920,17 +920,23 @@ void YoubotJoint::Initialize() {
   }
 }
 
-double YoubotJoint::Conversion::qDegFromTicks(int32_t ticks) const {
-  return double(ticks) * c + qCalibrationDeg;
+double YoubotJoint::Conversion::Ticks2qDeg(int32_t ticks) const {
+  return double(ticks) * 360. * gearRatio / double(ticksperround) + qCalibrationDeg;
 }
 
-int32_t YoubotJoint::Conversion::ticksFromqDeg(double qDeg) const {
-  return int32_t((qDeg - qCalibrationDeg) / c);
+int32_t YoubotJoint::Conversion::qDeg2Ticks(double qDeg) const {
+  return int32_t((qDeg - qCalibrationDeg) / (360. * gearRatio / double(ticksperround)));
+}
+
+double youbot::YoubotJoint::Conversion::RPM2qDegPerSec(int32_t RPM) const {
+  return double(RPM) * 60. * gearRatio;
+}
+
+int32_t youbot::YoubotJoint::Conversion::qDegPerSec2RPM(double degpersec) const {
+  return degpersec / 60. / gearRatio;
 }
 
 YoubotJoint::Conversion::Conversion(bool qDirectionSameAsEnc, int32_t ticksPerRound,
-  double gearRatio, double qCalibrationDeg) : intialized(1),
-  qCalibrationDeg(qCalibrationDeg), c(360. * gearRatio / double(ticksPerRound)) {
-  if (!qDirectionSameAsEnc)
-    c = -c;
+  double gearRatio, double qCalibrationDeg) : intialized(1), ticksperround(ticksPerRound),
+  gearRatio(gearRatio* (qDirectionSameAsEnc ? 1. : -1.)), qCalibrationDeg(qCalibrationDeg) {
 }

@@ -21,11 +21,13 @@ namespace youbot {
     double qMinDeg, qMaxDeg;
 
     struct Conversion {
-      double qCalibrationDeg;
-      double c;
+      int ticksperround;
+      double qCalibrationDeg, gearRatio;
       bool intialized;
-      double qDegFromTicks(int32_t ticks) const;
-      int32_t ticksFromqDeg(double qDeg) const;
+      double Ticks2qDeg(int32_t ticks) const;
+      int32_t qDeg2Ticks(double qDeg) const;
+      double RPM2qDegPerSec(int32_t RPM) const;
+      int32_t qDegPerSec2RPM(double degpersec) const;
       Conversion(bool qDirectionSameAsEnc, int32_t ticksPerRound,
         double gearRatio, double qCalibrationDeg);
       Conversion() :intialized(0) {};
