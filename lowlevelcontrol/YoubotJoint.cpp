@@ -650,7 +650,7 @@ bool YoubotJoint::JointStatus::FreeRunning() const {
   return value & (uint32_t)TMCL::StatusErrorFlags::FREERUNNING;
 };
 
-bool YoubotJoint::JointStatus::PosiitonReached() const {
+bool YoubotJoint::JointStatus::PositionReached() const {
   return value & (uint32_t)TMCL::StatusErrorFlags::POSITION_REACHED;
 };
 

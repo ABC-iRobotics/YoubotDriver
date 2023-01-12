@@ -53,7 +53,7 @@ namespace youbot {
       bool TorqueMode() const;
       bool EmergencyStop() const;
       bool FreeRunning() const;
-      bool PosiitonReached() const;
+      bool PositionReached() const;
       bool Initialized() const;
       bool Timeout() const;
       bool I2TExceeded() const;
