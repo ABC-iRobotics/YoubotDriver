@@ -146,12 +146,12 @@ namespace youbot {
     // Req joint quantity
     void ReqJointPositionRad(double value);
 
-    void ReqJointVelocityRadPerSec(double value);
+    void ReqJointSpeedRadPerSec(double value);
 
     void ReqJointTorqueNm(double value);
 
     // Req motor quantity
-    void ReqMotorVelocityRPM(int32_t value);
+    void ReqMotorSpeedRPM(int32_t value);
 
     void ReqEncoderReference(int32_t value);
 
@@ -162,7 +162,7 @@ namespace youbot {
     // Get joint quantity
     double GetJointPositionRad();
 
-    double GetJointVelocityRadPerSec();
+    double GetJointSpeedRadPerSec();
 
     double GetJointTorqueNm();
 

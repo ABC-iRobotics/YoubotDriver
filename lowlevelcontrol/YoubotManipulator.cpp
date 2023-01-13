@@ -69,7 +69,7 @@ void YoubotManipulator::Calibrate(bool forceCalibration) {
 	  jointcalstate[i] = TO_CALIBRATE;
 	  bool backward = bool(config.jointConfigs[i].at("CalibrationDirection"))
 		^ bool(config.jointConfigs[i].at("qDirectionSameAsEnc"));
-	  joints[i]->ReqJointVelocityRadPerSec(backward ? -calJointRadPerSec : calJointRadPerSec);
+	  joints[i]->ReqJointSpeedRadPerSec(backward ? -calJointRadPerSec : calJointRadPerSec);
 	  log(Log::info, "Calibration of joint " + std::to_string(i) + "started");
 	}
   }
