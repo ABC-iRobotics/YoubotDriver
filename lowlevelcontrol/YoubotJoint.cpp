@@ -64,7 +64,7 @@ YoubotJoint::YoubotJoint(int slaveIndex, const std::map<std::string,
   log(Log::info, " qDirectionSameAsEnc: " + std::to_string(int(qDirectionSameAsEnc)));
   double qCalibrationDeg = config.at("qCalibrationDeg");
   log(Log::info, " qCalibrationDeg: " + std::to_string(qCalibrationDeg));
-  conversion = Conversion(qDirectionSameAsEnc, ticksperround, gearRatio, qCalibrationDeg);
+  conversion = Conversion(qDirectionSameAsEnc, ticksperround, gearRatio, qCalibrationDeg, torqueconstantNmPerA);
 }
 
 void YoubotJoint::ConfigParameters(bool forceConfiguration) {
