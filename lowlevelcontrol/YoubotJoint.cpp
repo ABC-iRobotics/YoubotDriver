@@ -925,34 +925,47 @@ void YoubotJoint::SetCalibratedViaMailbox() {
 }
 
 void YoubotJoint::Initialize() {
-  if (!IsInitializedViaMailbox()) {
-    auto status = GetJointStatusViaMailbox();
-    log(Log::info, status.toString());
-    if (status.I2TExceeded()) {
-      ResetI2TExceededViaMailbox();
-      ResetTimeoutViaMailbox();
-    }
-    else
-      if(status.Timeout())
-        ResetTimeoutViaMailbox();
-    status = GetJointStatusViaMailbox();
-    log(Log::info, "Joint " + std::to_string(slaveIndex) + " status before calibration: " + status.toString());
-    StartInitializationViaMailbox();
-    auto start = std::chrono::steady_clock::now();
-    std::chrono::steady_clock::time_point end;
-    SLEEP_MILLISEC(10); // test
-    do {
-      if (IsInitializedViaMailbox()) {
-        log(Log::info, "Joint " + std::to_string(slaveIndex) + " is initialized");
-        return;
-      }
-      end = std::chrono::steady_clock::now();
-    } while (std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() < 2000);
-    StopViaMailbox();
-    log(Log::fatal, "Joint " + std::to_string(slaveIndex) + " error during initialization (possible causes: it is in the problematic end position, on windows: other processes take too much processor resource)");
-    SLEEP_MILLISEC(10);
-    throw std::runtime_error("One joint is not initialized and cannot be done it... ");
+  auto status = GetJointStatusViaMailbox();
+  if (status.Initialized()) {
+    log(Log::info, "Initialization of Joint " + std::to_string(slaveIndex) + " already initialized, status: " + status.toString());
+    return;
   }
+  // Initialization
+  SLEEP_MILLISEC(500); // Wait to finish the robot the current moves - controller likes it
+  log(Log::info, "Initialization of Joint " + std::to_string(slaveIndex) + " status before calibration: " + status.toString());
+  // Reset I2t flag
+  if (status.I2TExceeded())
+    ResetI2TExceededViaMailbox();
+  // Reset timeout flag (waiting for I2t clearence will cause timeout as well)
+  if(status.Timeout() || status.I2TExceeded())
+    ResetTimeoutViaMailbox();
+  // Get the new status
+  if (status.Timeout() || status.I2TExceeded()) {
+    status = GetJointStatusViaMailbox();
+    log(Log::info, "Joint " + std::to_string(slaveIndex) + " status after timeout, I2t cleared: " + status.toString());
+  }
+  StartInitializationViaMailbox();
+  auto start = std::chrono::steady_clock::now();
+  std::chrono::steady_clock::time_point end;
+  do {
+    auto status = GetJointStatusViaMailbox();
+    if (status.Timeout() || status.I2TExceeded() || status.InitializationError()) {
+      StopViaMailbox();
+      log(Log::fatal , "Error (timeout/I2t/init error) during initialization of Joint " + std::to_string(slaveIndex));
+      throw std::runtime_error("Error (timeout/I2t/init error) during initialization");
+    }
+    if (status.Initialized()) {
+      end = std::chrono::steady_clock::now();
+      log(Log::info, "Joint " + std::to_string(slaveIndex) + " is initialized, elapsed time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()) + "[ms]");
+      return;
+    }
+    end = std::chrono::steady_clock::now();
+  } while (std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() < 2000);
+  StopViaMailbox();
+  log(Log::fatal, "Joint " + std::to_string(slaveIndex) + " error during initialization (possible causes: it is in the problematic end position, on windows: other processes take too much processor resource)");
+  SLEEP_MILLISEC(10);
+  throw std::runtime_error("One joint is not initialized and cannot be done it... ");
+
 }
 
 double YoubotJoint::Conversion::Ticks2qRad(int32_t ticks) const {

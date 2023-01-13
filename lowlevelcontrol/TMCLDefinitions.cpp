@@ -50,6 +50,8 @@ std::string TMCL::StatusErrorFlagsToString(uint32_t in) {
 	ss << " POSITION_REACHED";
   if (in & (uint32_t)StatusErrorFlags::INITIALIZED)
 	ss << " INITIALIZED";
+  if (in & (uint32_t)StatusErrorFlags::INITIALIZATION_ERROR)
+	ss << " INITIALIZATION_ERROR";
   if (in & (uint32_t)StatusErrorFlags::TIMEOUT)
 	ss << " TIMEOUT";
   if (in & (uint32_t)StatusErrorFlags::I2T_EXCEEDED)
