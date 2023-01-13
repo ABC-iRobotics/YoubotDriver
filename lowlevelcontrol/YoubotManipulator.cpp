@@ -169,6 +169,38 @@ void YoubotManipulator::GetJointPositionRad(double& q0,
   q4 = joints[4]->GetJointPositionRad();
 }
 
+void youbot::YoubotManipulator::ReqJointSpeedRadPerSec(double dq0, double dq1, double dq2, double dq3, double dq4) {
+  joints[0]->ReqJointSpeedRadPerSec(dq0);
+  joints[1]->ReqJointSpeedRadPerSec(dq1);
+  joints[2]->ReqJointSpeedRadPerSec(dq2);
+  joints[3]->ReqJointSpeedRadPerSec(dq3);
+  joints[4]->ReqJointSpeedRadPerSec(dq4);
+}
+
+void youbot::YoubotManipulator::GetJointSpeedRadPerSec(double& dq0, double& dq1, double& dq2, double& dq3, double& dq4) {
+  dq0 = joints[0]->GetJointSpeedRadPerSec();
+  dq1 = joints[1]->GetJointSpeedRadPerSec();
+  dq2 = joints[2]->GetJointSpeedRadPerSec();
+  dq3 = joints[3]->GetJointSpeedRadPerSec();
+  dq4 = joints[4]->GetJointSpeedRadPerSec();
+}
+
+void youbot::YoubotManipulator::ReqJointTorqueNm(double tau0, double tau1, double tau2, double tau3, double tau4) {
+  joints[0]->ReqJointTorqueNm(tau0);
+  joints[1]->ReqJointTorqueNm(tau1);
+  joints[2]->ReqJointTorqueNm(tau2);
+  joints[3]->ReqJointTorqueNm(tau3);
+  joints[4]->ReqJointTorqueNm(tau4);
+}
+
+void youbot::YoubotManipulator::GetJointTorqueNm(double& tau0, double& tau1, double& tau2, double& tau3, double& tau4) {
+  tau0 = joints[0]->GetJointTorqueNm();
+  tau1 = joints[1]->GetJointTorqueNm();
+  tau2 = joints[2]->GetJointTorqueNm();
+  tau3 = joints[3]->GetJointTorqueNm();
+  tau4 = joints[4]->GetJointTorqueNm();
+}
+
 void YoubotManipulator::ReqManipulatorStop() {
   for (auto& it : joints)
 	it->ReqStop();
