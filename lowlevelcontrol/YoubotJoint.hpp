@@ -17,19 +17,22 @@ namespace youbot {
     double cooldowntime_sec = -1;
     double gearRatio = -1;
     bool calibrationDirection = false;
-    double torqueconstant = false;
+    double torqueconstantNmPerA = false;
     double qMinDeg, qMaxDeg;
 
     struct Conversion {
       int ticksperround;
       double qCalibrationRad, gearRatio;
+      double torqueconstantNmPerA;
       bool intialized;
       double Ticks2qRad(int32_t ticks) const;
       int32_t qRad2Ticks(double qDeg) const;
       double RPM2qRadPerSec(int32_t RPM) const;
       int32_t qRadPerSec2RPM(double degpersec) const;
+      double mA2Nm(int32_t mA) const;
+      int32_t Nm2mA(double Nm) const;
       Conversion(bool qDirectionSameAsEnc, int32_t ticksPerRound,
-        double gearRatio, double qCalibrationDeg);
+        double gearRatio, double qCalibrationDeg, double torqueconstantNmPerA);
       Conversion() :intialized(0) {};
     } conversion;
 
@@ -145,6 +148,8 @@ namespace youbot {
 
     void ReqJointVelocityRadPerSec(double value);
 
+    void ReqJointTorqueNm(double value);
+
     // Req motor quantity
     void ReqMotorVelocityRPM(int32_t value);
 
@@ -158,6 +163,9 @@ namespace youbot {
     double GetJointPositionRad();
 
     double GetJointVelocityRadPerSec();
+
+    double GetJointTorqueNm();
+
     // Get motor quantity
     int32_t GetMotorPosTick();
 

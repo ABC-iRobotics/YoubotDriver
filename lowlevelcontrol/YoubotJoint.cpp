@@ -54,9 +54,9 @@ YoubotJoint::YoubotJoint(int slaveIndex, const std::map<std::string,
   qMaxDeg = config.at("qMaxDeg");
   log(Log::info, "Init joint " + std::to_string(slaveIndex) + " qMaxDeg: "
     + std::to_string(qMaxDeg));
-  torqueconstant = config.at("TorqueConstant_NmPerAmpere");
+  torqueconstantNmPerA = config.at("TorqueConstant_NmPerAmpere");
   log(Log::info, "Init joint " + std::to_string(slaveIndex) + " TorqueConstant_NmPerAmpere: "
-    + std::to_string(torqueconstant));
+    + std::to_string(torqueconstantNmPerA));
   calibrationDirection = config.at("CalibrationDirection");
   log(Log::info, "Init joint " + std::to_string(slaveIndex) + " CalibrationDirection: "
     + std::to_string(calibrationDirection));
@@ -716,11 +716,16 @@ const YoubotJoint::ProcessReturn& YoubotJoint::GetProcessReturnData() {
   processReturn.motorPWM = _toInt32(&buffer.buffer[16]);
   processReturn.qRad = conversion.Ticks2qRad(processReturn.encoderPosition);
   processReturn.dqRadPerSec = conversion.RPM2qRadPerSec(processReturn.motorVelocityRPM);
+  processReturn.tau = conversion.mA2Nm(processReturn.currentmA);
   return processReturn;
 }
 
 void YoubotJoint::ReqJointVelocityRadPerSec(double value) {
   ReqMotorVelocityRPM(conversion.qRadPerSec2RPM(value));
+}
+
+void youbot::YoubotJoint::ReqJointTorqueNm(double value) {
+  ReqMotorCurrentmA(conversion.Nm2mA(value));
 }
 
 void YoubotJoint::ReqJointPositionRad(double rad) {
@@ -740,6 +745,10 @@ double YoubotJoint::GetJointPositionRad() {
 
 double youbot::YoubotJoint::GetJointVelocityRadPerSec() {
   return GetProcessReturnData().dqRadPerSec;
+}
+
+double youbot::YoubotJoint::GetJointTorqueNm() {
+  return GetProcessReturnData().tau;
 }
 
 void YoubotJoint::ReqMotorVelocityRPM(int32_t value) {
@@ -962,8 +971,18 @@ int32_t youbot::YoubotJoint::Conversion::qRadPerSec2RPM(double radpersec) const 
   return radpersec * 60. / gearRatio / (2. * M_PI);
 }
 
+double youbot::YoubotJoint::Conversion::mA2Nm(int32_t mA) const {
+  return double(mA) / 1000. * torqueconstantNmPerA;
+}
+
+int32_t youbot::YoubotJoint::Conversion::Nm2mA(double Nm) const {
+  return int32_t(Nm / torqueconstantNmPerA * 1000.);
+}
+
 YoubotJoint::Conversion::Conversion(bool qDirectionSameAsEnc, int32_t ticksPerRound,
-  double gearRatio, double qCalibrationDeg) : intialized(1), ticksperround(ticksPerRound),
+  double gearRatio, double qCalibrationDeg, double torqueconstantNmPerA) :
+  intialized(1), ticksperround(ticksPerRound),
+  torqueconstantNmPerA(torqueconstantNmPerA* (qDirectionSameAsEnc ? 1. : -1.)),
   gearRatio(gearRatio* (qDirectionSameAsEnc ? 1. : -1.)),
   qCalibrationRad(qCalibrationDeg / 180. * M_PI) {
 }
