@@ -171,7 +171,7 @@ void YoubotManipulator::GetJointPositionRad(double& q0,
 
 void YoubotManipulator::ReqManipulatorStop() {
   for (auto& it : joints)
-	it->ReqMotorStopViaProcess();
+	it->ReqStop();
 }
 void YoubotManipulator::ResetErrorFlags() {
   for (int i = 0; i < 5; i++) {

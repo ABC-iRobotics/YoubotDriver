@@ -63,14 +63,9 @@ namespace youbot {
     };
 
     struct ProcessReturn {
-      int32_t encoderPosition;
-      int32_t currentmA;
-      int32_t motorVelocityRPM;
+      int32_t encoderPosition, currentmA, motorVelocityRPM, motorPWM;
       JointStatus status;
-      int32_t motorPWM;
-      double qRad;
-      // double jointAngle, jointVelocityRad/s, torque, ...
-
+      double qRad, dqRadPerSec, tau;
       ProcessReturn();
       void Print() const;
     };
@@ -143,19 +138,32 @@ namespace youbot {
     // Process message-based req/get methods will be sent with the next ExcangeMessage/show the results of the latest one
     const ProcessReturn& GetProcessReturnData();
 
-    void ReqJointPositionRad(double value);
+    void ReqStop();
 
-    double GetJointPositionRad();
+    // Req joint quantity
+    void ReqJointPositionRad(double value);
 
     void ReqJointVelocityRadPerSec(double value);
 
+    // Req motor quantity
     void ReqMotorVelocityRPM(int32_t value);
 
     void ReqEncoderReference(int32_t value);
 
-    void ReqMotorStopViaProcess();
-
     void ReqVoltagePWM(int32_t value);
+
+    void ReqMotorCurrentmA(int32_t value);
+
+    // Get joint quantity
+    double GetJointPositionRad();
+
+    double GetJointVelocityRadPerSec();
+    // Get motor quantity
+    int32_t GetMotorPosTick();
+
+    int32_t GetMotorSpeedRPM();
+
+    int32_t GetMotorCurrentmA();
 
     void ReqInitializationViaProcess();
 

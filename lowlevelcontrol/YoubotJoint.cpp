@@ -714,6 +714,8 @@ const YoubotJoint::ProcessReturn& YoubotJoint::GetProcessReturnData() {
   processReturn.motorVelocityRPM = _toInt32(&buffer.buffer[8]);
   processReturn.status = _toInt32(&buffer.buffer[12]);
   processReturn.motorPWM = _toInt32(&buffer.buffer[16]);
+  processReturn.qRad = conversion.Ticks2qRad(processReturn.encoderPosition);
+  processReturn.dqRadPerSec = conversion.RPM2qRadPerSec(processReturn.motorVelocityRPM);
   return processReturn;
 }
 
@@ -736,6 +738,10 @@ double YoubotJoint::GetJointPositionRad() {
   return GetProcessReturnData().qRad;
 }
 
+double youbot::YoubotJoint::GetJointVelocityRadPerSec() {
+  return GetProcessReturnData().dqRadPerSec;
+}
+
 void YoubotJoint::ReqMotorVelocityRPM(int32_t value) {
   static ProcessBuffer toSet(5);
   toSet.buffer[3] = value >> 24;
@@ -756,7 +762,7 @@ void YoubotJoint::ReqEncoderReference(int32_t value) {
   center->SetProcessMsg(toSet, slaveIndex);
 }
 
-void YoubotJoint::ReqMotorStopViaProcess() {
+void YoubotJoint::ReqStop() {
   static ProcessBuffer toSet(5);
   for (int i = 0; i < 4; i++)
     toSet.buffer[i] = 0;
@@ -772,6 +778,28 @@ void YoubotJoint::ReqVoltagePWM(int32_t value) {
   toSet.buffer[0] = value & 0xff;
   toSet.buffer[4] = TMCL::ControllerMode::PWM_MODE;
   center->SetProcessMsg(toSet, slaveIndex);
+}
+
+void youbot::YoubotJoint::ReqMotorCurrentmA(int32_t value) {
+  static ProcessBuffer toSet(5);
+  toSet.buffer[3] = value >> 24;
+  toSet.buffer[2] = value >> 16;
+  toSet.buffer[1] = value >> 8;
+  toSet.buffer[0] = value & 0xff;
+  toSet.buffer[4] = TMCL::ControllerMode::CURRENT_MODE;
+  center->SetProcessMsg(toSet, slaveIndex);
+}
+
+int32_t youbot::YoubotJoint::GetMotorPosTick() {
+  return GetProcessReturnData().encoderPosition;
+}
+
+int32_t youbot::YoubotJoint::GetMotorSpeedRPM() {
+  return GetProcessReturnData().motorVelocityRPM;
+}
+
+int32_t youbot::YoubotJoint::GetMotorCurrentmA() {
+  return GetProcessReturnData().currentmA;
 }
 
 void YoubotJoint::ReqInitializationViaProcess() {
