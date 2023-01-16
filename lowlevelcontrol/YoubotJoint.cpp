@@ -700,7 +700,11 @@ std::string YoubotJoint::JointStatus::toString() const {
 }
 
 void YoubotJoint::ProcessReturn::Print() const {
-  log(Log::info, "encoderPosition: " + std::to_string((int)encoderPosition) + " currentmA: " + std::to_string((int)currentmA) + " motorVelocityRPM: " + std::to_string((int)motorVelocityRPM) + " status: " + status.toString() + " motorPWM: " + std::to_string((int)motorPWM));
+  log(Log::info, "Pos: " + std::to_string(qRad) + "[rad] (" + std::to_string(qRad/M_PI*180.) + "[deg],"
+    + std::to_string((int)encoderPosition) + "[tick]) Vel: " +
+    std::to_string(dqRadPerSec) + "[rad/s] (" + std::to_string(dqRadPerSec / M_PI * 180.) + "[deg/s],"
+    + std::to_string((int)motorVelocityRPM) + "RPM) torque: " +
+    std::to_string(tau) + "[NM] (" + std::to_string(currentmA) + "[mA])");
 }
 
 YoubotJoint::ProcessReturn::ProcessReturn() : status(0), encoderPosition(-1),
