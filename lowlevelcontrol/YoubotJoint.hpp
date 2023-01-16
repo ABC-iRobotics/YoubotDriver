@@ -33,9 +33,8 @@ namespace youbot {
       int32_t Nm2mA(double Nm) const;
       Conversion(bool qDirectionSameAsEnc, int32_t ticksPerRound,
         double gearRatio, double qCalibrationDeg, double torqueconstantNmPerA);
-      Conversion() :intialized(0) {};
+      Conversion();
     } conversion;
-
     void _getFirmwareVersionViaMailbox();
 
   public:

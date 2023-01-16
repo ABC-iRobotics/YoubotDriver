@@ -1003,3 +1003,6 @@ YoubotJoint::Conversion::Conversion(bool qDirectionSameAsEnc, int32_t ticksPerRo
   gearRatio(gearRatio* (qDirectionSameAsEnc ? 1. : -1.)),
   qCalibrationRad(qCalibrationDeg / 180. * M_PI) {
 }
+
+youbot::YoubotJoint::Conversion::Conversion() :intialized(0), ticksperround(0), qCalibrationRad(0), gearRatio(0),
+torqueconstantNmPerA(0) {}
