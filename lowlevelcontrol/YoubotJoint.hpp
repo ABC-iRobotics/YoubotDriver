@@ -174,6 +174,8 @@ namespace youbot {
 
     void ReqInitializationViaProcess();
 
+    void CheckI2tAndTimeoutError(JointStatus status);
+
     typedef std::shared_ptr<YoubotJoint> Ptr;
 
     // Only for test purposes

@@ -220,16 +220,7 @@ void youbot::YoubotManipulator::CheckAndResetI2tFlagsViaMailbox() {
 void youbot::YoubotManipulator::CheckI2tAndTimeoutErrorProcess() {
   for (int i = 0; i < 5; i++) {
 	auto status = joints[i]->GetProcessReturnData().status;
-	if (status.I2TExceeded()) {
-	  log(Log::fatal, "I2t exceeded during calibration in joint " + std::to_string(i) + " (" + status.toString() + ")");
-	  SLEEP_MILLISEC(10);
-	  throw std::runtime_error("I2t exceeded during calibration");
-	}
-	if (status.Timeout()) {
-	  log(Log::fatal, "Timeout during calibration in joint " + std::to_string(i) + " (" + status.toString() + ")");
-	  SLEEP_MILLISEC(10);
-	  throw std::runtime_error("Timeout during calibration");
-	}
+	joints[i]->CheckI2tAndTimeoutError(status);
   }
 }
 

@@ -551,12 +551,9 @@ void YoubotJoint::ResetTimeoutViaMailbox() {
 void YoubotJoint::ResetI2TExceededViaMailbox() {
   auto ptr = ClearI2TFlag::InitSharedPtr(slaveIndex);
   log(Log::info, "  ClearI2TFlag: waiting");
-
   SLEEP_MILLISEC(long(cooldowntime_sec * 1000))
-
   center->SendMessage_(ptr);
   log(Log::info, "  ClearI2TFlag: " + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + " waiting done");
-  
 }
 
 void YoubotJoint::StartInitializationViaMailbox() {
@@ -821,6 +818,19 @@ void YoubotJoint::ReqInitializationViaProcess() {
     toSet.buffer[i] = 0;
   toSet.buffer[4] = TMCL::ControllerMode::INITIALIZE;
   center->SetProcessMsg(toSet, slaveIndex);
+}
+
+void youbot::YoubotJoint::CheckI2tAndTimeoutError(JointStatus status) {
+  if (status.I2TExceeded()) {
+    log(Log::fatal, "I2t exceeded in slave " + std::to_string(slaveIndex) + " (" + status.toString() + ")");
+    SLEEP_MILLISEC(10);
+    throw std::runtime_error("I2t exceeded");
+  }
+  if (status.Timeout()) {
+    log(Log::fatal, "Timeout in slave " + std::to_string(slaveIndex) + " (" + status.toString() + ")");
+    SLEEP_MILLISEC(10);
+    throw std::runtime_error("Timeout");
+  }
 }
 
 double YoubotJoint::GetCurrentAViaMailbox() {
