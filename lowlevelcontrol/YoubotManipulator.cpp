@@ -240,6 +240,15 @@ void youbot::YoubotManipulator::CheckI2tAndTimeoutErrorProcess() {
   }
 }
 
+void youbot::YoubotManipulator::LogStatusProcess() {
+  log(Log::info, "Manipulator status: ");
+  for (int i = 0; i < 5; i++) {
+	auto data = joints[i]->GetProcessReturnData();
+	log(Log::info, "Joint " + std::to_string(i) + ": " + data.status.toString());
+	data.Print();
+  }
+}
+
 void YoubotManipulator::ReqManipulatorStop() {
   for (auto& it : joints)
 	it->ReqStop();

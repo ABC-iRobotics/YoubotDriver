@@ -57,6 +57,8 @@ namespace youbot {
 	void GetJointTorqueNm(double& tau0, double& tau1, double& tau2, double& tau3, double& tau4);
 
 	void CheckI2tAndTimeoutErrorProcess();
+
+	void LogStatusProcess();
   };
 }
 #endif
