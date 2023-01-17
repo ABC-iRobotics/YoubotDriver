@@ -677,6 +677,10 @@ std::string YoubotJoint::JointStatus::toString() const {
     ss << " MOTOR_HALTED";
   if (value & (uint32_t)TMCL::StatusErrorFlags::HALL_SENSOR_ERROR)
     ss << " HALL_SENSOR_ERROR";
+  if (value & (uint32_t)TMCL::StatusErrorFlags::ENCODER_ERROR)
+    ss << " ENCODER_ERROR";
+  if (value & (uint32_t)TMCL::StatusErrorFlags::INITIALIZATION_ERROR)
+    ss << " INITIALIZATION_ERROR";
   if (value & (uint32_t)TMCL::StatusErrorFlags::PWM_MODE_ACTIVE)
     ss << " PWM_MODE_ACTIVE";
   if (value & (uint32_t)TMCL::StatusErrorFlags::VELOCITY_MODE_ACTIVE)
@@ -685,6 +689,10 @@ std::string YoubotJoint::JointStatus::toString() const {
     ss << " POSITION_MODE_ACTIVE";
   if (value & (uint32_t)TMCL::StatusErrorFlags::TORQUE_MODE_ACTIVE)
     ss << " TORQUE_MODE_ACTIVE";
+  if (value & (uint32_t)TMCL::StatusErrorFlags::EMERGENCY_STOP)
+    ss << " EMERGENCY_STOP";
+  if (value & (uint32_t)TMCL::StatusErrorFlags::FREERUNNING)
+    ss << " FREERUNNING";
   if (value & (uint32_t)TMCL::StatusErrorFlags::POSITION_REACHED)
     ss << " POSITION_REACHED";
   if (value & (uint32_t)TMCL::StatusErrorFlags::INITIALIZED)
@@ -727,6 +735,12 @@ void YoubotJoint::ReqJointSpeedRadPerSec(double value) {
 
 void youbot::YoubotJoint::ReqJointTorqueNm(double value) {
   ReqMotorCurrentmA(conversion.Nm2mA(value));
+}
+
+void YoubotJoint::ReqNoAction() {
+  static ProcessBuffer toSet(5);
+  toSet.buffer[4] = TMCL::ControllerMode::NO_MORE_ACTION;
+  center->SetProcessMsg(toSet, slaveIndex);
 }
 
 void YoubotJoint::ReqJointPositionRad(double rad) {
