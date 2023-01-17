@@ -35,6 +35,10 @@ namespace youbot {
 
 	void ResetErrorFlags();
 
+	bool IsAllJointsCalibratedViaMailbox();
+
+	void CheckAndResetI2tFlagsViaMailbox();
+
 	// Process message related functions
 	void ReqManipulatorStop();
 
@@ -44,11 +48,15 @@ namespace youbot {
 
 	void ReqJointTorqueNm(double tau0, double tau1, double tau2, double tau3, double tau4);
 
+	void ReqZeroVoltage();
+
 	void GetJointPositionRad(double& q0, double& q1, double& q2, double& q3, double& q4);
 
 	void GetJointSpeedRadPerSec(double& dq0, double& dq1, double& dq2, double& dq3, double& dq4);
 
 	void GetJointTorqueNm(double& tau0, double& tau1, double& tau2, double& tau3, double& tau4);
+
+	void CheckI2tAndTimeoutErrorProcess();
   };
 }
 #endif

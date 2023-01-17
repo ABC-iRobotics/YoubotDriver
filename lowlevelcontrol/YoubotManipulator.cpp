@@ -191,12 +191,46 @@ void youbot::YoubotManipulator::ReqJointTorqueNm(double tau0, double tau1, doubl
   joints[4]->ReqJointTorqueNm(tau4);
 }
 
+void youbot::YoubotManipulator::ReqZeroVoltage() {
+  joints[0]->ReqVoltagePWM(0);
+  joints[1]->ReqVoltagePWM(0);
+  joints[2]->ReqVoltagePWM(0);
+  joints[3]->ReqVoltagePWM(0);
+  joints[4]->ReqVoltagePWM(0);
+}
+
 void youbot::YoubotManipulator::GetJointTorqueNm(double& tau0, double& tau1, double& tau2, double& tau3, double& tau4) {
   tau0 = joints[0]->GetJointTorqueNm();
   tau1 = joints[1]->GetJointTorqueNm();
   tau2 = joints[2]->GetJointTorqueNm();
   tau3 = joints[3]->GetJointTorqueNm();
   tau4 = joints[4]->GetJointTorqueNm();
+}
+
+void youbot::YoubotManipulator::CheckAndResetI2tFlagsViaMailbox() {
+  for (int i = 0; i < 5; i++) {
+	// RESET I2t flags
+	auto status = joints[i]->GetJointStatusViaMailbox();
+	log(Log::info, status.toString());
+	if (status.I2TExceeded())
+	  joints[i]->ResetI2TExceededViaMailbox();
+  }
+}
+
+void youbot::YoubotManipulator::CheckI2tAndTimeoutErrorProcess() {
+  for (int i = 0; i < 5; i++) {
+	auto status = joints[i]->GetProcessReturnData().status;
+	if (status.I2TExceeded()) {
+	  log(Log::fatal, "I2t exceeded during calibration in joint " + std::to_string(i) + " (" + status.toString() + ")");
+	  SLEEP_MILLISEC(10);
+	  throw std::runtime_error("I2t exceeded during calibration");
+	}
+	if (status.Timeout()) {
+	  log(Log::fatal, "Timeout during calibration in joint " + std::to_string(i) + " (" + status.toString() + ")");
+	  SLEEP_MILLISEC(10);
+	  throw std::runtime_error("Timeout during calibration");
+	}
+  }
 }
 
 void YoubotManipulator::ReqManipulatorStop() {
@@ -211,4 +245,11 @@ void YoubotManipulator::ResetErrorFlags() {
   }
   for (int i = 0; i < 5; i++)
 	joints[i]->ResetTimeoutViaMailbox();
+}
+
+bool youbot::YoubotManipulator::IsAllJointsCalibratedViaMailbox() {
+  for (int i = 0; i < 5; i++)
+	if (!joints[i]->IsCalibratedViaMailbox())
+	  return false;
+  return true;
 }
