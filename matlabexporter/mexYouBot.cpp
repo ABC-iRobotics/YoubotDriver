@@ -143,7 +143,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
     }
 
     double* q = mxGetPr(prhs[2]);
-    man->arm->ReqJointPosition(q[0],q[1],q[2],q[3],q[4]);
+    man->arm->ReqJointPositionRad(q[0] / 180. * M_PI,q[1] / 180. * M_PI,q[2] / 180. * M_PI,q[3] / 180. * M_PI,q[4] / 180. * M_PI);
 
     // Check parameters
     if (nlhs != 0)
@@ -177,7 +177,9 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
     if (nlhs == 1) {
       plhs[0] = mxCreateDoubleMatrix(5, 1, mxREAL);
       double* q = mxGetPr(plhs[0]);
-      man->arm->GetJointPosition(q[0], q[1], q[2], q[3], q[4]);
+      man->arm->GetJointPositionRad(q[0], q[1], q[2], q[3], q[4]);
+      for (int i = 0; i < 5; i++)
+        q[i] *= 180. / M_PI;
       return;
     }
     if (nlhs == 0)

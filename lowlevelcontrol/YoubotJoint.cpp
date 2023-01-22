@@ -43,7 +43,7 @@ YoubotJoint::YoubotJoint(int slaveIndex, const std::map<std::string,
   }
   // Get cooldowntime_sec
   {
-    cooldowntime_sec = GetThermalWindingTimeSec();
+    cooldowntime_sec = GetThermalWindingTimeSecViaMailbox();
   }
   gearRatio = config.at("GearRatio");
   log(Log::info, "Init joint " + std::to_string(slaveIndex) + " GearRatio: "
@@ -54,9 +54,9 @@ YoubotJoint::YoubotJoint(int slaveIndex, const std::map<std::string,
   qMaxDeg = config.at("qMaxDeg");
   log(Log::info, "Init joint " + std::to_string(slaveIndex) + " qMaxDeg: "
     + std::to_string(qMaxDeg));
-  torqueconstant = config.at("TorqueConstant_NmPerAmpere");
+  torqueconstantNmPerA = config.at("TorqueConstant_NmPerAmpere");
   log(Log::info, "Init joint " + std::to_string(slaveIndex) + " TorqueConstant_NmPerAmpere: "
-    + std::to_string(torqueconstant));
+    + std::to_string(torqueconstantNmPerA));
   calibrationDirection = config.at("CalibrationDirection");
   log(Log::info, "Init joint " + std::to_string(slaveIndex) + " CalibrationDirection: "
     + std::to_string(calibrationDirection));
@@ -64,7 +64,7 @@ YoubotJoint::YoubotJoint(int slaveIndex, const std::map<std::string,
   log(Log::info, " qDirectionSameAsEnc: " + std::to_string(int(qDirectionSameAsEnc)));
   double qCalibrationDeg = config.at("qCalibrationDeg");
   log(Log::info, " qCalibrationDeg: " + std::to_string(qCalibrationDeg));
-  conversion = Conversion(qDirectionSameAsEnc, ticksperround, gearRatio, qCalibrationDeg);
+  conversion = Conversion(qDirectionSameAsEnc, ticksperround, gearRatio, qCalibrationDeg, torqueconstantNmPerA);
 }
 
 void YoubotJoint::ConfigParameters(bool forceConfiguration) {
@@ -551,15 +551,12 @@ void YoubotJoint::ResetTimeoutViaMailbox() {
 void YoubotJoint::ResetI2TExceededViaMailbox() {
   auto ptr = ClearI2TFlag::InitSharedPtr(slaveIndex);
   log(Log::info, "  ClearI2TFlag: waiting");
-
   SLEEP_MILLISEC(long(cooldowntime_sec * 1000))
-
   center->SendMessage_(ptr);
   log(Log::info, "  ClearI2TFlag: " + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + " waiting done");
-  
 }
 
-void YoubotJoint::StartInitialization() {
+void YoubotJoint::StartInitializationViaMailbox() {
   StopViaMailbox();
   auto status = GetJointStatusViaMailbox();
   log(Log::info, status.toString());
@@ -574,7 +571,7 @@ void YoubotJoint::StartInitialization() {
   log(Log::info, "  SetInitialize: " + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()));
 }
 
-bool YoubotJoint::IsInitialized() {
+bool YoubotJoint::IsInitializedViaMailbox() {
   auto ptr = GetInitialized::InitSharedPtr(slaveIndex);
   center->SendMessage_(ptr);
   log(Log::info, "  GetInitialized: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
@@ -650,7 +647,7 @@ bool YoubotJoint::JointStatus::FreeRunning() const {
   return value & (uint32_t)TMCL::StatusErrorFlags::FREERUNNING;
 };
 
-bool YoubotJoint::JointStatus::PosiitonReached() const {
+bool YoubotJoint::JointStatus::PositionReached() const {
   return value & (uint32_t)TMCL::StatusErrorFlags::POSITION_REACHED;
 };
 
@@ -680,6 +677,10 @@ std::string YoubotJoint::JointStatus::toString() const {
     ss << " MOTOR_HALTED";
   if (value & (uint32_t)TMCL::StatusErrorFlags::HALL_SENSOR_ERROR)
     ss << " HALL_SENSOR_ERROR";
+  if (value & (uint32_t)TMCL::StatusErrorFlags::ENCODER_ERROR)
+    ss << " ENCODER_ERROR";
+  if (value & (uint32_t)TMCL::StatusErrorFlags::INITIALIZATION_ERROR)
+    ss << " INITIALIZATION_ERROR";
   if (value & (uint32_t)TMCL::StatusErrorFlags::PWM_MODE_ACTIVE)
     ss << " PWM_MODE_ACTIVE";
   if (value & (uint32_t)TMCL::StatusErrorFlags::VELOCITY_MODE_ACTIVE)
@@ -688,6 +689,10 @@ std::string YoubotJoint::JointStatus::toString() const {
     ss << " POSITION_MODE_ACTIVE";
   if (value & (uint32_t)TMCL::StatusErrorFlags::TORQUE_MODE_ACTIVE)
     ss << " TORQUE_MODE_ACTIVE";
+  if (value & (uint32_t)TMCL::StatusErrorFlags::EMERGENCY_STOP)
+    ss << " EMERGENCY_STOP";
+  if (value & (uint32_t)TMCL::StatusErrorFlags::FREERUNNING)
+    ss << " FREERUNNING";
   if (value & (uint32_t)TMCL::StatusErrorFlags::POSITION_REACHED)
     ss << " POSITION_REACHED";
   if (value & (uint32_t)TMCL::StatusErrorFlags::INITIALIZED)
@@ -700,7 +705,11 @@ std::string YoubotJoint::JointStatus::toString() const {
 }
 
 void YoubotJoint::ProcessReturn::Print() const {
-  log(Log::info, "encoderPosition: " + std::to_string((int)encoderPosition) + " currentmA: " + std::to_string((int)currentmA) + " motorVelocityRPM: " + std::to_string((int)motorVelocityRPM) + " status: " + status.toString() + " motorPWM: " + std::to_string((int)motorPWM));
+  log(Log::info, "Pos: " + std::to_string(qRad) + "[rad] (" + std::to_string(qRad/M_PI*180.) + "[deg],"
+    + std::to_string((int)encoderPosition) + "[tick]) Vel: " +
+    std::to_string(dqRadPerSec) + "[rad/s] (" + std::to_string(dqRadPerSec / M_PI * 180.) + "[deg/s],"
+    + std::to_string((int)motorVelocityRPM) + "RPM) torque: " +
+    std::to_string(tau) + "[NM] (" + std::to_string(currentmA) + "[mA])");
 }
 
 YoubotJoint::ProcessReturn::ProcessReturn() : status(0), encoderPosition(-1),
@@ -710,22 +719,33 @@ const YoubotJoint::ProcessReturn& YoubotJoint::GetProcessReturnData() {
   static ProcessBuffer buffer;
   center->GetProcessMsg(buffer, slaveIndex);
   processReturn.encoderPosition = _toInt32(&buffer.buffer[0]);
-  processReturn.qDeg = conversion.qDegFromTicks(processReturn.encoderPosition);
   processReturn.currentmA = _toInt32(&buffer.buffer[4]);
   processReturn.motorVelocityRPM = _toInt32(&buffer.buffer[8]);
   processReturn.status = _toInt32(&buffer.buffer[12]);
   processReturn.motorPWM = _toInt32(&buffer.buffer[16]);
+  processReturn.qRad = conversion.Ticks2qRad(processReturn.encoderPosition);
+  processReturn.dqRadPerSec = conversion.RPM2qRadPerSec(processReturn.motorVelocityRPM);
+  processReturn.tau = conversion.mA2Nm(processReturn.currentmA);
   return processReturn;
 }
 
-void YoubotJoint::ReqVelocityJointRadPerSec(double value) {
-  ReqVelocityMotorRPM(int32_t(value / 2. / M_PI * 60. / gearRatio));
+void YoubotJoint::ReqJointSpeedRadPerSec(double value) {
+  ReqMotorSpeedRPM(conversion.qRadPerSec2RPM(value));
 }
 
+void youbot::YoubotJoint::ReqJointTorqueNm(double value) {
+  ReqMotorCurrentmA(conversion.Nm2mA(value));
+}
 
-void YoubotJoint::ReqJointPositionDeg(double deg) {
+void YoubotJoint::ReqNoAction() {
   static ProcessBuffer toSet(5);
-  int32_t ticks = conversion.ticksFromqDeg(deg);
+  toSet.buffer[4] = TMCL::ControllerMode::NO_MORE_ACTION;
+  center->SetProcessMsg(toSet, slaveIndex);
+}
+
+void YoubotJoint::ReqJointPositionRad(double rad) {
+  static ProcessBuffer toSet(5);
+  int32_t ticks = conversion.qRad2Ticks(rad);
   toSet.buffer[3] = ticks >> 24;
   toSet.buffer[2] = ticks >> 16;
   toSet.buffer[1] = ticks >> 8;
@@ -734,11 +754,19 @@ void YoubotJoint::ReqJointPositionDeg(double deg) {
   center->SetProcessMsg(toSet, slaveIndex);
 }
 
-double YoubotJoint::GetJointPositionDeg() {
-  return GetProcessReturnData().qDeg;
+double YoubotJoint::GetJointPositionRad() {
+  return GetProcessReturnData().qRad;
 }
 
-void YoubotJoint::ReqVelocityMotorRPM(int32_t value) {
+double youbot::YoubotJoint::GetJointSpeedRadPerSec() {
+  return GetProcessReturnData().dqRadPerSec;
+}
+
+double youbot::YoubotJoint::GetJointTorqueNm() {
+  return GetProcessReturnData().tau;
+}
+
+void YoubotJoint::ReqMotorSpeedRPM(int32_t value) {
   static ProcessBuffer toSet(5);
   toSet.buffer[3] = value >> 24;
   toSet.buffer[2] = value >> 16;
@@ -758,7 +786,7 @@ void YoubotJoint::ReqEncoderReference(int32_t value) {
   center->SetProcessMsg(toSet, slaveIndex);
 }
 
-void YoubotJoint::ReqMotorStopViaProcess() {
+void YoubotJoint::ReqStop() {
   static ProcessBuffer toSet(5);
   for (int i = 0; i < 4; i++)
     toSet.buffer[i] = 0;
@@ -776,12 +804,47 @@ void YoubotJoint::ReqVoltagePWM(int32_t value) {
   center->SetProcessMsg(toSet, slaveIndex);
 }
 
+void youbot::YoubotJoint::ReqMotorCurrentmA(int32_t value) {
+  static ProcessBuffer toSet(5);
+  toSet.buffer[3] = value >> 24;
+  toSet.buffer[2] = value >> 16;
+  toSet.buffer[1] = value >> 8;
+  toSet.buffer[0] = value & 0xff;
+  toSet.buffer[4] = TMCL::ControllerMode::CURRENT_MODE;
+  center->SetProcessMsg(toSet, slaveIndex);
+}
+
+int32_t youbot::YoubotJoint::GetMotorPosTick() {
+  return GetProcessReturnData().encoderPosition;
+}
+
+int32_t youbot::YoubotJoint::GetMotorSpeedRPM() {
+  return GetProcessReturnData().motorVelocityRPM;
+}
+
+int32_t youbot::YoubotJoint::GetMotorCurrentmA() {
+  return GetProcessReturnData().currentmA;
+}
+
 void YoubotJoint::ReqInitializationViaProcess() {
   static ProcessBuffer toSet(5);
   for (int i = 0; i < 4; i++)
     toSet.buffer[i] = 0;
   toSet.buffer[4] = TMCL::ControllerMode::INITIALIZE;
   center->SetProcessMsg(toSet, slaveIndex);
+}
+
+void youbot::YoubotJoint::CheckI2tAndTimeoutError(JointStatus status) {
+  if (status.I2TExceeded()) {
+    log(Log::fatal, "I2t exceeded in slave " + std::to_string(slaveIndex) + " (" + status.toString() + ")");
+    SLEEP_MILLISEC(10);
+    throw std::runtime_error("I2t exceeded");
+  }
+  if (status.Timeout()) {
+    log(Log::fatal, "Timeout in slave " + std::to_string(slaveIndex) + " (" + status.toString() + ")");
+    SLEEP_MILLISEC(10);
+    throw std::runtime_error("Timeout");
+  }
 }
 
 double YoubotJoint::GetCurrentAViaMailbox() {
@@ -805,41 +868,41 @@ void YoubotJoint::RotateMotorLeftViaMailbox(int32_t speedMotorRPM) {
     " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
 }
 
-double YoubotJoint::GetJointVelocityRadPerSec() {
+double YoubotJoint::GetJointVelocityRadPerSecViaMailbox() {
   auto ptr = GetActualSpeedMotorRPM::InitSharedPtr(slaveIndex);
   center->SendMessage_(ptr);
   log(Log::info, " GetActualSpeedMotorRPM: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
   return double(ptr->GetReplyValue()) * 2. * M_PI / 60. * gearRatio;
 }
 
-long youbot::YoubotJoint::GetI2tLimitValue() {
+long youbot::YoubotJoint::GetI2tLimitValueViaMailbox() {
   auto ptr = GetI2tLimitValue::InitSharedPtr(slaveIndex);
   center->SendMessage_(ptr);
   log(Log::info, " GetI2tLimitValue: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
   return ptr->GetReplyValue();
 }
 
-long youbot::YoubotJoint::GetCurrentI2tValue() {
+long youbot::YoubotJoint::GetCurrentI2tValueViaMailbox() {
   auto ptr = GetCurrentI2tValue::InitSharedPtr(slaveIndex);
   center->SendMessage_(ptr);
   log(Log::info, " GetCurrentI2tValue: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
   return ptr->GetReplyValue();
 }
 
-void YoubotJoint::SetJointVelocityRadPerSec(double value) {
+void YoubotJoint::SetJointVelocityRadPerSecViaMailbox(double value) {
   auto ptr = RotateRightMotorRPM::InitSharedPtr(slaveIndex, value / gearRatio * 60. / M_PI / 2.);
   center->SendMessage_(ptr);
   log(Log::info, " GetActualSpeedMotorRPM: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
 }
 
-double YoubotJoint::GetThermalWindingTimeSec() {
+double YoubotJoint::GetThermalWindingTimeSecViaMailbox() {
   auto ptr = GetThermalWindingTimeMs::InitSharedPtr(slaveIndex);
   center->SendMessage_(ptr);
   log(Log::info, " GetThermalWindingTimeMs: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
   return double(ptr->GetReplyValue()) / 1000.;
 }
 
-void YoubotJoint::SetTargetCurrentA(double current) {
+void YoubotJoint::SetTargetCurrentAViaMailbox(double current) {
   auto ptr = SetTargetCurrentmA::InitSharedPtr(slaveIndex, int32_t(current * 1000.));
   center->SendMessage_(ptr);
   log(Log::info, " SetTargetCurrentmA[mA]: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
@@ -860,13 +923,13 @@ void YoubotJoint::I2tResetTest() {
   bool forward = config.at("CalibrationDirection");
   const double calJointRadPerSec = 0.2;
   
-  int limit = GetI2tLimitValue();
+  int limit = GetI2tLimitValueViaMailbox();
   
   ResetTimeoutViaMailbox();
-  SetJointVelocityRadPerSec(forward ? calJointRadPerSec : -calJointRadPerSec);
+  SetJointVelocityRadPerSecViaMailbox(forward ? calJointRadPerSec : -calJointRadPerSec);
   do
   {
-    auto current = GetCurrentI2tValue();
+    auto current = GetCurrentI2tValueViaMailbox();
     status = GetJointStatusViaMailbox();
     auto str = status.toString();
   } while (!status.I2TExceeded());
@@ -890,47 +953,80 @@ void YoubotJoint::SetCalibratedViaMailbox() {
 }
 
 void YoubotJoint::Initialize() {
-  if (!IsInitialized()) {
-    auto status = GetJointStatusViaMailbox();
-    log(Log::info, status.toString());
-    if (status.I2TExceeded()) {
-      ResetI2TExceededViaMailbox();
-      ResetTimeoutViaMailbox();
-    }
-    else
-      if(status.Timeout())
-        ResetTimeoutViaMailbox();
-    status = GetJointStatusViaMailbox();
-    log(Log::info, "Joint " + std::to_string(slaveIndex) + " status before calibration: " + status.toString());
-    StartInitialization();
-    auto start = std::chrono::steady_clock::now();
-    std::chrono::steady_clock::time_point end;
-    SLEEP_MILLISEC(10); // test
-    do {
-      if (IsInitialized()) {
-        log(Log::info, "Joint " + std::to_string(slaveIndex) + " is initialized");
-        return;
-      }
-      end = std::chrono::steady_clock::now();
-    } while (std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() < 2000);
-    StopViaMailbox();
-    log(Log::fatal, "Joint " + std::to_string(slaveIndex) + " error during initialization (possible causes: it is in the problematic end position, on windows: other processes take too much processor resource)");
-    SLEEP_MILLISEC(10);
-    throw std::runtime_error("One joint is not initialized and cannot be done it... ");
+  auto status = GetJointStatusViaMailbox();
+  if (status.Initialized()) {
+    log(Log::info, "Initialization of Joint " + std::to_string(slaveIndex) + " already initialized, status: " + status.toString());
+    return;
   }
+  // Initialization
+  SLEEP_MILLISEC(500); // Wait to finish the robot the current moves - controller likes it
+  log(Log::info, "Initialization of Joint " + std::to_string(slaveIndex) + " status before calibration: " + status.toString());
+  // Reset I2t flag
+  if (status.I2TExceeded())
+    ResetI2TExceededViaMailbox();
+  // Reset timeout flag (waiting for I2t clearence will cause timeout as well)
+  if(status.Timeout() || status.I2TExceeded())
+    ResetTimeoutViaMailbox();
+  // Get the new status
+  if (status.Timeout() || status.I2TExceeded()) {
+    status = GetJointStatusViaMailbox();
+    log(Log::info, "Joint " + std::to_string(slaveIndex) + " status after timeout, I2t cleared: " + status.toString());
+  }
+  StartInitializationViaMailbox();
+  auto start = std::chrono::steady_clock::now();
+  std::chrono::steady_clock::time_point end;
+  do {
+    auto status = GetJointStatusViaMailbox();
+    if (status.Timeout() || status.I2TExceeded() || status.InitializationError()) {
+      StopViaMailbox();
+      log(Log::fatal , "Error (timeout/I2t/init error) during initialization of Joint " + std::to_string(slaveIndex));
+      throw std::runtime_error("Error (timeout/I2t/init error) during initialization");
+    }
+    if (status.Initialized()) {
+      end = std::chrono::steady_clock::now();
+      log(Log::info, "Joint " + std::to_string(slaveIndex) + " is initialized, elapsed time: " + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()) + "[ms]");
+      return;
+    }
+    end = std::chrono::steady_clock::now();
+  } while (std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() < 2000);
+  StopViaMailbox();
+  log(Log::fatal, "Joint " + std::to_string(slaveIndex) + " error during initialization (possible causes: it is in the problematic end position, on windows: other processes take too much processor resource)");
+  SLEEP_MILLISEC(10);
+  throw std::runtime_error("One joint is not initialized and cannot be done it... ");
+
 }
 
-double YoubotJoint::Conversion::qDegFromTicks(int32_t ticks) const {
-  return double(ticks) * c + qCalibrationDeg;
+double YoubotJoint::Conversion::Ticks2qRad(int32_t ticks) const {
+  return double(ticks) * 2. * M_PI * gearRatio / double(ticksperround) + qCalibrationRad;
 }
 
-int32_t YoubotJoint::Conversion::ticksFromqDeg(double qDeg) const {
-  return int32_t((qDeg - qCalibrationDeg) / c);
+int32_t YoubotJoint::Conversion::qRad2Ticks(double qDeg) const {
+  return int32_t((qDeg - qCalibrationRad) / (2. * M_PI * gearRatio / double(ticksperround)));
+}
+
+double youbot::YoubotJoint::Conversion::RPM2qRadPerSec(int32_t RPM) const {
+  return double(RPM) / 60. * gearRatio * 2. * M_PI;
+}
+
+int32_t youbot::YoubotJoint::Conversion::qRadPerSec2RPM(double radpersec) const {
+  return radpersec * 60. / gearRatio / (2. * M_PI);
+}
+
+double youbot::YoubotJoint::Conversion::mA2Nm(int32_t mA) const {
+  return double(mA) / 1000. * torqueconstantNmPerA;
+}
+
+int32_t youbot::YoubotJoint::Conversion::Nm2mA(double Nm) const {
+  return int32_t(Nm / torqueconstantNmPerA * 1000.);
 }
 
 YoubotJoint::Conversion::Conversion(bool qDirectionSameAsEnc, int32_t ticksPerRound,
-  double gearRatio, double qCalibrationDeg) : intialized(1),
-  qCalibrationDeg(qCalibrationDeg), c(360. * gearRatio / double(ticksPerRound)) {
-  if (!qDirectionSameAsEnc)
-    c = -c;
+  double gearRatio, double qCalibrationDeg, double torqueconstantNmPerA) :
+  intialized(1), ticksperround(ticksPerRound),
+  torqueconstantNmPerA(torqueconstantNmPerA* (qDirectionSameAsEnc ? 1. : -1.)),
+  gearRatio(gearRatio* (qDirectionSameAsEnc ? 1. : -1.)),
+  qCalibrationRad(qCalibrationDeg / 180. * M_PI) {
 }
+
+youbot::YoubotJoint::Conversion::Conversion() :intialized(0), ticksperround(0), qCalibrationRad(0), gearRatio(0),
+torqueconstantNmPerA(0) {}

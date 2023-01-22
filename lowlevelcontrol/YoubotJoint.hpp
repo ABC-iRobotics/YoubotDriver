@@ -17,20 +17,24 @@ namespace youbot {
     double cooldowntime_sec = -1;
     double gearRatio = -1;
     bool calibrationDirection = false;
-    double torqueconstant = false;
+    double torqueconstantNmPerA = false;
     double qMinDeg, qMaxDeg;
 
     struct Conversion {
-      double qCalibrationDeg;
-      double c;
+      int ticksperround;
+      double qCalibrationRad, gearRatio;
+      double torqueconstantNmPerA;
       bool intialized;
-      double qDegFromTicks(int32_t ticks) const;
-      int32_t ticksFromqDeg(double qDeg) const;
+      double Ticks2qRad(int32_t ticks) const;
+      int32_t qRad2Ticks(double qDeg) const;
+      double RPM2qRadPerSec(int32_t RPM) const;
+      int32_t qRadPerSec2RPM(double degpersec) const;
+      double mA2Nm(int32_t mA) const;
+      int32_t Nm2mA(double Nm) const;
       Conversion(bool qDirectionSameAsEnc, int32_t ticksPerRound,
-        double gearRatio, double qCalibrationDeg);
-      Conversion() :intialized(0) {};
+        double gearRatio, double qCalibrationDeg, double torqueconstantNmPerA);
+      Conversion();
     } conversion;
-
     void _getFirmwareVersionViaMailbox();
 
   public:
@@ -51,7 +55,7 @@ namespace youbot {
       bool TorqueMode() const;
       bool EmergencyStop() const;
       bool FreeRunning() const;
-      bool PosiitonReached() const;
+      bool PositionReached() const;
       bool Initialized() const;
       bool Timeout() const;
       bool I2TExceeded() const;
@@ -61,14 +65,9 @@ namespace youbot {
     };
 
     struct ProcessReturn {
-      int32_t encoderPosition;
-      int32_t currentmA;
-      int32_t motorVelocityRPM;
+      int32_t encoderPosition, currentmA, motorVelocityRPM, motorPWM;
       JointStatus status;
-      int32_t motorPWM;
-      double qDeg;
-      // double jointAngle, jointVelocityRad/s, torque, ...
-
+      double qRad, dqRadPerSec, tau;
       ProcessReturn();
       void Print() const;
     };
@@ -93,6 +92,9 @@ namespace youbot {
 
     bool CheckConfig();
 
+    void Initialize();
+
+    // Mailbox-based Set/Get mothods
     bool IsConfiguratedViaMailbox();
 
     void SetConfiguratedViaMailbox();
@@ -109,51 +111,72 @@ namespace youbot {
 
     void ResetI2TExceededViaMailbox();
 
-    void StartInitialization();
+    void StartInitializationViaMailbox();
 
-    bool IsInitialized();
+    bool IsInitializedViaMailbox();
 
-    void Initialize();
-
-    const ProcessReturn& GetProcessReturnData();
-
-    void ReqJointPositionDeg(double value);
-
-    double GetJointPositionDeg();
-
-    void ReqVelocityJointRadPerSec(double value);
-
-    void ReqVelocityMotorRPM(int32_t value);
-
-    double GetThermalWindingTimeSec();
-
-    void ReqEncoderReference(int32_t value);
-
-    void ReqMotorStopViaProcess();
-
-    void ReqVoltagePWM(int32_t value);
-
-    void ReqInitializationViaProcess();
+    double GetThermalWindingTimeSecViaMailbox();
 
     double GetCurrentAViaMailbox();
 
     void RotateMotorRightViaMailbox(int32_t speedMotorRPM);
 
     void RotateMotorLeftViaMailbox(int32_t speedMotorRPM);
-
-    double GetJointVelocityRadPerSec();
-
-    long GetI2tLimitValue();
-
-    long GetCurrentI2tValue();
-
-    void SetJointVelocityRadPerSec(double value);
-
-    void SetTargetCurrentA(double current);
+    
+    void SetTargetCurrentAViaMailbox(double current);
 
     bool IsCalibratedViaMailbox();
 
     void SetCalibratedViaMailbox();
+
+    long GetI2tLimitValueViaMailbox();
+
+    long GetCurrentI2tValueViaMailbox();
+
+    double GetJointVelocityRadPerSecViaMailbox();
+
+    void SetJointVelocityRadPerSecViaMailbox(double value);
+
+    // Process message-based req/get methods will be sent with the next ExcangeMessage/show the results of the latest one
+    const ProcessReturn& GetProcessReturnData();
+
+    void ReqStop();
+
+    // Req joint quantity
+    void ReqJointPositionRad(double value);
+
+    void ReqJointSpeedRadPerSec(double value);
+
+    void ReqJointTorqueNm(double value);
+
+    void ReqNoAction();
+
+    // Req motor quantity
+    void ReqMotorSpeedRPM(int32_t value);
+
+    void ReqEncoderReference(int32_t value);
+
+    void ReqVoltagePWM(int32_t value);
+
+    void ReqMotorCurrentmA(int32_t value);
+
+    // Get joint quantity
+    double GetJointPositionRad();
+
+    double GetJointSpeedRadPerSec();
+
+    double GetJointTorqueNm();
+
+    // Get motor quantity
+    int32_t GetMotorPosTick();
+
+    int32_t GetMotorSpeedRPM();
+
+    int32_t GetMotorCurrentmA();
+
+    void ReqInitializationViaProcess();
+
+    void CheckI2tAndTimeoutError(JointStatus status);
 
     typedef std::shared_ptr<YoubotJoint> Ptr;
 
