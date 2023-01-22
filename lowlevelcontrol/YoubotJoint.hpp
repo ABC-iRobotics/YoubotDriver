@@ -149,6 +149,8 @@ namespace youbot {
 
     void ReqJointTorqueNm(double value);
 
+    void ReqNoAction();
+
     // Req motor quantity
     void ReqMotorSpeedRPM(int32_t value);
 
