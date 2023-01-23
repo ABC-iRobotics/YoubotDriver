@@ -744,6 +744,11 @@ void YoubotJoint::ReqNoAction() {
 }
 
 void YoubotJoint::ReqJointPositionRad(double rad) {
+  if (firmwareversion == 148) {
+    log(Log::fatal, "Position control is forbidden for TMCM1610 with firmware 1.48 because of random encoder error!");
+    SLEEP_MILLISEC(200);
+    throw std::runtime_error("Position control is forbidden for TMCM1610 with firmware 1.48 because of random encoder error!");
+  }
   static ProcessBuffer toSet(5);
   int32_t ticks = conversion.qRad2Ticks(rad);
   toSet.buffer[3] = ticks >> 24;
