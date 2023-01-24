@@ -84,8 +84,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
 
     if (!manager->arm)
       manager->arm = new YoubotManipulator(manager->config, EtherCATMaster::GetSingleton());
-    manager->arm->ConfigJoints();
-    manager->arm->InitCommutationAllJoints();
+    manager->arm->InitializeManipulator();
     manager->arm->Calibrate();
     // Check parameters
     if (nlhs != 0)
@@ -118,7 +117,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
     if (!man->arm)
       mexErrMsgTxt("Arm not initialized.");
     SLEEP_SEC(1);
-    man->arm->ResetErrorFlags();
+    man->arm->CheckAndResetErrorFlags();
     double* Ts = mxGetPr(prhs[2]);
     EtherCATMaster::GetSingleton()->StartProcessThread(*Ts >= 0 ? (int)*Ts : 0);
     // Check parameters

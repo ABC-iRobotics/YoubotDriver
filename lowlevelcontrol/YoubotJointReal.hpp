@@ -16,8 +16,8 @@ namespace youbot {
 
     YoubotJointReal(int slaveIndex, const std::map<std::string, double>& config, EtherCATMaster* center);
 
-    void ConfigParameters(bool forceConfiguration = false) override;
-    bool CheckConfig() override;
+    void ConfigControlParameters(bool forceConfiguration = false) override;
+    bool CheckControlParameters() override;
     void InitCommutation() override;
 
     // Mailbox-based Set/Get mothods

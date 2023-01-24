@@ -27,24 +27,29 @@ YoubotJointReal::Ptr YoubotManipulator::GetJoint(int i) {
   return joints[i];
 }
 
-void YoubotManipulator::SetParameters() {
+void YoubotManipulator::CollectBasicJointParameters() {
   for (int i = 0; i < 5; i++)
-	joints[i]->SetParameters();
+	joints[i]->ConfigControlParameters();
 }
 
-void YoubotManipulator::ConfigJoints(bool forceConfiguration) {
+void YoubotManipulator::ConfigJointControlParameters(bool forceConfiguration) {
   for (int i = 0; i < 5; i++)
-	joints[i]->ConfigParameters(forceConfiguration);
+	joints[i]->ConfigControlParameters(forceConfiguration);
 }
 
-bool YoubotManipulator::CheckJointConfigs() {
+bool YoubotManipulator::CheckJointControlParameters() {
   for (int i = 0; i < 5; i++)
-	if (!joints[i]->CheckConfig())
+	if (!joints[i]->CheckControlParameters())
 	  return false;
   return true;
 }
 
-void YoubotManipulator::InitCommutationAllJoints() {
+void YoubotManipulator::InitializeManipulator(bool forceConfiguration) {
+  for (int i = 0; i < 5; i++)
+	joints[i]->InitializeJoint(forceConfiguration);
+}
+
+void YoubotManipulator::InitJointCommutation() {
   for (auto& it : joints)
 	it->InitCommutation();
 }
@@ -258,7 +263,7 @@ void YoubotManipulator::ReqManipulatorStop() {
   for (auto& it : joints)
 	it->ReqStop();
 }
-void YoubotManipulator::ResetErrorFlags() {
+void YoubotManipulator::CheckAndResetErrorFlags() {
   for (int i = 0; i < 5; i++) {
 	auto status = joints[i]->GetJointStatusViaMailbox();
 	if (status.I2TExceeded())

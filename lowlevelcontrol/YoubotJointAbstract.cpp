@@ -9,6 +9,12 @@ using namespace youbot;
 YoubotJointAbstract::YoubotJointAbstract(int slaveIndex, const std::map<std::string,double>& config)
     : config(config), slaveIndex(slaveIndex) {}
 
+void YoubotJointAbstract::InitializeJoint(bool forceConfiguration) {
+  CollectBasicParameters();
+  ConfigControlParameters(forceConfiguration);
+  InitCommutation();
+}
+
 const YoubotJointAbstract::Parameters& YoubotJointAbstract::GetParameters() const {
   if (!parameters.intialized)
     throw::std::runtime_error("");
@@ -23,7 +29,7 @@ int YoubotJointAbstract::GetSlaveIndex() const {
   return slaveIndex;
 }
 
-void YoubotJointAbstract::SetParameters() {
+void YoubotJointAbstract::CollectBasicParameters() {
   GetFirmwareVersionViaMailbox(parameters.controllerNum, parameters.firmwareversion);
   // GetTickPerRounds
   parameters.ticksperround = GetEncoderResolutionViaMailbox();

@@ -43,7 +43,7 @@ YoubotJointReal::YoubotJointReal(int slaveIndex, const std::map<std::string,
   double>& config, EtherCATMaster* center)
     : center(center), YoubotJointAbstract(slaveIndex, config) {}
 
-void YoubotJointReal::ConfigParameters(bool forceConfiguration) {
+void YoubotJointReal::ConfigControlParameters(bool forceConfiguration) {
   if (!forceConfiguration && IsConfiguratedViaMailbox()) {
     log(Log::info, "Joint " + std::to_string(GetSlaveIndex()) + " is already configurated");
     return;
@@ -242,7 +242,7 @@ void YoubotJointReal::ConfigParameters(bool forceConfiguration) {
   SetConfiguratedViaMailbox();
 }
 
-bool YoubotJointReal::CheckConfig() {
+bool YoubotJointReal::CheckControlParameters() {
   // GetMaxRampVelocityRPM
   {
     auto ptr = GetMaxRampVelocityRPM::InitSharedPtr(GetSlaveIndex());

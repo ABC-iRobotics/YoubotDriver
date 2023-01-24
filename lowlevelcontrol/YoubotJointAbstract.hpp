@@ -79,19 +79,16 @@ namespace youbot {
     YoubotJointAbstract(YoubotJointAbstract&) = delete;
     YoubotJointAbstract(const YoubotJointAbstract&) = delete;
 
-    // Most important functions to initalize
+    // Constructor
     YoubotJointAbstract(int slaveIndex, const std::map<std::string, double>& config);
 
-    // Set parameters, config the driver, init electronics
-    void Initialize_(bool forceConfiguration = false) {
-      SetParameters();
-      ConfigParameters(forceConfiguration);
-      InitCommutation();
-    }
+    // Main initialization routine
+    void InitializeJoint(bool forceConfiguration = false);
 
-    void SetParameters(); // get essential paramters from the config and the motor driver
-    virtual void ConfigParameters(bool forceConfiguration = false) = 0; // set the control parameters to the driver
-    virtual bool CheckConfig() = 0; // check the control parameters to the driver
+    // Submethods of initialization
+    void CollectBasicParameters(); // get essential paramters from the config and the motor driver
+    virtual void ConfigControlParameters(bool forceConfiguration = false) = 0; // set the control parameters to the driver
+    virtual bool CheckControlParameters() = 0; // check the control parameters to the driver
     virtual void InitCommutation() = 0; // set commutation/encoder of the driver
 
     // Variable getters

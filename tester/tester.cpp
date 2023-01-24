@@ -114,13 +114,11 @@ int main(int argc, char *argv[])
   }
 
   YoubotManipulator man(config, EtherCATMaster::GetSingleton());
-  man.ConfigJoints();
-  // if (man.CheckJointConfigs())  std::cout << "OK!!" << std::endl;
-  man.InitializeAllJoints();
+  man.InitializeManipulator();
   man.Calibrate();
   
   SLEEP_SEC(1);
-  man.ResetErrorFlags();
+  man.CheckAndResetErrorFlags();
   
   GoTowardsZero(man, 5000, 0.05, config);
 
