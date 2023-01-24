@@ -6,8 +6,8 @@ set(SOURCES
 		TMCLMailboxMessage.cpp
 		TMCLDefinitions.cpp
 		EtherCATMaster.cpp
-		YoubotJointAbstract.cpp
-		YoubotJointReal.cpp
+		YoubotJoint.cpp
+		YoubotJointPhysical.cpp
 		YoubotJointVirtual.cpp
 		YoubotConfig.cpp
 		YoubotManipulator.cpp
@@ -20,8 +20,8 @@ set(HEADERS
 		Logger.hpp
 		EtherCATMaster.hpp
 		MailboxMessage.hpp
-		YoubotJointAbstract.hpp
-		YoubotJointReal.hpp
+		YoubotJoint.hpp
+		YoubotJointPhysical.hpp
 		YoubotJointVirtual.hpp
 		YoubotConfig.hpp
 		YoubotManipulator.hpp

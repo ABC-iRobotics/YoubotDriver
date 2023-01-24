@@ -2,19 +2,19 @@
 #define YOUBOT_JOINT_REAL_HPP
 
 #include "EtherCATMaster.hpp"
-#include "YoubotJointAbstract.hpp"
+#include "YoubotJoint.hpp"
 #include <map>
 
 namespace youbot {
 
-  class YoubotJointReal : public YoubotJointAbstract {
+  class YoubotJointPhysical : public YoubotJoint {
   public:
     // Deleted constructor
-    YoubotJointReal() = delete;
-    YoubotJointReal(YoubotJointReal&) = delete;
-    YoubotJointReal(const YoubotJointReal&) = delete;
+    YoubotJointPhysical() = delete;
+    YoubotJointPhysical(YoubotJointPhysical&) = delete;
+    YoubotJointPhysical(const YoubotJointPhysical&) = delete;
 
-    YoubotJointReal(int slaveIndex, const std::map<std::string, double>& config, EtherCATMaster* center);
+    YoubotJointPhysical(int slaveIndex, const std::map<std::string, double>& config, EtherCATMaster* center);
 
     void ConfigControlParameters(bool forceConfiguration = false) override;
     bool CheckControlParameters() override;

@@ -2,8 +2,9 @@
 #define YOUBOT_MANIPULATOR_HPP
 
 #include <vector>
-#include "YoubotJointReal.hpp"
+#include "YoubotJoint.hpp"
 #include "YoubotConfig.hpp"
+#include "EtherCATMaster.hpp"
 
 namespace youbot {
 
@@ -36,7 +37,7 @@ namespace youbot {
 	void CheckAndResetI2tFlagsViaMailbox(); // to check and reset i2t and timeout
 
 	// To get joint operations
-	YoubotJointReal::Ptr GetJoint(int i);
+	YoubotJoint::Ptr GetJoint(int i);
 
 	// Process message related functions
 	void ReqManipulatorStop();
@@ -54,7 +55,7 @@ namespace youbot {
   private:
 	const YoubotConfig config;
 	EtherCATMaster* center;
-	std::vector<YoubotJointReal::Ptr> joints;
+	std::vector<YoubotJoint::Ptr> joints;
 
 
 

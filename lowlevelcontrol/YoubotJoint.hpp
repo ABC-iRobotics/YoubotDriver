@@ -7,7 +7,7 @@
 
 namespace youbot {
 
-  class YoubotJointAbstract {
+  class YoubotJoint {
   public:
     struct Parameters {
       uint32_t ticksperround;
@@ -75,12 +75,12 @@ namespace youbot {
     };
 
     // Not available constructors
-    YoubotJointAbstract() = delete;
-    YoubotJointAbstract(YoubotJointAbstract&) = delete;
-    YoubotJointAbstract(const YoubotJointAbstract&) = delete;
+    YoubotJoint() = delete;
+    YoubotJoint(YoubotJoint&) = delete;
+    YoubotJoint(const YoubotJoint&) = delete;
 
     // Constructor
-    YoubotJointAbstract(int slaveIndex, const std::map<std::string, double>& config);
+    YoubotJoint(int slaveIndex, const std::map<std::string, double>& config);
 
     // Main initialization routine
     void InitializeJoint(bool forceConfiguration = false);
@@ -160,7 +160,7 @@ namespace youbot {
 
     virtual void CheckI2tAndTimeoutError(JointStatus status) = 0;
 
-    typedef std::shared_ptr<YoubotJointAbstract> Ptr;
+    typedef std::shared_ptr<YoubotJoint> Ptr;
 
   private:
     const int slaveIndex;

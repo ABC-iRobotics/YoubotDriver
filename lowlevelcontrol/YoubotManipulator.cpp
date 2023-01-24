@@ -1,4 +1,5 @@
 #include "YoubotManipulator.hpp"
+#include "YoubotJointPhysical.hpp"
 #include <stdexcept>
 #include "Logger.hpp"
 #include "Time.hpp"
@@ -7,23 +8,12 @@ using namespace youbot;
 
 YoubotManipulator::YoubotManipulator(const YoubotConfig& config, EtherCATMaster* center)
   : config(config), center(center) {
-  // Check slavenames
-  if (center->getSlaveNum() < 6)
-	throw std::runtime_error("Less than 6 ethercat slaves");
-  for (int i = 0; i < 5; i++) {
-	if (config.jointIndices[i] >= center->getSlaveNum())
-	  throw std::runtime_error("Slave index " + std::to_string(config.jointIndices[i]) + " not found");
-	if (center->getSlaveName(config.jointIndices[i]).compare("TMCM-1610") != 0)
-	  throw std::runtime_error("Unknown module name " + center->getSlaveName(config.jointIndices[i]));
-	joints.push_back(std::make_shared<YoubotJointReal>(config.jointIndices[i], config.jointConfigs[i], center));
-  }
-
-  // Set ProcessMsgFromSlave sizes
+  // Construct joints
   for (int i = 0; i < 5; i++)
-	center->SetProcessFromSlaveSize(20, config.jointIndices[i]);
+	joints.push_back(std::make_shared<YoubotJointPhysical>(config.jointIndices[i], config.jointConfigs[i], center));
 }
 
-YoubotJointReal::Ptr YoubotManipulator::GetJoint(int i) {
+YoubotJointPhysical::Ptr YoubotManipulator::GetJoint(int i) {
   return joints[i];
 }
 
