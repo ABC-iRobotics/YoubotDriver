@@ -85,7 +85,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
     if (!manager->arm)
       manager->arm = new YoubotManipulator(manager->config, EtherCATMaster::GetSingleton());
     manager->arm->ConfigJoints();
-    manager->arm->InitializeAllJoints();
+    manager->arm->InitCommutationAllJoints();
     manager->arm->Calibrate();
     // Check parameters
     if (nlhs != 0)

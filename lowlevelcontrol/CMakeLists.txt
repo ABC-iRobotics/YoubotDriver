@@ -6,7 +6,9 @@ set(SOURCES
 		TMCLMailboxMessage.cpp
 		TMCLDefinitions.cpp
 		EtherCATMaster.cpp
-		YoubotJoint.cpp
+		YoubotJointAbstract.cpp
+		YoubotJointReal.cpp
+		YoubotJointVirtual.cpp
 		YoubotConfig.cpp
 		YoubotManipulator.cpp
 		ProcessBuffer.cpp
@@ -18,7 +20,9 @@ set(HEADERS
 		Logger.hpp
 		EtherCATMaster.hpp
 		MailboxMessage.hpp
-		YoubotJoint.hpp
+		YoubotJointAbstract.hpp
+		YoubotJointReal.hpp
+		YoubotJointVirtual.hpp
 		YoubotConfig.hpp
 		YoubotManipulator.hpp
 		ProcessBuffer.hpp

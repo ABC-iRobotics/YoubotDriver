@@ -15,7 +15,7 @@ YoubotManipulator::YoubotManipulator(const YoubotConfig& config, EtherCATMaster*
 	  throw std::runtime_error("Slave index " + std::to_string(config.jointIndices[i]) + " not found");
 	if (center->getSlaveName(config.jointIndices[i]).compare("TMCM-1610") != 0)
 	  throw std::runtime_error("Unknown module name " + center->getSlaveName(config.jointIndices[i]));
-	joints.push_back(std::make_shared<YoubotJoint>(config.jointIndices[i], config.jointConfigs[i], center));
+	joints.push_back(std::make_shared<YoubotJointReal>(config.jointIndices[i], config.jointConfigs[i], center));
   }
 
   // Set ProcessMsgFromSlave sizes
@@ -23,8 +23,13 @@ YoubotManipulator::YoubotManipulator(const YoubotConfig& config, EtherCATMaster*
 	center->SetProcessFromSlaveSize(20, config.jointIndices[i]);
 }
 
-YoubotJoint::Ptr YoubotManipulator::GetJoint(int i) {
+YoubotJointReal::Ptr YoubotManipulator::GetJoint(int i) {
   return joints[i];
+}
+
+void YoubotManipulator::SetParameters() {
+  for (int i = 0; i < 5; i++)
+	joints[i]->SetParameters();
 }
 
 void YoubotManipulator::ConfigJoints(bool forceConfiguration) {
@@ -39,9 +44,9 @@ bool YoubotManipulator::CheckJointConfigs() {
   return true;
 }
 
-void YoubotManipulator::InitializeAllJoints() {
+void YoubotManipulator::InitCommutationAllJoints() {
   for (auto& it : joints)
-	it->Initialize();
+	it->InitCommutation();
 }
 
 void YoubotManipulator::Calibrate(bool forceCalibration) {

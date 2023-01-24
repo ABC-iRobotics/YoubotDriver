@@ -2,7 +2,7 @@
 #define YOUBOT_MANIPULATOR_HPP
 
 #include <vector>
-#include "YoubotJoint.hpp"
+#include "YoubotJointReal.hpp"
 #include "YoubotConfig.hpp"
 
 namespace youbot {
@@ -10,7 +10,7 @@ namespace youbot {
   class YoubotManipulator {
 	const YoubotConfig config;
 	EtherCATMaster* center;
-	std::vector<YoubotJoint::Ptr> joints;
+	std::vector<YoubotJointReal::Ptr> joints;
 
   public:
 	YoubotManipulator() = delete;
@@ -23,13 +23,15 @@ namespace youbot {
 
 	~YoubotManipulator() {};
 
-	YoubotJoint::Ptr GetJoint(int i);
+	YoubotJointReal::Ptr GetJoint(int i);
 
 	void ConfigJoints(bool forceConfiguration = false);
 
 	bool CheckJointConfigs();
 
-	void InitializeAllJoints();
+	void SetParameters();
+
+	void InitCommutationAllJoints();
 
 	void Calibrate(bool forceCalibration = false);
 
