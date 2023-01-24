@@ -4,16 +4,25 @@
 #include <string>
 #include "MailboxMessage.hpp"
 #include "ProcessBuffer.hpp"
-#include <thread>
+//#include <thread>
+#include <memory>
 
 namespace youbot {
 
   class EtherCATMaster {
+    /*
     bool toStopThread, isRunning = false;
     std::thread thread;
 
-    void _processThreadFunc(int sleepMS);
+    void _processThreadFunc(int sleepMS);*/
   public:
+    enum Type {
+      PHYSICAL,
+      VIRTUAL
+    };
+
+    virtual Type GetType() const = 0;
+
     ~EtherCATMaster();
 
     enum class MailboxStatus : uint8_t {
@@ -41,17 +50,19 @@ namespace youbot {
 
     virtual void CloseConnection() = 0;
 
-    static EtherCATMaster* GetSingleton();
-
     virtual int getSlaveNum() const = 0; // cnt: 0..N-1
 
     virtual std::string getSlaveName(int cnt) const = 0; // cnt: 0..N-1
-
+    /*
     void StartProcessThread(int sleepMS);
 
     void StopProcessThread();
-
+    */
     virtual bool isOpened() const = 0;
+
+    typedef std::shared_ptr<EtherCATMaster> Ptr;
+
+    static Ptr CreatePhysical();
   };
 }
 #endif

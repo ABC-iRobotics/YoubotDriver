@@ -39,7 +39,7 @@ namespace youbot {
       // Mutex for ethercat communications in general
       std::mutex ethercatComm;
 
-      static bool opened;
+      static bool opened; // to avoid multiple openings/initializations
 
       char IOmap_[4096] = { 0 }; // used by soem
 
@@ -47,6 +47,8 @@ namespace youbot {
       SimpleOpenEtherCATMaster() {};
 
       ~SimpleOpenEtherCATMaster();
+
+      Type GetType() const override;
 
       // index: 0..(num-1)
       int getSlaveNum() const override;

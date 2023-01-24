@@ -21,6 +21,9 @@ using namespace youbot::intrinsic;
 
 bool SimpleOpenEtherCATMaster::opened = false;
 
+SimpleOpenEtherCATMaster::Type SimpleOpenEtherCATMaster::GetType() const {
+  return Type::PHYSICAL;
+}
 
 bool SimpleOpenEtherCATMaster::isOpened() const {
   return opened;

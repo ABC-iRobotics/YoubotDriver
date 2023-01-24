@@ -6,8 +6,8 @@
 
 using namespace youbot;
 
-YoubotJoint::YoubotJoint(int slaveIndex, const std::map<std::string,double>& config)
-    : config(config), slaveIndex(slaveIndex) {}
+YoubotJoint::YoubotJoint(int slaveIndex, const std::map<std::string,double>& config,
+  EtherCATMaster::Ptr center) : config(config), slaveIndex(slaveIndex), center(center) {}
 
 void YoubotJoint::InitializeJoint(bool forceConfiguration) {
   CollectBasicParameters();
@@ -21,7 +21,7 @@ const YoubotJoint::Parameters& YoubotJoint::GetParameters() const {
   return parameters;
 }
 
-const const std::map<std::string, double>& YoubotJoint::GetConfig() const {
+const std::map<std::string, double>& YoubotJoint::GetConfig() const {
   return config;
 }
 

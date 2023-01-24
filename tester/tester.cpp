@@ -6,12 +6,14 @@
 
 using namespace youbot;
 
+EtherCATMaster::Ptr center;
+
 void GoToZero(YoubotManipulator& man, int time_ms) {
   log(Log::info, "Goint to zero started!");
   auto start = std::chrono::steady_clock::now();
   man.ReqJointPositionRad(0, 0, 0, 0, 0);
   do {
-    EtherCATMaster::GetSingleton()->ExchangeProcessMsg();
+    center->ExchangeProcessMsg();
     man.LogStatusProcess();
     SLEEP_MILLISEC(5)
   } while (std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -23,7 +25,7 @@ void StopThere(YoubotManipulator& man, int time_ms) {
   auto start = std::chrono::steady_clock::now();
   man.ReqManipulatorStop();
   do {
-    EtherCATMaster::GetSingleton()->ExchangeProcessMsg();
+    center->ExchangeProcessMsg();
     man.LogStatusProcess();
     SLEEP_MILLISEC(5)
   } while (std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -39,7 +41,7 @@ void GoTowardsZero(YoubotManipulator& man, int time_ms, double velocityRadPerSec
     man.GetJoint(i)->ReqJointSpeedRadPerSec(backward ? velocityRadPerSec : -velocityRadPerSec);
   }
   do {
-    EtherCATMaster::GetSingleton()->ExchangeProcessMsg();
+    center->ExchangeProcessMsg();
     man.LogStatusProcess();
     SLEEP_MILLISEC(5)
   } while (std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -51,7 +53,7 @@ void FreeDriveMode(YoubotManipulator& man, int time_ms) {
   auto start = std::chrono::steady_clock::now();
   man.ReqJointTorqueNm(0, 0, 0, 0, 0);
   do {
-    EtherCATMaster::GetSingleton()->ExchangeProcessMsg();
+    center->ExchangeProcessMsg();
     man.LogStatusProcess();
     SLEEP_MILLISEC(5)
   } while (std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -70,7 +72,7 @@ void WaveDemo(YoubotManipulator& man, int time_ms) {
       14. / 180. * M_PI * sin(2. * M_PI / 4. * t),
       16. / 180. * M_PI * sin(2. * M_PI / 4.5 * t),
       18. / 180. * M_PI * sin(2. * M_PI / 5. * t));
-    EtherCATMaster::GetSingleton()->ExchangeProcessMsg();
+    center->ExchangeProcessMsg();
     man.LogStatusProcess();
     SLEEP_MILLISEC(5)
   } while (std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -82,7 +84,7 @@ void ZeroVelocityDemo(YoubotManipulator& man, int time_ms) {
   auto start = std::chrono::steady_clock::now();
   man.ReqJointSpeedRadPerSec(0, 0, 0, 0, 0);
   do {
-    EtherCATMaster::GetSingleton()->ExchangeProcessMsg();
+    center->ExchangeProcessMsg();
     man.LogStatusProcess();
     SLEEP_MILLISEC(5)
   } while (std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -100,6 +102,9 @@ int main(int argc, char *argv[])
   // Initialize logger
   Log::Setup(config.logConfig);
 
+  // Init physical ethercat class
+  center = EtherCATMaster::CreatePhysical();
+
   // Find appropriate ethernet adapter and open connection
   {
     char name[1000];
@@ -109,11 +114,11 @@ int main(int argc, char *argv[])
       log(Log::fatal, "Adapter with turned on youBot arm NOT found!");
       return -1;
     }
-    if (!EtherCATMaster::GetSingleton()->OpenConnection(name))
+    if (!center->OpenConnection(name))
       return -1;
   }
 
-  YoubotManipulator man(config, EtherCATMaster::GetSingleton());
+  YoubotManipulator man(config, center);
   man.InitializeManipulator();
   man.Calibrate();
   

@@ -6,11 +6,14 @@
 
 using namespace youbot;
 
-YoubotManipulator::YoubotManipulator(const YoubotConfig& config, EtherCATMaster* center)
+YoubotManipulator::YoubotManipulator(const YoubotConfig& config, EtherCATMaster::Ptr center)
   : config(config), center(center) {
   // Construct joints
   for (int i = 0; i < 5; i++)
-	joints.push_back(std::make_shared<YoubotJointPhysical>(config.jointIndices[i], config.jointConfigs[i], center));
+	if (center->GetType() == EtherCATMaster::PHYSICAL)
+	  joints.push_back(std::make_shared<YoubotJointPhysical>(config.jointIndices[i], config.jointConfigs[i], center));
+	else
+	  ; //TODO
 }
 
 YoubotJointPhysical::Ptr YoubotManipulator::GetJoint(int i) {

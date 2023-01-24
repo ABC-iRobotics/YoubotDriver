@@ -6,11 +6,10 @@
 using namespace youbot;
 using namespace youbot::intrinsic;
 
-EtherCATMaster* EtherCATMaster::GetSingleton() {
-  static SimpleOpenEtherCATMaster center;
-  return &center;
+EtherCATMaster::Ptr EtherCATMaster::CreatePhysical() {
+  return std::make_shared<SimpleOpenEtherCATMaster>();
 }
-
+/*
 void EtherCATMaster::_processThreadFunc(int sleepMS) {
   isRunning = true;
   while (!toStopThread) {
@@ -20,11 +19,11 @@ void EtherCATMaster::_processThreadFunc(int sleepMS) {
   }
   isRunning = false;
 }
-
+*/
 EtherCATMaster::~EtherCATMaster() {
-  StopProcessThread();
+  //StopProcessThread();
 }
-
+/*
 void EtherCATMaster::StartProcessThread(int sleepMS) {
   toStopThread = false;
   thread = std::thread([this, sleepMS] { _processThreadFunc(sleepMS); });
@@ -38,3 +37,4 @@ void EtherCATMaster::StopProcessThread() {
   if (thread.joinable())
 	thread.join();
 }
+*/

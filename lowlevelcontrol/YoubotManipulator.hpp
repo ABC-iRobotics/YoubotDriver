@@ -16,7 +16,7 @@ namespace youbot {
 	YoubotManipulator(const YoubotManipulator&) = delete;
 
 	// Constructor
-	YoubotManipulator(const YoubotConfig& config, EtherCATMaster* center);
+	YoubotManipulator(const YoubotConfig& config, EtherCATMaster::Ptr center);
 	// Destructor
 	~YoubotManipulator() {};
 
@@ -54,13 +54,22 @@ namespace youbot {
 
   private:
 	const YoubotConfig config;
-	EtherCATMaster* center;
+	EtherCATMaster::Ptr center;
 	std::vector<YoubotJoint::Ptr> joints;
 
 
+	// Longer operations
+	void MoveToPosition_RawPID(const double target[5]) {
 
+	}
 
+	void MoveToPosition_PIDwSpeedRampant(const double target[5], const double maxspeed[5]) {
 
+	}
+
+	void MoveToPosition_JointInterpolated(const double target[5]) {
+
+	}
   };
 }
 #endif

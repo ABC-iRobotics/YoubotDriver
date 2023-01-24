@@ -3,7 +3,7 @@
 
 #include <map>
 #include <string>
-#include <memory>
+#include "EtherCATMaster.hpp"
 
 namespace youbot {
 
@@ -80,7 +80,8 @@ namespace youbot {
     YoubotJoint(const YoubotJoint&) = delete;
 
     // Constructor
-    YoubotJoint(int slaveIndex, const std::map<std::string, double>& config);
+    YoubotJoint(int slaveIndex, const std::map<std::string, double>& config,
+      EtherCATMaster::Ptr center);
 
     // Main initialization routine
     void InitializeJoint(bool forceConfiguration = false);
@@ -169,6 +170,7 @@ namespace youbot {
 
   protected:
     ProcessReturn processReturn;
+    EtherCATMaster::Ptr center;
   };
 }
 #endif
