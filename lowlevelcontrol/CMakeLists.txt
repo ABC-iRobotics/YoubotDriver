@@ -22,8 +22,6 @@ set(HEADERS
 		EtherCATMaster.hpp
 		MailboxMessage.hpp
 		YoubotJoint.hpp
-		YoubotJointPhysical.hpp
-		YoubotJointVirtual.hpp
 		YoubotConfig.hpp
 		YoubotManipulator.hpp
 		ProcessBuffer.hpp
@@ -33,6 +31,8 @@ set(INTRINSIC_HEADERS
 		DataObjectLockFree.hpp
 		SimpleOpenEtherCATMaster.hpp
 		VirtualEtherCATMaster.hpp
+		YoubotJointPhysical.hpp
+		YoubotJointVirtual.hpp
 		TMCLMailboxMessage.hpp
 		TMCLDefinitions.hpp
 )
