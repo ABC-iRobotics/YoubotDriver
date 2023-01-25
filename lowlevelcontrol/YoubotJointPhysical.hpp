@@ -18,7 +18,6 @@ namespace youbot {
 
     void ConfigControlParameters(bool forceConfiguration = false) override;
     bool CheckControlParameters() override;
-    void InitCommutation() override;
 
     // Mailbox-based Set/Get mothods
     bool IsConfiguratedViaMailbox() override;

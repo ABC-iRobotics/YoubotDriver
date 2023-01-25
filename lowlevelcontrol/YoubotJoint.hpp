@@ -90,7 +90,7 @@ namespace youbot {
     void CollectBasicParameters(); // get essential paramters from the config and the motor driver
     virtual void ConfigControlParameters(bool forceConfiguration = false) = 0; // set the control parameters to the driver
     virtual bool CheckControlParameters() = 0; // check the control parameters to the driver
-    virtual void InitCommutation() = 0; // set commutation/encoder of the driver
+    virtual void InitCommutation(); // set commutation/encoder of the driver
 
     // Variable getters
     const Parameters& GetParameters() const;
