@@ -3,6 +3,7 @@ set(SOURCES
 		adapters.cpp
 		Logger.cpp
 		SimpleOpenEtherCATMaster.cpp
+		VirtualEtherCATMaster.cpp
 		TMCLMailboxMessage.cpp
 		TMCLDefinitions.cpp
 		EtherCATMaster.cpp
@@ -31,6 +32,7 @@ set(HEADERS
 set(INTRINSIC_HEADERS
 		DataObjectLockFree.hpp
 		SimpleOpenEtherCATMaster.hpp
+		VirtualEtherCATMaster.hpp
 		TMCLMailboxMessage.hpp
 		TMCLDefinitions.hpp
 )

@@ -63,6 +63,8 @@ namespace youbot {
     typedef std::shared_ptr<EtherCATMaster> Ptr;
 
     static Ptr CreatePhysical();
+
+    static Ptr CreateVirtual();
   };
 }
 #endif

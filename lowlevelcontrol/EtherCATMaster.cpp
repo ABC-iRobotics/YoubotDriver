@@ -1,5 +1,6 @@
 #include "EtherCATMaster.hpp"
 #include "SimpleOpenEtherCATMaster.hpp"
+#include "VirtualEtherCATMaster.hpp"
 #include "Logger.hpp"
 #include "Time.hpp"
 
@@ -9,6 +10,11 @@ using namespace youbot::intrinsic;
 EtherCATMaster::Ptr EtherCATMaster::CreatePhysical() {
   return std::make_shared<SimpleOpenEtherCATMaster>();
 }
+
+EtherCATMaster::Ptr EtherCATMaster::CreateVirtual() {
+  return std::make_shared<VirtualEtherCATMaster>();
+}
+
 /*
 void EtherCATMaster::_processThreadFunc(int sleepMS) {
   isRunning = true;
