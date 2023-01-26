@@ -13,6 +13,48 @@ void YoubotJointVirtual::GetFirmwareVersionViaMailbox(int& controllernum,
   firmwareversion = 148;
 }
 
+void YoubotJointVirtual::_calledAtExchange() {
+  _update();
+  // Update return values
+  processReturnAfterExchange.currentmA = current_mA;
+  processReturnAfterExchange.encoderPosition = ticks();
+  processReturnAfterExchange.motorPWM = 0;
+  processReturnAfterExchange.status = _getStatus();
+  processReturnAfterExchange.dqRadPerSec = RPM2qRadPerSec(RPM);
+  processReturnAfterExchange.motorVelocityRPM = RPM;
+  processReturnAfterExchange.qRad = Ticks2qRad(ticks());
+  processReturnAfterExchange.tau = mA2Nm(current_mA);
+
+  // Update command
+  switch (processCommand.type) {
+  case ProcessCommand::POSITION:
+    controlMode = POSITION;
+    target = processCommand.value;
+    break;
+  case ProcessCommand::VELOCITY:
+    controlMode = VELOCITY;
+    target = processCommand.value;
+    break;
+  case ProcessCommand::CURRENT:
+    controlMode = CURRENT;
+    target = processCommand.value;
+    break;
+  case ProcessCommand::PWM:
+    controlMode = PWM;
+    target = processCommand.value;
+    break;
+  case ProcessCommand::ENCODER_ZERO:
+    settickstozero();
+    break;
+  case ProcessCommand::INITIALIZE:
+    throw std::runtime_error("not implemented"); // not used
+    break;
+  case ProcessCommand::NO_MORE_ACTION:
+    throw std::runtime_error("not implemented"); // not understood
+    break;
+  }
+}
+
 unsigned int YoubotJointVirtual::GetEncoderResolutionViaMailbox() {
   return 4000;
 }
@@ -20,7 +62,7 @@ unsigned int YoubotJointVirtual::GetEncoderResolutionViaMailbox() {
 YoubotJointVirtual::JointStatus YoubotJointVirtual::_getStatus() {
   int32_t status = 0;
   if (timeout)
-    status |= int32_t(JointStatus::StatusErrorFlags::INITIALIZED);
+    status |= int32_t(JointStatus::StatusErrorFlags::TIMEOUT);
   if (I2terror)
     status |= int32_t(JointStatus::StatusErrorFlags::I2T_EXCEEDED);
   if (commutationState.initialized)
@@ -41,9 +83,89 @@ YoubotJointVirtual::JointStatus YoubotJointVirtual::_getStatus() {
   }
   if (abs(RPM) < 10) //TODO: 10?
     status |= int32_t(JointStatus::StatusErrorFlags::MOTOR_HALTED);
-  if (controlMode == POSITION && abs(target - ticks) < 10) //TODO: 10?
+  if (controlMode == POSITION && abs(target - ticks()) < 10) //TODO: 10?
     status |= int32_t(JointStatus::StatusErrorFlags::POSITION_REACHED);
   return status;
+}
+
+int64_t youbot::YoubotJointVirtual::ticks() const {
+  return qRad2Ticks(qRad_true) + ticks_offset;
+}
+
+inline void youbot::YoubotJointVirtual::settickstozero() {
+  ticks_offset = -qRad2Ticks(qRad_true);
+}
+
+void youbot::YoubotJointVirtual::_updateFor(double elapsedTime) {
+  if (timeout || I2terror) { // forcestop
+    RPM = 0;
+    current_mA = 0;
+  }
+  else {
+    switch (controlMode) {
+    case CURRENT: {
+      current_mA = target;
+      double T = mA2Nm(current_mA);
+      double phi0 = qRad_true, dphi0 = RPM2qRadPerSec(RPM);
+      double lambda = -damping / theta;
+      double A = (dphi0 - T / theta) / lambda;
+      double C = phi0 - A;
+      double newq = A * exp(lambda * elapsedTime) + T / theta * elapsedTime + C;
+      double newdq = A * lambda * exp(lambda * elapsedTime) + T / theta;
+      qRad_true = newq;
+      RPM = qRadPerSec2RPM(newdq);
+      break;
+    }
+    case VELOCITY: {// fucking fast setling
+      RPM = target;
+      double qRadPerSec = RPM2qRadPerSec(RPM);
+      qRad_true += qRadPerSec * elapsedTime;
+      current_mA = 0;
+      break;
+    }
+    case POSITION: {// fucking fast setling
+      double old = qRad_true;
+      qRad_true = Ticks2qRad(target);
+      RPM = qRadPerSec2RPM((qRad_true - old) / elapsedTime);
+      break;
+    }
+    }
+  }
+  // Stop the joint at the limit
+  if (qRad_true < (GetParameters().qMinDeg) / 180 * M_PI) {
+    qRad_true = (GetParameters().qMinDeg) / 180 * M_PI;
+    RPM = 0;
+    return;
+  }
+  if (qRad_true >(GetParameters().qMaxDeg) / 180 * M_PI) {
+    qRad_true = (GetParameters().qMaxDeg) / 180 * M_PI;
+    RPM = 0;
+    return;
+  }
+}
+
+void youbot::YoubotJointVirtual::_update() {
+  auto now = std::chrono::steady_clock::now();
+  double dt = double(std::chrono::duration_cast<std::chrono::milliseconds>(now
+    - updated_at).count()) / 1000.;
+  // Update commutation state
+  commutationState.Update();
+  // if commutation is not initialized: do nothing
+  if (!commutationState.initialized) {
+    updated_at = now;
+    return;
+  }
+  // if went to timeout
+  if (dt >= 0.100) {
+    _updateFor(0.1); // Update till updated_at+100ms
+    timeout = true; // Set timeout
+    _updateFor(dt - 0.1);
+    updated_at = now;
+    return;
+  }
+  // otherwise
+  _updateFor(dt);
+  updated_at = now;
 }
 
 YoubotJointVirtual::YoubotJointVirtual(int slaveIndex, const std::map<std::string,
@@ -131,7 +253,8 @@ void YoubotJointVirtual::SetConfiguratedViaMailbox() {
 }
 
 const YoubotJointVirtual::ProcessReturn& YoubotJointVirtual::GetProcessReturnData() {
-  return processReturnAfterExchange;
+  processReturn = processReturnAfterExchange;
+  return processReturn;
 }
 
 void YoubotJointVirtual::ReqNoAction() {
@@ -241,4 +364,13 @@ bool YoubotJointVirtual::IsCalibratedViaMailbox() {
 
 void YoubotJointVirtual::SetCalibratedViaMailbox() {
   calibrated_flag = true;
+}
+
+void youbot::YoubotJointVirtual::CommutationState::Update() {
+  if (!initialized && started) {
+    // TODO: move
+    if (std::chrono::duration_cast<std::chrono::milliseconds>(
+      std::chrono::steady_clock::now() - started_at).count() > 500)
+      initialized = true;
+  }
 }
