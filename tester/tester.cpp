@@ -103,10 +103,11 @@ int main(int argc, char *argv[])
   Log::Setup(config.logConfig);
 
   // Init physical ethercat class
-  center = EtherCATMaster::CreatePhysical();
+  //center = EtherCATMaster::CreatePhysical();
+  center = EtherCATMaster::CreateVirtual();
 
   // Find appropriate ethernet adapter and open connection
-  {
+  if (center->GetType() == EtherCATMaster::PHYSICAL)  {
     char name[1000];
     if (findYouBotEtherCatAdapter(name))
       log(Log::info, "Adapter found:" + std::string(name));

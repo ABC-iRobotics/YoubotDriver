@@ -1,5 +1,6 @@
 #include "YoubotManipulator.hpp"
 #include "YoubotJointPhysical.hpp"
+#include "YoubotJointVirtual.hpp"
 #include <stdexcept>
 #include "Logger.hpp"
 #include "Time.hpp"
@@ -13,7 +14,7 @@ YoubotManipulator::YoubotManipulator(const YoubotConfig& config, EtherCATMaster:
 	if (center->GetType() == EtherCATMaster::PHYSICAL)
 	  joints.push_back(std::make_shared<YoubotJointPhysical>(config.jointIndices[i], config.jointConfigs[i], center));
 	else
-	  ; //TODO
+	  joints.push_back(std::make_shared<YoubotJointVirtual>(config.jointIndices[i], config.jointConfigs[i], center));
 }
 
 YoubotJointPhysical::Ptr YoubotManipulator::GetJoint(int i) {
