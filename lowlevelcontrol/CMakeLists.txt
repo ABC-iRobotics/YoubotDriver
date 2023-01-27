@@ -30,7 +30,6 @@ set(HEADERS
 )
 
 set(INTRINSIC_HEADERS
-		DataObjectLockFree.hpp
 		SimpleOpenEtherCATMaster.hpp
 		VirtualEtherCATMaster.hpp
 		YoubotJointPhysical.hpp

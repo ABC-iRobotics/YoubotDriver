@@ -4,7 +4,6 @@
 #include <string>
 #include <mutex>
 #include <vector>
-#include "DataObjectLockFree.hpp"
 
 extern "C" {
 #include "ethercattype.h"
@@ -31,7 +30,7 @@ namespace youbot {
 
       // For process messages
       struct ProcessBuffers {
-        DataObjectLockFree<ProcessBuffer> toSlave, fromSlave;
+        ProcessBuffer toSlave, fromSlave;
         uint8_t fromMsgSize = 0;
       };
       ProcessBuffers* processBuffers = NULL;

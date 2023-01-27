@@ -179,7 +179,7 @@ SimpleOpenEtherCATMaster::MailboxStatus SimpleOpenEtherCATMaster::SendMessage_(M
 }
 
 void SimpleOpenEtherCATMaster::GetProcessMsg(ProcessBuffer& buff, uint8_t slaveNumber) const {
-  buff = processBuffers[slaveNumber].fromSlave.Get();
+  buff = processBuffers[slaveNumber].fromSlave;
 }
 
 void SimpleOpenEtherCATMaster::SetProcessFromSlaveSize(uint8_t size, uint8_t slaveNumber) {
@@ -187,13 +187,13 @@ void SimpleOpenEtherCATMaster::SetProcessFromSlaveSize(uint8_t size, uint8_t sla
 }
 
 int SimpleOpenEtherCATMaster::SetProcessMsg(const ProcessBuffer& buffer, uint8_t slaveNumber) {
-  processBuffers[slaveNumber].toSlave.Set(buffer);
+  processBuffers[slaveNumber].toSlave = buffer;
   return buffer.Size();
 }
 
 void SimpleOpenEtherCATMaster::ExchangeProcessMsg() {
   for (int i = 0; i < getSlaveNum(); i++)
-    processBuffers[i].toSlave.Get().CopyTo(ec_slave[i + 1].outputs, ec_slave[i + 1].Obytes);
+    processBuffers[i].toSlave.CopyTo(ec_slave[i + 1].outputs, ec_slave[i + 1].Obytes);
   {
     static long communicationErrors = 0;
     static long maxCommunicationErrors = 100;
@@ -220,7 +220,7 @@ void SimpleOpenEtherCATMaster::ExchangeProcessMsg() {
   for (int i = 0; i < getSlaveNum(); i++) {
     uint8_t buff_size = MIN((uint8_t)ec_slave[i + 1].Ibytes, processBuffers[i].fromMsgSize);
     ProcessBuffer saved(buff_size, ec_slave[i + 1].inputs);
-    processBuffers[i].fromSlave.Set(saved);
+    processBuffers[i].fromSlave = saved;
   }
   _callAfterExchangeCallbacks();
 }
