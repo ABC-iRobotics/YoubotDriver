@@ -115,6 +115,9 @@ namespace youbot {
     // Get motor quantity
     void ReqInitializationViaProcess() override;
     void CheckI2tAndTimeoutError(JointStatus status) override;
+
+    // Cheat funciton
+    double GetJointPositionTRUE() const;
   };
 }
 #endif

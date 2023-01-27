@@ -308,6 +308,12 @@ void youbot::YoubotJointVirtual::CheckI2tAndTimeoutError(JointStatus status) {
   }
 }
 
+// Cheat funciton
+
+double youbot::YoubotJointVirtual::GetJointPositionTRUE() const {
+    return qRad_true;
+}
+
 double YoubotJointVirtual::GetCurrentAViaMailbox() {
   _update();
   return double(current_mA) / 1000.;
