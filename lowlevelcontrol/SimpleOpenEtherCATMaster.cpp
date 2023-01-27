@@ -222,4 +222,5 @@ void SimpleOpenEtherCATMaster::ExchangeProcessMsg() {
     ProcessBuffer saved(buff_size, ec_slave[i + 1].inputs);
     processBuffers[i].fromSlave.Set(saved);
   }
+  _callAfterExchangeCallbacks();
 }

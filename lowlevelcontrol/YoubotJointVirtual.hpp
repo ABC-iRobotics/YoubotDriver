@@ -22,8 +22,6 @@ namespace youbot {
       int32_t value;
     } processCommand;
 
-    ProcessReturn processReturnAfterExchange;
-
     struct CommutationState {
       bool initialized = false;
       bool started = false;
@@ -45,7 +43,7 @@ namespace youbot {
 
     int32_t target = 0;
 
-    JointStatus _getStatus();
+    JointStatus _getStatus(); // to compute the true status from the state variables
 
     int32_t RPM = 0;
     int32_t current_mA = 0;
@@ -60,7 +58,7 @@ namespace youbot {
 
     void _updateFor(double elapsedTime);
     void _update(); // update till now
-    void _calledAtExchange(); // save the state into processReturnAfterExchange, write processCommand into command
+    void _calledAtExchange(); // save the state into *latest immediately, write processCommand into command
 
   public:
     // Deleted constructor
@@ -100,7 +98,6 @@ namespace youbot {
     unsigned int GetEncoderResolutionViaMailbox() override;
 
     // Process message-based req/get methods will be sent with the next ExcangeMessage/show the results of the latest one
-    const ProcessReturn& GetProcessReturnData() override;
     void ReqStop() override;
     void ReqNoAction() override;
 

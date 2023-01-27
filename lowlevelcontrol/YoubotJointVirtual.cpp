@@ -15,16 +15,12 @@ void YoubotJointVirtual::GetFirmwareVersionViaMailbox(int& controllernum,
 
 void YoubotJointVirtual::_calledAtExchange() {
   _update();
-  // Update return values
-  processReturnAfterExchange.currentmA = current_mA;
-  processReturnAfterExchange.encoderPosition = ticks();
-  processReturnAfterExchange.motorPWM = 0;
-  processReturnAfterExchange.status = _getStatus();
-  processReturnAfterExchange.dqRadPerSec = RPM2qRadPerSec(RPM);
-  processReturnAfterExchange.motorVelocityRPM = RPM;
-  processReturnAfterExchange.qRad = Ticks2qRad(ticks());
-  processReturnAfterExchange.tau = mA2Nm(current_mA);
-
+  // Update latest values
+  ticksLatest.exchange(ticks());
+  mALatest.exchange(current_mA);
+  RPMLatest.exchange(RPM);
+  statusLatest.exchange({ _getStatus() });
+  UpwmLatest.exchange(0);
   // Update command
   switch (processCommand.type) {
   case ProcessCommand::POSITION:
@@ -171,8 +167,7 @@ void youbot::YoubotJointVirtual::_update() {
 YoubotJointVirtual::YoubotJointVirtual(int slaveIndex, const std::map<std::string,
   double>& config, EtherCATMaster::Ptr center)
   : YoubotJoint(slaveIndex, config, center) {
-  std::dynamic_pointer_cast<intrinsic::VirtualEtherCATMaster>(center)->RegisterSlave(
-    std::bind(&YoubotJointVirtual::_calledAtExchange, this));
+  center->RegisterAfterExchangeCallback(std::bind(&YoubotJointVirtual::_calledAtExchange, this));
 }
 
 void YoubotJointVirtual::ConfigControlParameters(bool forceConfiguration) {
@@ -206,7 +201,9 @@ void YoubotJointVirtual::StopViaMailbox() {
 
 YoubotJointVirtual::JointStatus YoubotJointVirtual::GetJointStatusViaMailbox() {
   _update();
-  return _getStatus();
+  auto status = _getStatus();
+  statusLatest.exchange(status);
+  return status;
 }
 
 void YoubotJointVirtual::ResetTimeoutViaMailbox() {
@@ -245,11 +242,6 @@ bool YoubotJointVirtual::IsConfiguratedViaMailbox() {
 
 void YoubotJointVirtual::SetConfiguratedViaMailbox() {
   configurated_flag = true;
-}
-
-const YoubotJointVirtual::ProcessReturn& YoubotJointVirtual::GetProcessReturnData() {
-  processReturn = processReturnAfterExchange;
-  return processReturn;
 }
 
 void YoubotJointVirtual::ReqNoAction() {
@@ -306,12 +298,14 @@ void youbot::YoubotJointVirtual::CheckI2tAndTimeoutError(JointStatus status) {
 // Cheat funciton
 
 double youbot::YoubotJointVirtual::GetJointPositionTRUE() const {
-    return qRad_true;
+  return qRad_true;
 }
 
 double YoubotJointVirtual::GetCurrentAViaMailbox() {
   _update();
-  return double(current_mA) / 1000.;
+  auto mA = current_mA;
+  mALatest.exchange(mA);
+  return double(mA) / 1000.;
 }
 
 void YoubotJointVirtual::RotateMotorRightViaMailbox(int32_t speedMotorRPM) {
@@ -330,6 +324,7 @@ void YoubotJointVirtual::RotateMotorLeftViaMailbox(int32_t speedMotorRPM) {
 
 double YoubotJointVirtual::GetJointVelocityRadPerSecViaMailbox() {
   _update();
+  RPMLatest.exchange(RPM);
   return RPM2qRadPerSec(RPM);
 }
 

@@ -176,7 +176,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
     if (nlhs == 1) {
       plhs[0] = mxCreateDoubleMatrix(5, 1, mxREAL);
       double* q = mxGetPr(plhs[0]);
-      man->arm->GetJointPositionRad(q[0], q[1], q[2], q[3], q[4]);
+      man->arm->GetQLatest(q[0], q[1], q[2], q[3], q[4]);
       for (int i = 0; i < 5; i++)
         q[i] *= 180. / M_PI;
       return;

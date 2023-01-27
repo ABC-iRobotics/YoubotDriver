@@ -4,17 +4,13 @@
 #include <string>
 #include "MailboxMessage.hpp"
 #include "ProcessBuffer.hpp"
-//#include <thread>
 #include <memory>
+#include <functional>
+#include <vector>
 
 namespace youbot {
 
   class EtherCATMaster {
-    /*
-    bool toStopThread, isRunning = false;
-    std::thread thread;
-
-    void _processThreadFunc(int sleepMS);*/
   public:
     enum Type {
       PHYSICAL,
@@ -53,11 +49,7 @@ namespace youbot {
     virtual int getSlaveNum() const = 0; // cnt: 0..N-1
 
     virtual std::string getSlaveName(int cnt) const = 0; // cnt: 0..N-1
-    /*
-    void StartProcessThread(int sleepMS);
-
-    void StopProcessThread();
-    */
+    
     virtual bool isOpened() const = 0;
 
     typedef std::shared_ptr<EtherCATMaster> Ptr;
@@ -65,6 +57,26 @@ namespace youbot {
     static Ptr CreatePhysical();
 
     static Ptr CreateVirtual();
+
+    void RegisterAfterExchangeCallback(std::function<void(void)> in);
+
+  protected:
+    void _callAfterExchangeCallbacks();
+
+  private:
+    std::vector<std::function<void(void)>> afterExchangeCallbacks;
+
+    /*
+    bool toStopThread, isRunning = false;
+    std::thread thread;
+
+    void _processThreadFunc(int sleepMS);
+    
+    /*
+    void StartProcessThread(int sleepMS);
+
+    void StopProcessThread();
+    */
   };
 }
 #endif

@@ -3,9 +3,22 @@
 
 #include <map>
 #include <string>
+#include <chrono>
+#include <atomic>
 #include "EtherCATMaster.hpp"
 
 namespace youbot {
+
+  static std::chrono::steady_clock::time_point started_at;
+
+  template <class T>
+  struct Data {
+    T value;
+    std::chrono::steady_clock::time_point origin;
+    Data() : value(0), origin(started_at) {}
+    Data(T val) : value(val), origin(std::chrono::steady_clock::now()) {}
+    Data(T val, std::chrono::steady_clock::time_point origin) : value(val), origin(origin) {};
+  };
 
   class YoubotJoint {
   public:
@@ -66,14 +79,6 @@ namespace youbot {
       JointStatus(uint32_t value) : value(value) {} // can be only used if the flags are the same
     };
 
-    struct ProcessReturn {
-      int32_t encoderPosition, currentmA, motorVelocityRPM, motorPWM;
-      JointStatus status;
-      double qRad, dqRadPerSec, tau;
-      ProcessReturn();
-      void Print() const;
-    };
-
     // Not available constructors
     YoubotJoint() = delete;
     YoubotJoint(YoubotJoint&) = delete;
@@ -131,7 +136,6 @@ namespace youbot {
     virtual unsigned int GetEncoderResolutionViaMailbox() = 0;
 
     // Process message-based req/get methods will be sent with the next ExcangeMessage/show the results of the latest one
-    virtual const ProcessReturn& GetProcessReturnData() = 0;
     virtual void ReqStop() = 0;
 
     // Req motor quantity
@@ -148,17 +152,21 @@ namespace youbot {
     virtual void ReqNoAction() = 0;
     virtual void ReqInitializationViaProcess() = 0;
 
+    // Thread safe getters
     // Get joint quantity
-    double GetJointPositionRad();
-    double GetJointSpeedRadPerSec();
-    double GetJointTorqueNm();
+    Data<double> GetQLatestRad() const;
+    Data<double> GetDQLatestRad() const;
+    Data<double> GetTauLatestNm() const;
 
     // Get motor quantity
-    int32_t GetMotorPosTick();
-    int32_t GetMotorSpeedRPM();
-    int32_t GetMotorCurrentmA();
+    Data<int32_t> GetTicksLatest() const;
+    Data<int32_t> GetRPMLatest() const;
+    Data<int32_t> GetMALatest() const;
+    Data<JointStatus> GetStatusLatest() const;
 
     virtual void CheckI2tAndTimeoutError(JointStatus status) = 0;
+
+    void LogLatestState() const;
 
     typedef std::shared_ptr<YoubotJoint> Ptr;
 
@@ -168,7 +176,8 @@ namespace youbot {
     Parameters parameters;
 
   protected:
-    ProcessReturn processReturn;
+    std::atomic<Data<int32_t>> ticksLatest, RPMLatest, mALatest, UpwmLatest;
+    std::atomic<Data<JointStatus>> statusLatest;
     EtherCATMaster::Ptr center;
   };
 }

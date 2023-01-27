@@ -74,47 +74,47 @@ void YoubotManipulator::Calibrate(bool forceCalibration) {
 	bool still_moving[5] = { true,true,true,true,true };
 	int cycles_in_zero_speed[5] = { 0,0,0,0,0 }; //counters for ~0 speed, if achieves 5->still moving to zero
 	center->ExchangeProcessMsg(); // do sg to avoid a new timout
-	SLEEP_MILLISEC(2) // Wait until the status flag of process messages will be refreshed (without timeout flag)
-	  do {
-		center->ExchangeProcessMsg();
-		// Check status
-		CheckI2tAndTimeoutErrorProcess();
-		// Check if enough time elapsed (in the first 200ms, the joints can start to move)
-		SLEEP_MILLISEC(3);
-		if (std::chrono::duration_cast<std::chrono::milliseconds>(
-		  std::chrono::steady_clock::now() - start).count() < 200)
-		  continue; // in the first 200[ms] let the joints start moving
-		// if dt>200ms, check if the joint has already stopped
-		std::string str = "Calibration vel: ";
-		for (int i = 0; i < 5; i++)
-		  if (still_moving[i]) {
-			int vel = joints[i]->GetProcessReturnData().motorVelocityRPM;
-			str = str + std::to_string(vel) + "RPM ";
-			if (vel<5 && vel>-5) // if it is ~stopped, increase its counter
-			  cycles_in_zero_speed[i]++;
-			else
-			  cycles_in_zero_speed[i] = 0; // if it is moving, null the counter
-			// if it has stopped for 5 cycles, hold via small current
-			if (cycles_in_zero_speed[i] >= 5) {
-			  log(Log::info, "Joint " + std::to_string(i) + " at endposition");
-			  bool sign = bool(config.jointConfigs[i].at("CalibrationDirection"));
-			  int holding_current = 30; //[mA]
-			  joints[i]->ReqMotorCurrentmA(sign ? holding_current : -holding_current);
-			  still_moving[i] = false; // change state
-			}
+	SLEEP_MILLISEC(2); // Wait until the status flag of process messages will be refreshed (without timeout flag)
+	do {
+	  center->ExchangeProcessMsg();
+	  // Check status
+	  CheckI2tAndTimeoutErrorProcess();
+	  // Check if enough time elapsed (in the first 200ms, the joints can start to move)
+	  SLEEP_MILLISEC(3);
+	  if (std::chrono::duration_cast<std::chrono::milliseconds>(
+		std::chrono::steady_clock::now() - start).count() < 200)
+		continue; // in the first 200[ms] let the joints start moving
+	  // if dt>200ms, check if the joint has already stopped
+	  std::string str = "Calibration vel: ";
+	  for (int i = 0; i < 5; i++)
+		if (still_moving[i]) {
+		  int vel = joints[i]->GetRPMLatest().value;
+		  str = str + std::to_string(vel) + "RPM ";
+		  if (vel<5 && vel>-5) // if it is ~stopped, increase its counter
+			cycles_in_zero_speed[i]++;
+		  else
+			cycles_in_zero_speed[i] = 0; // if it is moving, null the counter
+		  // if it has stopped for 5 cycles, hold via small current
+		  if (cycles_in_zero_speed[i] >= 5) {
+			log(Log::info, "Joint " + std::to_string(i) + " at endposition");
+			bool sign = bool(config.jointConfigs[i].at("CalibrationDirection"));
+			int holding_current = 30; //[mA]
+			joints[i]->ReqMotorCurrentmA(sign ? holding_current : -holding_current);
+			still_moving[i] = false; // change state
 		  }
-		  else { // if it has reached the holding state do nothing
-			int ticks = joints[i]->GetProcessReturnData().encoderPosition;
-			str = str + std::to_string(ticks) + "ticks ";
-		  }
-		log(Log::info, str);
-		// if all joints just holding increase a counter - to let the hold current command start working
-		if (still_moving[0] || still_moving[1] || still_moving[2]
-		  || still_moving[3] || still_moving[4])
-		  reached_since = 0;
-		else
-		  reached_since++;
-	  } while (reached_since <= 5);
+		}
+		else { // if it has reached the holding state do nothing
+		  int ticks = joints[i]->GetTicksLatest().value;
+		  str = str + std::to_string(ticks) + "ticks ";
+		}
+	  log(Log::info, str);
+	  // if all joints just holding increase a counter - to let the hold current command start working
+	  if (still_moving[0] || still_moving[1] || still_moving[2]
+		|| still_moving[3] || still_moving[4])
+		reached_since = 0;
+	  else
+		reached_since++;
+	} while (reached_since <= 5);
   }
   // Now all joints are holding the endposition with 30mA
   // Start reference setting
@@ -129,10 +129,10 @@ void YoubotManipulator::Calibrate(bool forceCalibration) {
 	  allSet = true;
 	  std::string str;
 	  for (int i = 0; i < 5; i++) {
-		int ticks = joints[i]->GetProcessReturnData().encoderPosition;
+		int ticks = joints[i]->GetTicksLatest().value;
 		if (abs(ticks) > 3)
 		  allSet = false;
-		int mA = joints[i]->GetProcessReturnData().currentmA;
+		int mA = joints[i]->GetMALatest().value;
 		str = str + std::to_string(ticks) + "ticks (" + std::to_string(mA) + "mA) ";
 	  }
 	  log(Log::info, str);
@@ -163,9 +163,7 @@ void YoubotManipulator::Calibrate(bool forceCalibration) {
   // Print the after calibration status
   log(Log::info, "After calibration:");
   for (auto& it : joints) {
-	auto data = it->GetProcessReturnData();
-	data.Print();
-	log(Log::info, data.status.toString());
+	it->LogLatestState();
   }
 }
 
@@ -178,13 +176,13 @@ void YoubotManipulator::ReqJointPositionRad(double q0,
   joints[4]->ReqJointPositionRad(q4);
 }
 
-void YoubotManipulator::GetJointPositionRad(double& q0,
+void YoubotManipulator::GetQLatest(double& q0,
   double& q1, double& q2, double& q3, double& q4) {
-  q0 = joints[0]->GetJointPositionRad();
-  q1 = joints[1]->GetJointPositionRad();
-  q2 = joints[2]->GetJointPositionRad();
-  q3 = joints[3]->GetJointPositionRad();
-  q4 = joints[4]->GetJointPositionRad();
+  q0 = joints[0]->GetQLatestRad().value;
+  q1 = joints[1]->GetQLatestRad().value;
+  q2 = joints[2]->GetQLatestRad().value;
+  q3 = joints[3]->GetQLatestRad().value;
+  q4 = joints[4]->GetQLatestRad().value;
 }
 
 void youbot::YoubotManipulator::ReqJointSpeedRadPerSec(double dq0, double dq1, double dq2, double dq3, double dq4) {
@@ -195,12 +193,12 @@ void youbot::YoubotManipulator::ReqJointSpeedRadPerSec(double dq0, double dq1, d
   joints[4]->ReqJointSpeedRadPerSec(dq4);
 }
 
-void youbot::YoubotManipulator::GetJointSpeedRadPerSec(double& dq0, double& dq1, double& dq2, double& dq3, double& dq4) {
-  dq0 = joints[0]->GetJointSpeedRadPerSec();
-  dq1 = joints[1]->GetJointSpeedRadPerSec();
-  dq2 = joints[2]->GetJointSpeedRadPerSec();
-  dq3 = joints[3]->GetJointSpeedRadPerSec();
-  dq4 = joints[4]->GetJointSpeedRadPerSec();
+void youbot::YoubotManipulator::GetDQLatest(double& dq0, double& dq1, double& dq2, double& dq3, double& dq4) {
+  dq0 = joints[0]->GetDQLatestRad().value;
+  dq1 = joints[1]->GetDQLatestRad().value;
+  dq2 = joints[2]->GetDQLatestRad().value;
+  dq3 = joints[3]->GetDQLatestRad().value;
+  dq4 = joints[4]->GetDQLatestRad().value;
 }
 
 void youbot::YoubotManipulator::ReqJointTorqueNm(double tau0, double tau1, double tau2, double tau3, double tau4) {
@@ -219,12 +217,12 @@ void youbot::YoubotManipulator::ReqZeroVoltage() {
   joints[4]->ReqVoltagePWM(0);
 }
 
-void youbot::YoubotManipulator::GetJointTorqueNm(double& tau0, double& tau1, double& tau2, double& tau3, double& tau4) {
-  tau0 = joints[0]->GetJointTorqueNm();
-  tau1 = joints[1]->GetJointTorqueNm();
-  tau2 = joints[2]->GetJointTorqueNm();
-  tau3 = joints[3]->GetJointTorqueNm();
-  tau4 = joints[4]->GetJointTorqueNm();
+void youbot::YoubotManipulator::GetTauLatest(double& tau0, double& tau1, double& tau2, double& tau3, double& tau4) {
+  tau0 = joints[0]->GetTauLatestNm().value;
+  tau1 = joints[1]->GetTauLatestNm().value;
+  tau2 = joints[2]->GetTauLatestNm().value;
+  tau3 = joints[3]->GetTauLatestNm().value;
+  tau4 = joints[4]->GetTauLatestNm().value;
 }
 
 void youbot::YoubotManipulator::CheckAndResetI2tFlagsViaMailbox() {
@@ -239,18 +237,26 @@ void youbot::YoubotManipulator::CheckAndResetI2tFlagsViaMailbox() {
 
 void youbot::YoubotManipulator::CheckI2tAndTimeoutErrorProcess() {
   for (int i = 0; i < 5; i++) {
-	auto status = joints[i]->GetProcessReturnData().status;
+	auto status = joints[i]->GetStatusLatest().value;
 	joints[i]->CheckI2tAndTimeoutError(status);
   }
 }
 
 void youbot::YoubotManipulator::LogStatusProcess() {
   log(Log::info, "Manipulator status: ");
+  for (int i = 0; i < 5; i++)
+	joints[i]->LogLatestState();
+}
+
+youbot::YoubotManipulator::State youbot::YoubotManipulator::GetStateLatest() const {
+  State out;
   for (int i = 0; i < 5; i++) {
-	auto data = joints[i]->GetProcessReturnData();
-	log(Log::info, "Joint " + std::to_string(i) + ": " + data.status.toString());
-	data.Print();
+	out.joint[i].q = joints[i]->GetQLatestRad();
+	out.joint[i].dq = joints[i]->GetDQLatestRad();
+	out.joint[i].tau = joints[i]->GetTauLatestNm();
+	out.joint[i].status = joints[i]->GetStatusLatest();
   }
+  return out;
 }
 
 void YoubotManipulator::ReqManipulatorStop() {

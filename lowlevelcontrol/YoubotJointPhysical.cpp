@@ -39,6 +39,25 @@ unsigned int YoubotJointPhysical::GetEncoderResolutionViaMailbox() {
   return out;
 }
 
+int32_t _toInt32(uint8_t* buff) {
+  return buff[3] << 24 | buff[2] << 16 | buff[1] << 8 | buff[0];
+}
+
+void youbot::YoubotJointPhysical::_loadExchangeDataFromBuffer() {
+  static ProcessBuffer buffer;
+  center->GetProcessMsg(buffer, GetSlaveIndex());
+  auto ticks = _toInt32(&buffer.buffer[0]);
+  auto mA = _toInt32(&buffer.buffer[4]);
+  auto RPM = _toInt32(&buffer.buffer[8]);
+  auto status = (uint32_t)_toInt32(&buffer.buffer[12]);
+  auto PWM = _toInt32(&buffer.buffer[16]);
+  ticksLatest.exchange(ticks);
+  mALatest.exchange(mA);
+  RPMLatest.exchange(RPM);
+  statusLatest.exchange({ status });
+  UpwmLatest.exchange(PWM);
+}
+
 YoubotJointPhysical::YoubotJointPhysical(int slaveIndex, const std::map<std::string,
   double>& config, EtherCATMaster::Ptr center)
     : YoubotJoint(slaveIndex, config, center) {
@@ -49,6 +68,7 @@ YoubotJointPhysical::YoubotJointPhysical(int slaveIndex, const std::map<std::str
     throw std::runtime_error("Unknown module name " + center->getSlaveName(slaveIndex));
   // Set buffer size
   center->SetProcessFromSlaveSize(20, slaveIndex);
+  center->RegisterAfterExchangeCallback(std::bind(&YoubotJointPhysical::_loadExchangeDataFromBuffer, this));
 }
 
 void YoubotJointPhysical::ConfigControlParameters(bool forceConfiguration) {
@@ -522,10 +542,12 @@ void YoubotJointPhysical::StopViaMailbox() {
 YoubotJointPhysical::JointStatus YoubotJointPhysical::GetJointStatusViaMailbox() {
   auto ptr = GetErrorStatusFlag::InitSharedPtr(GetSlaveIndex());
   center->SendMessage_(ptr);
+  auto status = ptr->GetReplyValue();
   log(Log::info, "GetErrorStatusFlag: " +
-    TMCL::StatusErrorFlagsToString(ptr->GetReplyValue())
+    TMCL::StatusErrorFlagsToString(status)
     + "(" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
-  return ptr->GetReplyValue();
+  statusLatest.exchange(JointStatus(status));
+  return status;
 }
 
 void YoubotJointPhysical::ResetTimeoutViaMailbox() {
@@ -568,24 +590,6 @@ void YoubotJointPhysical::SetConfiguratedViaMailbox() {
   auto ptr = SetIsConfigurated::InitSharedPtr(GetSlaveIndex());
   center->SendMessage_(ptr);
   log(Log::info, " SetIsConfigurated: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
-}
-
-int32_t _toInt32(uint8_t* buff) {
-  return buff[3] << 24 | buff[2] << 16 | buff[1] << 8 | buff[0];
-}
-
-const YoubotJointPhysical::ProcessReturn& YoubotJointPhysical::GetProcessReturnData() {
-  static ProcessBuffer buffer;
-  center->GetProcessMsg(buffer, GetSlaveIndex());
-  processReturn.encoderPosition = _toInt32(&buffer.buffer[0]);
-  processReturn.currentmA = _toInt32(&buffer.buffer[4]);
-  processReturn.motorVelocityRPM = _toInt32(&buffer.buffer[8]);
-  processReturn.status = _toInt32(&buffer.buffer[12]);
-  processReturn.motorPWM = _toInt32(&buffer.buffer[16]);
-  processReturn.qRad = Ticks2qRad(processReturn.encoderPosition);
-  processReturn.dqRadPerSec = RPM2qRadPerSec(processReturn.motorVelocityRPM);
-  processReturn.tau = mA2Nm(processReturn.currentmA);
-  return processReturn;
 }
 
 void YoubotJointPhysical::ReqNoAction() {
@@ -681,8 +685,10 @@ void youbot::YoubotJointPhysical::CheckI2tAndTimeoutError(JointStatus status) {
 double YoubotJointPhysical::GetCurrentAViaMailbox() {
   auto ptr = GetCurrent::InitSharedPtr(GetSlaveIndex());
   center->SendMessage_(ptr);
-  log(Log::info, " GetCurrent[mA]: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
-  return double(ptr->GetReplyValue()) / 1000.;
+  auto mA = ptr->GetReplyValue();
+  log(Log::info, " GetCurrent[mA]: " + std::to_string(mA) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
+  mALatest.exchange(mA);
+  return double(mA) / 1000.;
 }
 
 void YoubotJointPhysical::RotateMotorRightViaMailbox(int32_t speedMotorRPM) {
@@ -702,8 +708,11 @@ void YoubotJointPhysical::RotateMotorLeftViaMailbox(int32_t speedMotorRPM) {
 double YoubotJointPhysical::GetJointVelocityRadPerSecViaMailbox() {
   auto ptr = GetActualSpeedMotorRPM::InitSharedPtr(GetSlaveIndex());
   center->SendMessage_(ptr);
-  log(Log::info, " GetActualSpeedMotorRPM: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
-  return double(ptr->GetReplyValue()) * 2. * M_PI / 60. * GetParameters().gearRatio;
+  auto RPM = ptr->GetReplyValue();
+  auto dq = RPM2qRadPerSec(RPM);
+  log(Log::info, " GetActualSpeedMotorRPM: " + std::to_string(RPM) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
+  RPMLatest.exchange(RPM);
+  return dq;
 }
 
 long youbot::YoubotJointPhysical::GetI2tLimitValueViaMailbox() {

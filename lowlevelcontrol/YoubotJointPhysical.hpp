@@ -45,7 +45,6 @@ namespace youbot {
     unsigned int GetEncoderResolutionViaMailbox() override;
 
     // Process message-based req/get methods will be sent with the next ExcangeMessage/show the results of the latest one
-    const ProcessReturn& GetProcessReturnData() override;
     void ReqStop() override;
     void ReqNoAction() override;
 
@@ -62,6 +61,9 @@ namespace youbot {
 
     // Only for test purposes
     void I2tResetTest();
+
+  private:
+    void _loadExchangeDataFromBuffer(); // registered to be called at the end of EtherCATMaster::ExchangeProcessMsgs
   };
 }
 #endif

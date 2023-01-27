@@ -46,11 +46,21 @@ namespace youbot {
 	void ReqJointTorqueNm(double tau0, double tau1, double tau2, double tau3, double tau4);
 	void ReqZeroVoltage();
 
-	void GetJointPositionRad(double& q0, double& q1, double& q2, double& q3, double& q4);
-	void GetJointSpeedRadPerSec(double& dq0, double& dq1, double& dq2, double& dq3, double& dq4);
-	void GetJointTorqueNm(double& tau0, double& tau1, double& tau2, double& tau3, double& tau4);
+	void GetQLatest(double& q0, double& q1, double& q2, double& q3, double& q4);
+	void GetDQLatest(double& dq0, double& dq1, double& dq2, double& dq3, double& dq4);
+	void GetTauLatest(double& tau0, double& tau1, double& tau2, double& tau3, double& tau4);
+
 	void CheckI2tAndTimeoutErrorProcess(); // runs to error if it finds sg in process msgs
 	void LogStatusProcess();
+
+	struct State {
+	  struct Joint {
+		Data<double> q, dq, tau;
+		Data<YoubotJoint::JointStatus> status;
+	  } joint[5];
+	};
+
+	State GetStateLatest() const;;
 
   private:
 	const YoubotConfig config;

@@ -4,7 +4,6 @@
 #include <string>
 #include <mutex>
 #include <vector>
-#include <functional>
 #include "EtherCATMaster.hpp"
 
 #include <iostream>
@@ -14,10 +13,7 @@
 namespace youbot {
   namespace intrinsic {
 
-    // only function ExchangeProcessMsg is implemented
-    // and RegisterSlave must be called once by all Slaves processmessages influence 
     class VirtualEtherCATMaster : public EtherCATMaster {
-      //std::vector<> vector of functions
 
     public:
       VirtualEtherCATMaster() {};
@@ -46,13 +42,6 @@ namespace youbot {
       virtual void ExchangeProcessMsg() override; // call the functions
 
       virtual bool isOpened() const override;
-
-      void RegisterSlave(std::function<void(void)> in) {
-        saved.push_back(in);
-      }
-
-    private:
-      std::vector<std::function<void(void)>> saved;
     };
   }
 }

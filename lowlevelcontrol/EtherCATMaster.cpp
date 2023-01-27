@@ -15,6 +15,15 @@ EtherCATMaster::Ptr EtherCATMaster::CreateVirtual() {
   return std::make_shared<VirtualEtherCATMaster>();
 }
 
+void youbot::EtherCATMaster::RegisterAfterExchangeCallback(std::function<void(void)> in) {
+  afterExchangeCallbacks.push_back(in);
+}
+
+void youbot::EtherCATMaster::_callAfterExchangeCallbacks() {
+  for (auto it : afterExchangeCallbacks)
+	it();
+}
+
 /*
 void EtherCATMaster::_processThreadFunc(int sleepMS) {
   isRunning = true;

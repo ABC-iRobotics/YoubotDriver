@@ -56,6 +56,5 @@ int VirtualEtherCATMaster::SetProcessMsg(const ProcessBuffer& buffer, uint8_t sl
 }
 
 void VirtualEtherCATMaster::ExchangeProcessMsg() {
-  for (auto it : saved)
-    it();
+  _callAfterExchangeCallbacks();
 }
