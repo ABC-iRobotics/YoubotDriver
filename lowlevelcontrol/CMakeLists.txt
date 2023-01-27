@@ -13,6 +13,7 @@ set(SOURCES
 		YoubotConfig.cpp
 		YoubotManipulator.cpp
 		ProcessBuffer.cpp
+		YoubotManipulatorModul.cpp
 	  )
 
 set(HEADERS
@@ -25,6 +26,7 @@ set(HEADERS
 		YoubotConfig.hpp
 		YoubotManipulator.hpp
 		ProcessBuffer.hpp
+		YoubotManipulatorModul.hpp
 )
 
 set(INTRINSIC_HEADERS
