@@ -24,32 +24,6 @@ void youbot::EtherCATMaster::_callAfterExchangeCallbacks() {
 	it();
 }
 
-/*
-void EtherCATMaster::_processThreadFunc(int sleepMS) {
-  isRunning = true;
-  while (!toStopThread) {
-	ExchangeProcessMsg();
-	log(Log::info, "Thread running");
-	SLEEP_MILLISEC(sleepMS);
-  }
-  isRunning = false;
-}
-*/
 EtherCATMaster::~EtherCATMaster() {
   //StopProcessThread();
 }
-/*
-void EtherCATMaster::StartProcessThread(int sleepMS) {
-  toStopThread = false;
-  thread = std::thread([this, sleepMS] { _processThreadFunc(sleepMS); });
-  thread.detach();
-}
-
-void EtherCATMaster::StopProcessThread() {
-  toStopThread = true;
-  while (isRunning)
-	SLEEP_MILLISEC(1);
-  if (thread.joinable())
-	thread.join();
-}
-*/

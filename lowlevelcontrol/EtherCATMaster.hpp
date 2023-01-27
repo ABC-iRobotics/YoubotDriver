@@ -65,18 +65,6 @@ namespace youbot {
 
   private:
     std::vector<std::function<void(void)>> afterExchangeCallbacks;
-
-    /*
-    bool toStopThread, isRunning = false;
-    std::thread thread;
-
-    void _processThreadFunc(int sleepMS);
-    
-    /*
-    void StartProcessThread(int sleepMS);
-
-    void StopProcessThread();
-    */
   };
 }
 #endif
