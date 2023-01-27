@@ -56,20 +56,6 @@ namespace youbot {
 	const YoubotConfig config;
 	EtherCATMaster::Ptr center;
 	std::vector<YoubotJoint::Ptr> joints;
-
-
-	// Longer operations
-	void MoveToPosition_RawPID(const double target[5]) {
-
-	}
-
-	void MoveToPosition_PIDwSpeedRampant(const double target[5], const double maxspeed[5]) {
-
-	}
-
-	void MoveToPosition_JointInterpolated(const double target[5]) {
-
-	}
   };
 }
 #endif

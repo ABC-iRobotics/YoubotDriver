@@ -239,11 +239,6 @@ void YoubotJointVirtual::StartInitializationViaMailbox() {
   log(Log::info, "  SetInitialize: OK");
 }
 
-bool YoubotJointVirtual::IsInitializedViaMailbox() {
-  _update();
-  return commutationState.initialized;
-}
-
 bool YoubotJointVirtual::IsConfiguratedViaMailbox() {
   return configurated_flag;
 }

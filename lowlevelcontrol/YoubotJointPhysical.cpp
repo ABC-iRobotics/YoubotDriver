@@ -557,13 +557,6 @@ void YoubotJointPhysical::StartInitializationViaMailbox() {
   log(Log::info, "  SetInitialize: " + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()));
 }
 
-bool YoubotJointPhysical::IsInitializedViaMailbox() {
-  auto ptr = GetInitialized::InitSharedPtr(GetSlaveIndex());
-  center->SendMessage_(ptr);
-  log(Log::info, "  GetInitialized: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
-  return ptr->GetReplyValue();
-}
-
 bool YoubotJointPhysical::IsConfiguratedViaMailbox() {
   auto ptr = GetNeedConfiguration::InitSharedPtr(GetSlaveIndex());
   center->SendMessage_(ptr);

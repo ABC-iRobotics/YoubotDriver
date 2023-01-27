@@ -29,7 +29,6 @@ namespace youbot {
     void ResetTimeoutViaMailbox() override;
     void ResetI2TExceededViaMailbox() override;
     void StartInitializationViaMailbox() override;
-    bool IsInitializedViaMailbox() override;
     double GetThermalWindingTimeSecViaMailbox() override;
     double GetCurrentAViaMailbox() override;
     void RotateMotorRightViaMailbox(int32_t speedMotorRPM) override;

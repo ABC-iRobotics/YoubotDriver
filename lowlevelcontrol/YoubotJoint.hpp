@@ -115,7 +115,6 @@ namespace youbot {
     virtual void ResetTimeoutViaMailbox() = 0;
     virtual void ResetI2TExceededViaMailbox() = 0;
     virtual void StartInitializationViaMailbox() = 0;
-    virtual bool IsInitializedViaMailbox() = 0;
     virtual double GetThermalWindingTimeSecViaMailbox() = 0;
     virtual double GetCurrentAViaMailbox() = 0;
     virtual void RotateMotorRightViaMailbox(int32_t speedMotorRPM) = 0;
