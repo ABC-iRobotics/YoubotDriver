@@ -44,7 +44,6 @@ youbot::YoubotManipulatorModul::YoubotManipulatorModul(const std::string& config
   if (virtual_)
     center = EtherCATMaster::CreateVirtual();
   else {
-    center = EtherCATMaster::CreatePhysical();
     // Find appropriate ethernet adapter and open connection
     char name[1000];
     if (findYouBotEtherCatAdapter(name))
@@ -53,8 +52,7 @@ youbot::YoubotManipulatorModul::YoubotManipulatorModul(const std::string& config
       log(Log::fatal, "Adapter with turned on youBot arm NOT found!");
       throw std::runtime_error("Adapter with turned on youBot arm NOT found!");
     }
-    if (!center->OpenConnection(name))
-      throw std::runtime_error("Connection couldn't be opened!");
+    center = EtherCATMaster::CreatePhysical(name);
   }
   // Initialize manipulator
   man = std::make_unique<YoubotManipulator>(config, center);

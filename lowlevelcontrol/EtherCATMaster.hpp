@@ -42,26 +42,20 @@ namespace youbot {
 
     virtual MailboxStatus SendMessage_(MailboxMessage::MailboxMessagePtr ptr) = 0;
 
-    virtual bool OpenConnection(const std::string& adapterName) = 0;
-
-    virtual void CloseConnection() = 0;
-
     virtual int getSlaveNum() const = 0; // cnt: 0..N-1
 
     virtual std::string getSlaveName(int cnt) const = 0; // cnt: 0..N-1
-    
-    virtual bool isOpened() const = 0;
 
     typedef std::shared_ptr<EtherCATMaster> Ptr;
 
-    static Ptr CreatePhysical();
+    static Ptr CreatePhysical(const std::string& adapterName);
 
     static Ptr CreateVirtual();
 
     void RegisterAfterExchangeCallback(std::function<void(void)> in);
 
   protected:
-    void _callAfterExchangeCallbacks();
+    void _callAfterExchangeCallbacks(); // must be called at the end of the exchange
 
   private:
     std::vector<std::function<void(void)>> afterExchangeCallbacks;

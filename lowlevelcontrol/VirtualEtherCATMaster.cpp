@@ -13,17 +13,6 @@ VirtualEtherCATMaster::Type VirtualEtherCATMaster::GetType() const {
   return Type::VIRTUAL;
 }
 
-bool VirtualEtherCATMaster::isOpened() const {
-  return true;
-}
-
-bool VirtualEtherCATMaster::OpenConnection(const std::string& adapterName) {
-  return true;
-}
-
-void VirtualEtherCATMaster::CloseConnection() {
-}
-
 VirtualEtherCATMaster::~VirtualEtherCATMaster() {
 }
 

@@ -19,24 +19,18 @@ extern "C" {
 using namespace youbot;
 using namespace youbot::intrinsic;
 
-bool SimpleOpenEtherCATMaster::opened = false;
+bool SimpleOpenEtherCATMaster::exist = false;
 
 SimpleOpenEtherCATMaster::Type SimpleOpenEtherCATMaster::GetType() const {
   return Type::PHYSICAL;
 }
 
-bool SimpleOpenEtherCATMaster::isOpened() const {
-  return opened;
-}
-
-bool SimpleOpenEtherCATMaster::OpenConnection(const std::string& adapterName) {
-  std::lock_guard<std::mutex> lock(ethercatComm);
-
-  if (opened) {
+youbot::intrinsic::SimpleOpenEtherCATMaster::SimpleOpenEtherCATMaster(const std::string& adapterName) {
+  if (exist) {
     log(__PRETTY_FUNCTION__, Log::fatal, "SimpleOpenEtherCATMaster is already opened.");
-    return true;
+    throw std::runtime_error("Already opened.");
   }
-
+  std::lock_guard<std::mutex> lock(ethercatComm);
   //initialize to zero
   for (unsigned int i = 0; i < 4096; i++)
     IOmap_[i] = 0;
@@ -107,37 +101,28 @@ bool SimpleOpenEtherCATMaster::OpenConnection(const std::string& adapterName) {
     log(Log::fatal, "No EtherCAT slave could be found");
     throw std::runtime_error("No EtherCAT slave could be found");
   }
-
   mailboxBuffers = new MailboxBuffers[ec_slavecount];
   processBuffers = new ProcessBuffers[ec_slavecount];
 
-  opened = true;
-  return opened;
-}
-
-void SimpleOpenEtherCATMaster::CloseConnection() {
-  if (opened) {
-    // Request safe operational state for all slaves
-    ec_slave[0].state = EC_STATE_SAFE_OP;
-
-    /* request SAFE_OP state for all slaves */
-    ec_writestate(0);
-
-    //stop SOEM, close socket
-    ec_close();
-
-    if (mailboxBuffers)
-      delete[] mailboxBuffers;
-    if (processBuffers)
-      delete[] processBuffers;
-
-    opened = false;
-  }
+  exist = true;
 }
 
 SimpleOpenEtherCATMaster::~SimpleOpenEtherCATMaster() {
-  if (opened)
-    CloseConnection();
+  // Request safe operational state for all slaves
+  ec_slave[0].state = EC_STATE_SAFE_OP;
+
+  /* request SAFE_OP state for all slaves */
+  ec_writestate(0);
+
+  //stop SOEM, close socket
+  ec_close();
+
+  if (mailboxBuffers)
+    delete[] mailboxBuffers;
+  if (processBuffers)
+    delete[] processBuffers;
+
+  exist = false;
 }
 
 int SimpleOpenEtherCATMaster::getSlaveNum() const {

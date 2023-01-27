@@ -103,11 +103,9 @@ int main(int argc, char *argv[])
   Log::Setup(config.logConfig);
 
   // Init physical ethercat class
-  //center = EtherCATMaster::CreatePhysical();
-  center = EtherCATMaster::CreateVirtual();
-
-  // Find appropriate ethernet adapter and open connection
-  if (center->GetType() == EtherCATMaster::PHYSICAL)  {
+  bool physical = true;
+  if (physical) {
+    // Find appropriate ethernet adapter and open connection
     char name[1000];
     if (findYouBotEtherCatAdapter(name))
       log(Log::info, "Adapter found:" + std::string(name));
@@ -115,9 +113,10 @@ int main(int argc, char *argv[])
       log(Log::fatal, "Adapter with turned on youBot arm NOT found!");
       return -1;
     }
-    if (!center->OpenConnection(name))
-      return -1;
+    center = EtherCATMaster::CreatePhysical(name);
   }
+  else
+    center = EtherCATMaster::CreateVirtual();
 
   YoubotManipulator man(config, center);
   man.InitializeManipulator();

@@ -27,10 +27,6 @@ namespace youbot {
 
       std::string getSlaveName(int cnt) const override;
 
-      virtual bool OpenConnection(const std::string& adapterName) override;
-
-      virtual void CloseConnection() override;
-
       virtual MailboxStatus SendMessage_(MailboxMessage::MailboxMessagePtr ptr) override;
 
       virtual void GetProcessMsg(ProcessBuffer& buff, uint8_t slaveNumber) const override;
@@ -40,8 +36,6 @@ namespace youbot {
       virtual int SetProcessMsg(const ProcessBuffer& buffer, uint8_t slaveNumber) override;
 
       virtual void ExchangeProcessMsg() override; // call the functions
-
-      virtual bool isOpened() const override;
     };
   }
 }
