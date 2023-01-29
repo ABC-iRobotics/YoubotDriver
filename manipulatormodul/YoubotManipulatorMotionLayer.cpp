@@ -74,13 +74,11 @@ void youbot::YoubotManipulatorMotionLayer::ConstantJointSpeed(const Eigen::Vecto
   man->CheckAndResetErrorFlags();
   man->ReqJointSpeedRadPerSec(dq[0], dq[1], dq[2], dq[3], dq[4]);
   do {
-    if (stoptask)
-      break;
     center->ExchangeProcessMsg();
     SLEEP_MILLISEC(10);
     elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
       std::chrono::steady_clock::now() - start).count();
-  } while (elapsed_ms < time_limit * 1000.);
+  } while (elapsed_ms < time_limit * 1000. && !stoptask);
   taskrunning = false;
   motionStatus.store(STOPPED);
 }
