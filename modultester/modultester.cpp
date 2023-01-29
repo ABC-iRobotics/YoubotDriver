@@ -92,53 +92,22 @@ void ZeroVelocityDemo(YoubotManipulator& man, int time_ms) {
 
 int main(int argc, char *argv[])
 {
-  // Get Configfile
-  YoubotConfig config(std::string(CONFIG_FOLDER) + "youBotArmConfig_fromKeisler.json");
+  std::string configpath = std::string(CONFIG_FOLDER) + "youBotArmConfig_fromKeisler.json";
   //youBotArmConfig_fromfactory.json");
   //youBotArmConfig_fromMoveIt.json");
   //youBotArmConfig_fromKeisler.json");
 
-  // Initialize logger
-  Log::Setup(config.logConfig);
+  YoubotManipulatorModul modul(configpath, true);
 
-  // Init physical ethercat class
-  bool physical = true;
-  if (physical) {
-    // Find appropriate ethernet adapter and open connection
-    char name[1000];
-    if (findYouBotEtherCatAdapter(name))
-      log(Log::info, "Adapter found:" + std::string(name));
-    else {
-      log(Log::fatal, "Adapter with turned on youBot arm NOT found!");
-      return -1;
-    }
-    center = EtherCATMaster::CreatePhysical(name);
-  }
-  else
-    center = EtherCATMaster::CreateVirtual();
+  modul.StartThreadAndInitialize();
 
-  YoubotManipulator man(config, center);
-  man.InitializeManipulator();
-  man.Calibrate();
-  
-  SLEEP_SEC(1);
-  man.CheckAndResetErrorFlags();
-  
-  GoTowardsZero(man, 5000, 0.05, config);
+  do {
+    SLEEP_SEC(1);
 
-  //ZeroVelocityDemo(man, 5000);
+  } while (modul.GetStatus().motion == YoubotManipulatorMotionLayer::INITIALIZATION);
+  SLEEP_SEC(3);//wait in the thread
+  modul.StopThread();
 
-  // Go to zero and stay there
-  //GoToZero(man, 3000);
-  
-  // Stop at the given position
-  //StopThere(man, 10000);
-  /*
-  // Zero current mode: ~free drive
-  FreeDriveMode(man, 3000);*/
-
-  // Wave movement
-  //WaveDemo(man, 10000);
 
   return 0;
 }

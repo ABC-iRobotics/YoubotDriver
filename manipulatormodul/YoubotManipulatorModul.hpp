@@ -1,81 +1,87 @@
 #ifndef YOUBOT_MANIPULATOR_MODUL_HPP
 #define YOUBOT_MANIPULATOR_MODUL_HPP
 
-#include "YoubotManipulator.hpp"
-#include <mutex>
-#include "Eigen/dense" // just to test it...
+#include "YoubotManipulatorMotionLayer.hpp"
+#include <thread>
 
 namespace youbot {
 
   class YoubotManipulatorModul {
   public:
-    struct Command {
-      enum Type {
-        STOP,
-        JOINT_VELOCITY,
-        JOINT_POSITION_RAW,
-        JOINT_POSITION_INT,
-        JOINT_TORQUE,
-        CARTESIAN_POSITION_RAW,
-        CARTESIAN_POSITION_INT,
-        CARTESIAN_VELOCITY,
-        CARTESIAN_FORCETORQUE
-      } type = STOP;
-      double params[7];
-      double timelimit = 10;
+    // Not available constructors
+    YoubotManipulatorModul() = delete;
+    YoubotManipulatorModul(YoubotManipulatorModul&) = delete;
+    YoubotManipulatorModul(const YoubotManipulatorModul&) = delete;
 
-      Command() {};
-      Command(Type type_, double timelimit_=100) : type(type_), timelimit(timelimit_) {};
-    };
+    YoubotManipulatorModul(const std::string& configfilepath, bool virtual_ = false); // Constructor - does nothing
+    ~YoubotManipulatorModul();
 
-    struct Status {
-      struct Joint {
-        double q, dq, tau;
-        YoubotJoint::JointStatus status;
-        Joint() : status(0), q(0), dq(0), tau(0) {};
-      } joint[5];
-      enum ManipulatorStatus {
+    YoubotManipulatorMotionLayer::Status GetStatus() const;
+    Eigen::VectorXd GetTrueStatus() const;
 
-      };
-    }; // Get methods updates it
-
-    YoubotManipulatorModul(const std::string& configfilepath, bool virtual_ = false);
-
-    void AddCommand(const Command& c);
-    Status GetStatus();
-    void GetTrueStatus(double& q0, double& q1, double& q2, double& q3, double& q4);
-
-    // Longer operations
-    void MoveToPosition_RawPID(const double target[5]) {
-
-    }
-
-    void MoveToPosition_PIDwSpeedRampant(const double target[5], const double maxspeed[5]) {
-
-    }
-
-    void MoveToPosition_JointInterpolated(const double target[5]) {
-
-    }
+    void StartThreadAndInitialize();
+    void StopThread(bool waitin = true);
 
   private:
-    EtherCATMaster::Ptr center;
-    std::unique_ptr<YoubotManipulator> man;
-    std::vector<Command> saved_commands; // saved by mutex
-    std::mutex command_mutex, status_mutex;
-    std::vector<Command> to_perform; // flipped
-    Status status;
+    void _thread(const std::string& configfilepath, bool virtual_ = false) {
+      threadtostop = false;
+      if (!man)
+        man = std::make_unique<YoubotManipulatorMotionLayer>(configfilepath, virtual_);
+      man->Initialize();
 
-    void _processReturnsIntoStatus() { // must be called after ExchangeMsg // how can I get the status during calibration/mailbox messages, etc....
-      std::lock_guard<std::mutex> lock(status_mutex);
-      for (int i = 0; i < 5; i++) {
-        auto j = man->GetJoint(i);
-        status.joint[i].q = j->GetQLatestRad().value;
-        status.joint[i].dq = j->GetDQLatestRad().value;
-        status.joint[i].tau = j->GetTauLatestNm().value;
-        status.joint[i].status = j->GetStatusLatest().value;
-      }
+      // Command based operation, checking stop...
+      //while (!threadtostop) {
+        Eigen::VectorXd dq(5);
+        dq << 0.1, 0.1, 0.1, 0.1, 0.1;
+        man->ConstantJointSpeed(dq,10);
+        // copy the commands
+        //std::vector<Command> saved_commands;
+      //}
+      threadrunning = false;
     }
+
+    std::thread t;
+    bool threadrunning = false, threadtostop = false;
+
+    std::unique_ptr<YoubotManipulatorMotionLayer> man = NULL;
+    std::string configfilepath;
+    bool virtual_;
   };
 }
 #endif
+
+/*
+
+    void Stop() {
+
+      // conditional_variable?? - if thread running, otherwise
+    }
+    
+void youbot::YoubotManipulatorModul::AddCommand(const Command& c) {
+  std::lock_guard<std::mutex> lock(command_mutex);
+  commands.push_back(c);
+}
+
+    void AddCommand(const Command& c);
+
+  typedef YoubotManipulatorMotionLayer::MotionType MotionType;
+    struct Command {
+      MotionType type;
+      Eigen::VectorXd params = {};
+      double timelimit = 10;
+      bool preemptive = true;
+
+      Command() {};
+      Command(MotionType type_, const Eigen::VectorXd& params, bool preemptive = true, double timelimit_=100) :
+        preemptive(preemptive), type(type_), timelimit(timelimit_), params(params) {};
+    };
+
+    std::mutex command_mutex;
+    std::vector<Command> commands;
+
+*/
+
+
+
+
+
