@@ -28,8 +28,8 @@ namespace youbot {
       double cooldowntime_sec;
       bool calibrationDirection;
       double qMinDeg, qMaxDeg;
-      double qCalibrationRad, gearRatio;
-      double torqueconstantNmPerA;
+      double qCalibrationRad=0, gearRatio=1;
+      double torqueconstantNmPerA=1;
       bool intialized = false;
     };
 

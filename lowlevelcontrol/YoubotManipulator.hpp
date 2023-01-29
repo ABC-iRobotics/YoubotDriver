@@ -65,7 +65,7 @@ namespace youbot {
   private:
 	const YoubotConfig config;
 	EtherCATMaster::Ptr center;
-	std::vector<YoubotJoint::Ptr> joints;
+	std::vector<YoubotJoint::Ptr> joints = {NULL, NULL, NULL, NULL, NULL};
   };
 }
 #endif

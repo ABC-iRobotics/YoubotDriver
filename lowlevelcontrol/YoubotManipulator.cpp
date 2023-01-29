@@ -12,9 +12,9 @@ YoubotManipulator::YoubotManipulator(const YoubotConfig& config, EtherCATMaster:
   // Construct joints
   for (int i = 0; i < 5; i++)
 	if (center->GetType() == EtherCATMaster::PHYSICAL)
-	  joints.push_back(std::make_shared<YoubotJointPhysical>(config.jointIndices[i], config.jointConfigs[i], center));
+	  joints[i] = std::make_shared<YoubotJointPhysical>(config.jointIndices[i], config.jointConfigs[i], center);
 	else
-	  joints.push_back(std::make_shared<YoubotJointVirtual>(config.jointIndices[i], config.jointConfigs[i], center));
+	  joints[i] = std::make_shared<YoubotJointVirtual>(config.jointIndices[i], config.jointConfigs[i], center);
 }
 
 YoubotJointPhysical::Ptr YoubotManipulator::GetJoint(int i) {
