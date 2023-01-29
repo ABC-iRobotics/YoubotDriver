@@ -13,7 +13,6 @@ set(SOURCES
 		YoubotConfig.cpp
 		YoubotManipulator.cpp
 		ProcessBuffer.cpp
-		YoubotManipulatorModul.cpp
 	  )
 
 set(HEADERS
@@ -26,7 +25,6 @@ set(HEADERS
 		YoubotConfig.hpp
 		YoubotManipulator.hpp
 		ProcessBuffer.hpp
-		YoubotManipulatorModul.hpp
 )
 
 set(INTRINSIC_HEADERS
@@ -44,7 +42,6 @@ source_group("Intrinsic headers" FILES ${INTRINSIC_HEADERS} )
 
 requires_soem(lowlevelcontrol)
 requires_spdlog(lowlevelcontrol)
-requires_eigen(lowlevelcontrol)
 
 set_target_properties(lowlevelcontrol PROPERTIES LINKER_LANGUAGE CXX)
 

@@ -3,6 +3,7 @@
 
 #include "YoubotManipulator.hpp"
 #include <mutex>
+#include "Eigen/dense" // just to test it...
 
 namespace youbot {
 
