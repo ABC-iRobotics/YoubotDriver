@@ -1,10 +1,12 @@
 
 set(SOURCES
 		YoubotManipulatorModul.cpp
+    YoubotManipulatorMotionLayer.cpp
 	  )
 
 set(HEADERS
 		YoubotManipulatorModul.hpp
+    YoubotManipulatorMotionLayer.hpp
 )
 
 set(INTRINSIC_HEADERS
