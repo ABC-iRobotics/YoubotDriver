@@ -6,7 +6,7 @@
 using namespace youbot;
 
 youbot::YoubotManipulatorMotionLayer::Status youbot::YoubotManipulatorModul::GetStatus() const {
-  if (man)
+  if (man != nullptr)
 	return man->GetStatus();
   else
 	return {};
@@ -36,7 +36,10 @@ void YoubotManipulatorModul::StopThread(bool waitin) {
 }
 
 Eigen::VectorXd youbot::YoubotManipulatorModul::GetTrueStatus() const {
-  return man->GetTrueStatus();
+  if (man != nullptr)
+    return man->GetTrueStatus();
+  else
+    return Eigen::VectorXd(5);
 }
 
 youbot::YoubotManipulatorModul::YoubotManipulatorModul(
@@ -46,7 +49,8 @@ youbot::YoubotManipulatorModul::YoubotManipulatorModul(
 void YoubotManipulatorModul::NewManipulatorTask(ManipulatorTask::Ptr task, double time_limit) {
   std::lock_guard<std::mutex> guard(new_task_mutex);
   new_man_task = { task, time_limit };
-  man->StopTask();
+  if (man != nullptr)
+    man->StopTask();
 }
 
 #include <iostream>
@@ -54,7 +58,7 @@ void YoubotManipulatorModul::_thread(const std::string& configfilepath, bool vir
   try {
     ManipulatorTask::Ptr idle_ptr = std::make_shared<IdleManipulatorTask>();
     threadtostop = false;
-    if (!man)
+    if (man == nullptr)
       man = std::make_unique<YoubotManipulatorMotionLayer>(configfilepath, virtual_);
     man->Initialize();
 
