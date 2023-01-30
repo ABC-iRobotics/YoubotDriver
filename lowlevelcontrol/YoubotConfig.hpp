@@ -28,6 +28,10 @@ namespace youbot {
 	std::map<std::string, std::string> logConfig;
 
 	YoubotConfig(const std::string& filename);
+
+	void Init();
+
+	const std::string filename;
   };
 }
 #endif

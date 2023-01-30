@@ -97,7 +97,9 @@ endmacro(install_lib)
 ## ---------------------------------------------------------------
 add_subdirectory(slaveinfo)
 add_subdirectory(lowlevelcontrol)
+add_subdirectory(manipulatormodul)
 add_subdirectory(tester)
+add_subdirectory(modultester)
 add_subdirectory(matlabexporter)
 #add_subdirectory(oldshit)
 

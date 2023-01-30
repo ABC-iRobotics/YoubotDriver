@@ -19,21 +19,18 @@ extern "C" {
 using namespace youbot;
 using namespace youbot::intrinsic;
 
-bool SimpleOpenEtherCATMaster::opened = false;
+bool SimpleOpenEtherCATMaster::exist = false;
 
-
-bool SimpleOpenEtherCATMaster::isOpened() const {
-  return opened;
+SimpleOpenEtherCATMaster::Type SimpleOpenEtherCATMaster::GetType() const {
+  return Type::PHYSICAL;
 }
 
-bool SimpleOpenEtherCATMaster::OpenConnection(const std::string& adapterName) {
-  std::lock_guard<std::mutex> lock(ethercatComm);
-
-  if (opened) {
+void youbot::intrinsic::SimpleOpenEtherCATMaster::Init() {
+  if (exist) {
     log(__PRETTY_FUNCTION__, Log::fatal, "SimpleOpenEtherCATMaster is already opened.");
-    return true;
+    throw std::runtime_error("Already opened.");
   }
-
+  std::lock_guard<std::mutex> lock(ethercatComm);
   //initialize to zero
   for (unsigned int i = 0; i < 4096; i++)
     IOmap_[i] = 0;
@@ -104,37 +101,28 @@ bool SimpleOpenEtherCATMaster::OpenConnection(const std::string& adapterName) {
     log(Log::fatal, "No EtherCAT slave could be found");
     throw std::runtime_error("No EtherCAT slave could be found");
   }
-
   mailboxBuffers = new MailboxBuffers[ec_slavecount];
   processBuffers = new ProcessBuffers[ec_slavecount];
 
-  opened = true;
-  return opened;
-}
-
-void SimpleOpenEtherCATMaster::CloseConnection() {
-  if (opened) {
-    // Request safe operational state for all slaves
-    ec_slave[0].state = EC_STATE_SAFE_OP;
-
-    /* request SAFE_OP state for all slaves */
-    ec_writestate(0);
-
-    //stop SOEM, close socket
-    ec_close();
-
-    if (mailboxBuffers)
-      delete[] mailboxBuffers;
-    if (processBuffers)
-      delete[] processBuffers;
-
-    opened = false;
-  }
+  exist = true;
 }
 
 SimpleOpenEtherCATMaster::~SimpleOpenEtherCATMaster() {
-  if (opened)
-    CloseConnection();
+  // Request safe operational state for all slaves
+  ec_slave[0].state = EC_STATE_SAFE_OP;
+
+  /* request SAFE_OP state for all slaves */
+  ec_writestate(0);
+
+  //stop SOEM, close socket
+  ec_close();
+
+  if (mailboxBuffers)
+    delete[] mailboxBuffers;
+  if (processBuffers)
+    delete[] processBuffers;
+
+  exist = false;
 }
 
 int SimpleOpenEtherCATMaster::getSlaveNum() const {
@@ -176,7 +164,7 @@ SimpleOpenEtherCATMaster::MailboxStatus SimpleOpenEtherCATMaster::SendMessage_(M
 }
 
 void SimpleOpenEtherCATMaster::GetProcessMsg(ProcessBuffer& buff, uint8_t slaveNumber) const {
-  buff = processBuffers[slaveNumber].fromSlave.Get();
+  buff = processBuffers[slaveNumber].fromSlave;
 }
 
 void SimpleOpenEtherCATMaster::SetProcessFromSlaveSize(uint8_t size, uint8_t slaveNumber) {
@@ -184,13 +172,13 @@ void SimpleOpenEtherCATMaster::SetProcessFromSlaveSize(uint8_t size, uint8_t sla
 }
 
 int SimpleOpenEtherCATMaster::SetProcessMsg(const ProcessBuffer& buffer, uint8_t slaveNumber) {
-  processBuffers[slaveNumber].toSlave.Set(buffer);
+  processBuffers[slaveNumber].toSlave = buffer;
   return buffer.Size();
 }
 
 void SimpleOpenEtherCATMaster::ExchangeProcessMsg() {
   for (int i = 0; i < getSlaveNum(); i++)
-    processBuffers[i].toSlave.Get().CopyTo(ec_slave[i + 1].outputs, ec_slave[i + 1].Obytes);
+    processBuffers[i].toSlave.CopyTo(ec_slave[i + 1].outputs, ec_slave[i + 1].Obytes);
   {
     static long communicationErrors = 0;
     static long maxCommunicationErrors = 100;
@@ -217,6 +205,7 @@ void SimpleOpenEtherCATMaster::ExchangeProcessMsg() {
   for (int i = 0; i < getSlaveNum(); i++) {
     uint8_t buff_size = MIN((uint8_t)ec_slave[i + 1].Ibytes, processBuffers[i].fromMsgSize);
     ProcessBuffer saved(buff_size, ec_slave[i + 1].inputs);
-    processBuffers[i].fromSlave.Set(saved);
+    processBuffers[i].fromSlave = saved;
   }
+  _callAfterExchangeCallbacks();
 }

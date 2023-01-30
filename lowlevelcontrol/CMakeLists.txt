@@ -3,10 +3,13 @@ set(SOURCES
 		adapters.cpp
 		Logger.cpp
 		SimpleOpenEtherCATMaster.cpp
+		VirtualEtherCATMaster.cpp
 		TMCLMailboxMessage.cpp
 		TMCLDefinitions.cpp
 		EtherCATMaster.cpp
 		YoubotJoint.cpp
+		YoubotJointPhysical.cpp
+		YoubotJointVirtual.cpp
 		YoubotConfig.cpp
 		YoubotManipulator.cpp
 		ProcessBuffer.cpp
@@ -25,8 +28,10 @@ set(HEADERS
 )
 
 set(INTRINSIC_HEADERS
-		DataObjectLockFree.hpp
 		SimpleOpenEtherCATMaster.hpp
+		VirtualEtherCATMaster.hpp
+		YoubotJointPhysical.hpp
+		YoubotJointVirtual.hpp
 		TMCLMailboxMessage.hpp
 		TMCLDefinitions.hpp
 )
@@ -37,7 +42,6 @@ source_group("Intrinsic headers" FILES ${INTRINSIC_HEADERS} )
 
 requires_soem(lowlevelcontrol)
 requires_spdlog(lowlevelcontrol)
-requires_eigen(lowlevelcontrol)
 
 set_target_properties(lowlevelcontrol PROPERTIES LINKER_LANGUAGE CXX)
 

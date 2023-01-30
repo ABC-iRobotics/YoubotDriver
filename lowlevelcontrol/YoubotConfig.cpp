@@ -5,7 +5,9 @@
 
 using namespace youbot;
 
-YoubotConfig::YoubotConfig(const std::string& filename) {
+YoubotConfig::YoubotConfig(const std::string& filename) : filename(filename) {};
+
+void YoubotConfig::Init() {
   std::ifstream configFile;
   configFile.open(filename, std::ios_base::in);
 

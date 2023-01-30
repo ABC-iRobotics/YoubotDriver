@@ -1,44 +1,59 @@
-#ifndef YOUBOT_JOINT_HPP
-#define YOUBOT_JOINT_HPP
+#ifndef YOUBOT_JOINT_ABSTRACT_HPP
+#define YOUBOT_JOINT_ABSTRACT_HPP
 
-#include "EtherCATMaster.hpp"
 #include <map>
+#include <string>
+#include <chrono>
+#include <atomic>
+#include "EtherCATMaster.hpp"
 
 namespace youbot {
 
+  static std::chrono::steady_clock::time_point started_at;
+
+  template <class T>
+  struct Data {
+    T value;
+    std::chrono::steady_clock::time_point origin;
+    Data() : value(0), origin(started_at) {}
+    Data(T val) : value(val), origin(std::chrono::steady_clock::now()) {}
+    Data(T val, std::chrono::steady_clock::time_point origin) : value(val), origin(origin) {};
+  };
+
   class YoubotJoint {
-    int slaveIndex;
-    EtherCATMaster* center;
-    std::map<std::string, double> config;
-
-    // Read during configuration
-    uint32_t ticksperround = -1;
-    int firmwareversion = -1, controllerNum = -1;
-    double cooldowntime_sec = -1;
-    double gearRatio = -1;
-    bool calibrationDirection = false;
-    double torqueconstantNmPerA = false;
-    double qMinDeg, qMaxDeg;
-
-    struct Conversion {
-      int ticksperround;
-      double qCalibrationRad, gearRatio;
-      double torqueconstantNmPerA;
-      bool intialized;
-      double Ticks2qRad(int32_t ticks) const;
-      int32_t qRad2Ticks(double qDeg) const;
-      double RPM2qRadPerSec(int32_t RPM) const;
-      int32_t qRadPerSec2RPM(double degpersec) const;
-      double mA2Nm(int32_t mA) const;
-      int32_t Nm2mA(double Nm) const;
-      Conversion(bool qDirectionSameAsEnc, int32_t ticksPerRound,
-        double gearRatio, double qCalibrationDeg, double torqueconstantNmPerA);
-      Conversion();
-    } conversion;
-    void _getFirmwareVersionViaMailbox();
-
   public:
+    struct Parameters {
+      uint32_t ticksperround;
+      int firmwareversion, controllerNum;
+      double cooldowntime_sec;
+      bool calibrationDirection;
+      double qMinDeg, qMaxDeg;
+      double qCalibrationRad=0, gearRatio=1;
+      double torqueconstantNmPerA=1;
+      bool intialized = false;
+    };
+
     struct JointStatus {
+      enum class StatusErrorFlags : uint32_t {
+        OVER_CURRENT = 0x1,
+        UNDER_VOLTAGE = 0x2,
+        OVER_VOLTAGE = 0x4,
+        OVER_TEMPERATURE = 0x8,
+        MOTOR_HALTED = 0x10,
+        HALL_SENSOR_ERROR = 0x20,
+        ENCODER_ERROR = 0x40,
+        INITIALIZATION_ERROR = 0x80,
+        PWM_MODE_ACTIVE = 0x100,
+        VELOCITY_MODE_ACTIVE = 0x200,
+        POSITION_MODE_ACTIVE = 0x400,
+        TORQUE_MODE_ACTIVE = 0x800,
+        EMERGENCY_STOP = 0x1000,
+        FREERUNNING = 0x2000,
+        POSITION_REACHED = 0x4000,
+        INITIALIZED = 0x8000,
+        TIMEOUT = 0x10000,
+        I2T_EXCEEDED = 0x20000
+      };
       uint32_t value;
 
       bool OverCurrent() const;
@@ -61,127 +76,109 @@ namespace youbot {
       bool I2TExceeded() const;
       std::string toString() const;
 
-      JointStatus(uint32_t value) : value(value) {}
+      JointStatus(uint32_t value) : value(value) {} // can be only used if the flags are the same
     };
 
-    struct ProcessReturn {
-      int32_t encoderPosition, currentmA, motorVelocityRPM, motorPWM;
-      JointStatus status;
-      double qRad, dqRadPerSec, tau;
-      ProcessReturn();
-      void Print() const;
-    };
-
-    int32_t _toInt32(uint8_t* buff) {
-      return buff[3] << 24 | buff[2] << 16 | buff[1] << 8 | buff[0];
-    }
-
-  private:
-    ProcessReturn processReturn;
-
-  public:
+    // Not available constructors
     YoubotJoint() = delete;
-
     YoubotJoint(YoubotJoint&) = delete;
-
     YoubotJoint(const YoubotJoint&) = delete;
 
-    YoubotJoint(int slaveIndex, const std::map<std::string, double>& config, EtherCATMaster* center);
+    // Constructor
+    YoubotJoint(int slaveIndex, const std::map<std::string, double>& config,
+      EtherCATMaster::Ptr center);
 
-    void ConfigParameters(bool forceConfiguration = false);
+    // Main initialization routine
+    void InitializeJoint(bool forceConfiguration = false);
 
-    bool CheckConfig();
+    // Submethods of initialization
+    void CollectBasicParameters(); // get essential paramters from the config and the motor driver
+    virtual void ConfigControlParameters(bool forceConfiguration = false) = 0; // set the control parameters to the driver
+    virtual bool CheckControlParameters() = 0; // check the control parameters to the driver
+    virtual void InitCommutation(); // set commutation/encoder of the driver
 
-    void Initialize();
+    // Variable getters
+    const Parameters& GetParameters() const;
+    const std::map<std::string, double>& GetConfig() const;
+    int GetSlaveIndex() const;
+
+    // Conversions
+    double Ticks2qRad(int32_t ticks) const;
+    int32_t qRad2Ticks(double qDeg) const;
+    double RPM2qRadPerSec(int32_t RPM) const;
+    int32_t qRadPerSec2RPM(double degpersec) const;
+    double mA2Nm(int32_t mA) const;
+    int32_t Nm2mA(double Nm) const;
 
     // Mailbox-based Set/Get mothods
-    bool IsConfiguratedViaMailbox();
-
-    void SetConfiguratedViaMailbox();
-
-    void RotateJointRightViaMailbox(double speedJointRadPerSec);
-
-    void RotateJointLeftViaMailbox(double speedJointRadPerSec);
-
-    void StopViaMailbox();
-
-    JointStatus GetJointStatusViaMailbox();
-
-    void ResetTimeoutViaMailbox();
-
-    void ResetI2TExceededViaMailbox();
-
-    void StartInitializationViaMailbox();
-
-    bool IsInitializedViaMailbox();
-
-    double GetThermalWindingTimeSecViaMailbox();
-
-    double GetCurrentAViaMailbox();
-
-    void RotateMotorRightViaMailbox(int32_t speedMotorRPM);
-
-    void RotateMotorLeftViaMailbox(int32_t speedMotorRPM);
-    
-    void SetTargetCurrentAViaMailbox(double current);
-
-    bool IsCalibratedViaMailbox();
-
-    void SetCalibratedViaMailbox();
-
-    long GetI2tLimitValueViaMailbox();
-
-    long GetCurrentI2tValueViaMailbox();
-
-    double GetJointVelocityRadPerSecViaMailbox();
-
-    void SetJointVelocityRadPerSecViaMailbox(double value);
+    virtual bool IsConfiguratedViaMailbox() = 0;
+    virtual void SetConfiguratedViaMailbox() = 0;
+    virtual void RotateJointRightViaMailbox(double speedJointRadPerSec) = 0;
+    virtual void RotateJointLeftViaMailbox(double speedJointRadPerSec) = 0;
+    virtual void StopViaMailbox() = 0;
+    virtual JointStatus GetJointStatusViaMailbox() = 0;
+    virtual void ResetTimeoutViaMailbox() = 0;
+    virtual void ResetI2TExceededViaMailbox() = 0;
+    virtual void StartInitializationViaMailbox() = 0;
+    virtual double GetThermalWindingTimeSecViaMailbox() = 0;
+    virtual double GetCurrentAViaMailbox() = 0;
+    virtual void RotateMotorRightViaMailbox(int32_t speedMotorRPM) = 0;
+    virtual void RotateMotorLeftViaMailbox(int32_t speedMotorRPM) = 0;
+    virtual void SetTargetCurrentAViaMailbox(double current) = 0;
+    virtual bool IsCalibratedViaMailbox() = 0;
+    virtual void SetCalibratedViaMailbox() = 0;
+    virtual long GetI2tLimitValueViaMailbox() = 0;
+    virtual long GetCurrentI2tValueViaMailbox() = 0;
+    virtual double GetJointVelocityRadPerSecViaMailbox() = 0;
+    virtual void SetJointVelocityRadPerSecViaMailbox(double value) = 0;
+    virtual void GetFirmwareVersionViaMailbox(int& controllernum,
+      int& firmwareversion) = 0;
+    virtual unsigned int GetEncoderResolutionViaMailbox() = 0;
 
     // Process message-based req/get methods will be sent with the next ExcangeMessage/show the results of the latest one
-    const ProcessReturn& GetProcessReturnData();
+    virtual void ReqStop() = 0;
 
-    void ReqStop();
+    // Req motor quantity
+    virtual void ReqMotorSpeedRPM(int32_t value) = 0;
+    virtual void ReqEncoderReference(int32_t value) = 0;
+    virtual void ReqMotorPositionTick(int32_t value) = 0;
+    virtual void ReqVoltagePWM(int32_t value) = 0;
+    virtual void ReqMotorCurrentmA(int32_t value) = 0;
 
     // Req joint quantity
     void ReqJointPositionRad(double value);
-
     void ReqJointSpeedRadPerSec(double value);
-
     void ReqJointTorqueNm(double value);
+    virtual void ReqNoAction() = 0;
+    virtual void ReqInitializationViaProcess() = 0;
 
-    void ReqNoAction();
-
-    // Req motor quantity
-    void ReqMotorSpeedRPM(int32_t value);
-
-    void ReqEncoderReference(int32_t value);
-
-    void ReqVoltagePWM(int32_t value);
-
-    void ReqMotorCurrentmA(int32_t value);
-
+    // Thread safe getters
     // Get joint quantity
-    double GetJointPositionRad();
-
-    double GetJointSpeedRadPerSec();
-
-    double GetJointTorqueNm();
+    Data<double> GetQLatestRad() const;
+    Data<double> GetDQLatestRad() const;
+    Data<double> GetTauLatestNm() const;
 
     // Get motor quantity
-    int32_t GetMotorPosTick();
+    Data<int32_t> GetTicksLatest() const;
+    Data<int32_t> GetRPMLatest() const;
+    Data<int32_t> GetMALatest() const;
+    Data<JointStatus> GetStatusLatest() const;
 
-    int32_t GetMotorSpeedRPM();
+    virtual void CheckI2tAndTimeoutError(JointStatus status) = 0;
 
-    int32_t GetMotorCurrentmA();
-
-    void ReqInitializationViaProcess();
-
-    void CheckI2tAndTimeoutError(JointStatus status);
+    void LogLatestState() const;
 
     typedef std::shared_ptr<YoubotJoint> Ptr;
 
-    // Only for test purposes
-    void I2tResetTest();
+  private:
+    const int slaveIndex;
+    const std::map<std::string, double> config;
+    Parameters parameters;
+
+  protected:
+    std::atomic<Data<int32_t>> ticksLatest, RPMLatest, mALatest, UpwmLatest;
+    std::atomic<Data<JointStatus>> statusLatest;
+    EtherCATMaster::Ptr center;
   };
 }
 #endif

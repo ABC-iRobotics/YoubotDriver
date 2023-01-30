@@ -47,7 +47,11 @@ Log::LogLevel fromString(const std::string& name) {
   return Log::n_levels;
 }
 
+static bool spdlogopened = false;
+
 void Log::Setup(const std::map<std::string, std::string>& settings) {
+  if (spdlogopened)
+    Log::DropLogger();
   std::string filename;
   if (settings.find("LogFileName") != settings.end())
     filename = settings.at("LogFileName");
@@ -68,6 +72,7 @@ void Log::Setup(const std::map<std::string, std::string>& settings) {
     Log::FileSetup(fromString(settings.at("LogFileLevel")));
   else
     Log::FileSetup(Log::trace);
+  spdlogopened = true;
 }
 
 void Log::ConsoleSetup(Log::LogLevel print_over) {
@@ -81,10 +86,13 @@ void Log::FileSetup(Log::LogLevel print_over) {
 }
 
 void Log::DropLogger() {
-  spdlog::drop_all();
-  stdout_sink = NULL;
-  file_sink = NULL;
-  spd_logger = NULL;
+  if (spdlogopened) {
+    spdlog::drop_all();
+    stdout_sink = NULL;
+    file_sink = NULL;
+    spd_logger = NULL;
+    spdlogopened = false;
+  }
 }
 
 void log(const std::string& funcName, const int& lineNo,
