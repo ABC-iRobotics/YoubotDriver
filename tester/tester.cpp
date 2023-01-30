@@ -97,6 +97,7 @@ int main(int argc, char *argv[])
   //youBotArmConfig_fromfactory.json");
   //youBotArmConfig_fromMoveIt.json");
   //youBotArmConfig_fromKeisler.json");
+  config.Init();
 
   // Initialize logger
   Log::Setup(config.logConfig);
