@@ -3,8 +3,7 @@
 
 #include "YoubotManipulatorMotionLayer.hpp"
 #include <thread>
-
-#include "RawConstantJointSpeedTask.hpp"
+#include <mutex>
 
 namespace youbot {
 
@@ -24,23 +23,18 @@ namespace youbot {
     void StartThreadAndInitialize();
     void StopThread(bool waitin = true);
 
-  private:
-    void _thread(const std::string& configfilepath, bool virtual_ = false) {
-      threadtostop = false;
-      if (!man)
-        man = std::make_unique<YoubotManipulatorMotionLayer>(configfilepath, virtual_);
-      man->Initialize();
+    void NewManipulatorTask(ManipulatorTask::Ptr task, double time_limit);
 
-      // Command based operation, checking stop...
-      //while (!threadtostop) {
-        Eigen::VectorXd dq(5);
-        dq << 0.1, 0.1, -0.1, -0.1, 0.1;
-        ManipulatorTask::Ptr task = std::make_shared<RawConstantJointSpeedTask>(dq, 10);
-        man->DoTask(task, 5);
-        //man->ConstantJointSpeed(dq,10);
-      //}
-      threadrunning = false;
-    }
+  private:
+    struct NewTask {
+      ManipulatorTask::Ptr ptr;
+      double time_limit;
+      NewTask() : ptr(NULL), time_limit(0) {}
+      NewTask(ManipulatorTask::Ptr ptr_, double time_limit_) : ptr(ptr_), time_limit(time_limit_) {}
+    } new_man_task = {};
+    std::mutex new_task_mutex;
+
+    void _thread(const std::string& configfilepath, bool virtual_ = false);
 
     std::thread t;
     bool threadrunning = false, threadtostop = false;
@@ -51,39 +45,3 @@ namespace youbot {
   };
 }
 #endif
-
-/*
-
-    void Stop() {
-
-      // conditional_variable?? - if thread running, otherwise
-    }
-    
-void youbot::YoubotManipulatorModul::AddCommand(const Command& c) {
-  std::lock_guard<std::mutex> lock(command_mutex);
-  commands.push_back(c);
-}
-
-    void AddCommand(const Command& c);
-
-  typedef YoubotManipulatorMotionLayer::MotionType MotionType;
-    struct Command {
-      MotionType type;
-      Eigen::VectorXd params = {};
-      double timelimit = 10;
-      bool preemptive = true;
-
-      Command() {};
-      Command(MotionType type_, const Eigen::VectorXd& params, bool preemptive = true, double timelimit_=100) :
-        preemptive(preemptive), type(type_), timelimit(timelimit_), params(params) {};
-    };
-
-    std::mutex command_mutex;
-    std::vector<Command> commands;
-
-*/
-
-
-
-
-

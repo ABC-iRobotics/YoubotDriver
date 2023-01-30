@@ -1,5 +1,6 @@
 #include "adapters.hpp"
 #include "YoubotManipulatorModul.hpp"
+#include "RawConstantJointSpeedTask.hpp"
 #include "Time.hpp"
 #include "Logger.hpp"
 
@@ -18,16 +19,24 @@ int main(int argc, char *argv[])
 
   modul.StartThreadAndInitialize();
 
+  // Wait until initialization ends
   do {
     SLEEP_SEC(1);
-
   } while (modul.GetStatus().motion == ManipulatorTask::INITIALIZATION);
 
-  for (int i = 0; i < 100; i++) {
+  // Create and start a task
+  Eigen::VectorXd dq(5);
+  dq << 0.1, 0.1, -0.1, -0.1, 0.1;
+  ManipulatorTask::Ptr task = std::make_shared<RawConstantJointSpeedTask>(dq, 10);
+  modul.NewManipulatorTask(task, 5);
+
+  // Lets see what's happening
+  for (int i = 0; i < 700; i++) {
     SLEEP_MILLISEC(10);
     modul.GetStatus().LogStatus();
   }
 
+  // Stop and go home
   modul.StopThread();
 
   return 0;
