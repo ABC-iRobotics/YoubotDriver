@@ -3,70 +3,50 @@ classdef YoubotManager < handle
 
     properties (Access=private)
         ptr;
-        arm_setup;
     end
     
     methods
-        function out = IsSetup(obj)
-            out = obj.arm_setup;
-        end
-        
-        function obj = YoubotManager(configfilename)
+        function obj = YoubotManager(configfilename,virtual)
             if (nargin==0)
                 configfilename = 'D:\Tresors\WORK\PROJECT - KUKA youbot\myYouBotDriver\config/youBotArmConfig_fromKeisler.json';
             end
             if isa(configfilename,'string')
                 configfilename = convertStringsToChars(configfilename);
             end
-            obj.ptr = youbotarmmanager(0,configfilename);
-            obj.arm_setup = 0;
+            obj.ptr = youbotarmmanager(0,configfilename,virtual);
+        end
+        
+        function StartThread(obj)
+            youbotarmmanager(5,obj.ptr);
+        end
+        
+        function StopThread(obj)
+            youbotarmmanager(7,obj.ptr);
         end
         
         function delete(obj)
             try
+                obj.StopThread();
                 youbotarmmanager(1,obj.ptr);
             catch ME
                 disp(['Error: ' ME.message])
             end
         end
         
-        function setupRobot(obj)
-            try 
-                youbotarmmanager(2,obj.ptr);
-                obj.arm_setup = 1;
-            catch ME
-                disp(['Error: ' ME.message])
-                obj.arm_setup = 0;
-            end
+        function StopJoints(obj)
+            youbotarmmanager(6,obj.ptr,[],0,0);
         end
         
-        function StartProcessCommunication(obj,Ts)
-            if nargin == 1
-                Ts = 40;
-            end
-            if obj.arm_setup
-                youbotarmmanager(5,obj.ptr,Ts);
-            end
+        function SetJointVelocity(obj, dqDegPsec, tlimit)
+            youbotarmmanager(6,obj.ptr,dqDegPsec,1,tlimit);
         end
         
-        function StopProcessCommunication(obj)
-            youbotarmmanager(7,obj.ptr);
+        function q = GetTrueJointAngles(obj)
+            q = youbotarmmanager(8,obj.ptr);
         end
         
-        function SetJointAngles(obj, q)
-            if obj.arm_setup
-                youbotarmmanager(6,obj.ptr,q);
-            else
-                error("");
-            end
-        end
-        
-        function q = GetJointAngles(obj)
-            if obj.arm_setup
-                q = youbotarmmanager(8,obj.ptr);
-            else
-                error("");
-            end
+        function [q,dq,tau,mode] = GetStatus(obj)
+            [q,dq,tau,mode] = youbotarmmanager(9,obj.ptr);
         end
     end
 end
