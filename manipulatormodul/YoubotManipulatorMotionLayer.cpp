@@ -7,22 +7,8 @@
 
 using namespace youbot;
 
-std::string youbot::YoubotManipulatorMotionLayer::to_string(MotionType type) {
-  switch (type)
-  {
-  case youbot::YoubotManipulatorMotionLayer::INITIALIZATION:
-    return "INITIALIZATION";
-  case youbot::YoubotManipulatorMotionLayer::STOPPED:
-    return "STOPPED";
-  case youbot::YoubotManipulatorMotionLayer::CONSTANT_JOINTSPEED:
-    return "CONSTANT_JOINTSPEED";
-  default:
-    return "Conversion not implemented";
-  }
-}
-
 void youbot::YoubotManipulatorMotionLayer::Status::LogStatus() const {
-  log(Log::info, "Manipulator status: " + to_string(motion));
+  log(Log::info, "Manipulator status: " + ManipulatorTask::Type2String(motion));
   for (int i = 0; i < 5; i++) {
     log(Log::info, "Joint " + std::to_string(i) + ": q=" + std::to_string(joint[i].q.value) + "[rad] dq/dt="
       + std::to_string(joint[i].dq.value) + "[rad/s] tau="
@@ -66,25 +52,47 @@ Eigen::VectorXd youbot::YoubotManipulatorMotionLayer::GetTrueStatus() const {
   return out;
 }
 
-void youbot::YoubotManipulatorMotionLayer::ConstantJointSpeed(const Eigen::VectorXd& dq, double time_limit) {
-  motionStatus.store(CONSTANT_JOINTSPEED);
+void youbot::YoubotManipulatorMotionLayer::StopTask() {
+  stoptask = true;
+}
+
+// Tasks
+
+void youbot::YoubotManipulatorMotionLayer::DoTask(ManipulatorTask::Ptr task, double time_limit) {
+  motionStatus.store(task->GetType());
   taskrunning = true;
   auto start = std::chrono::steady_clock::now();
   int elapsed_ms;
   man->CheckAndResetErrorFlags();
-  man->ReqJointSpeedRadPerSec(dq[0], dq[1], dq[2], dq[3], dq[4]);
+  task->Initialize(man->GetStateLatest());
   do {
+    auto man_c = task->GetCommand(man->GetStateLatest());
+    switch (man_c.type) {
+    case ManipulatorCommand::JOINT_POSITION:
+      man->ReqJointPositionRad(man_c.value[0], man_c.value[1],
+        man_c.value[2], man_c.value[3], man_c.value[4]);
+      break;
+    case ManipulatorCommand::JOINT_VELOCITY:
+      man->ReqJointSpeedRadPerSec(man_c.value[0], man_c.value[1],
+        man_c.value[2], man_c.value[3], man_c.value[4]);
+      break;
+    case ManipulatorCommand::JOINT_TORQUE:
+      man->ReqJointTorqueNm(man_c.value[0], man_c.value[1],
+        man_c.value[2], man_c.value[3], man_c.value[4]);
+      break;
+      /*
+      case ManipulatorCommand::ENCODER_SET_REFERENCE:
+      man->Req(man_c.value[0], man_c.value[1],
+      man_c.value[2], man_c.value[3], man_c.value[4]);
+      break;*/
+    }
     center->ExchangeProcessMsg();
-    SLEEP_MILLISEC(10);
+    SLEEP_MILLISEC(10);// compute adaptively the remained time..
     elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
       std::chrono::steady_clock::now() - start).count();
-  } while (elapsed_ms < time_limit * 1000. && !stoptask);
+  } while (elapsed_ms < time_limit * 1000. && !stoptask && !task->Finished());
   taskrunning = false;
-  motionStatus.store(STOPPED);
-}
-
-void youbot::YoubotManipulatorMotionLayer::StopTask() {
-  stoptask = true;
+  motionStatus.store(ManipulatorTask::STOPPED);
 }
 
 bool youbot::YoubotManipulatorMotionLayer::IsRunning() const {
@@ -96,7 +104,7 @@ YoubotManipulatorMotionLayer::YoubotManipulatorMotionLayer(
  : configfilepath(configfilepath), virtual_(virtual_) {};
 
 void YoubotManipulatorMotionLayer::Initialize() {
-  motionStatus.store(INITIALIZATION);
+  motionStatus.store(ManipulatorTask::INITIALIZATION);
   // Get Configfile
   YoubotConfig config(configfilepath);
   // Initialize logger
@@ -122,5 +130,5 @@ void YoubotManipulatorMotionLayer::Initialize() {
     man = std::make_unique<YoubotManipulator>(config, center);
   man->InitializeManipulator();
   man->Calibrate();
-  motionStatus.store(STOPPED);
+  motionStatus.store(ManipulatorTask::STOPPED);
 }

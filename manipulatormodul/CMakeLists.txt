@@ -1,12 +1,16 @@
 
 set(SOURCES
-		YoubotManipulatorModul.cpp
+    YoubotManipulatorModul.cpp
     YoubotManipulatorMotionLayer.cpp
-	  )
+    ManipulatorTask.cpp
+    RawConstantJointSpeedTask.cpp
+)
 
 set(HEADERS
-		YoubotManipulatorModul.hpp
+    YoubotManipulatorModul.hpp
     YoubotManipulatorMotionLayer.hpp
+    ManipulatorTask.hpp
+    RawConstantJointSpeedTask.hpp
 )
 
 set(INTRINSIC_HEADERS

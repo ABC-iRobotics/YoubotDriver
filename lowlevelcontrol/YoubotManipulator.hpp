@@ -8,6 +8,13 @@
 
 namespace youbot {
 
+  struct JointsState {
+	struct JointState {
+	  Data<double> q, dq, tau;
+	  Data<YoubotJoint::JointStatus> status;
+	} joint[5];
+  };
+
   class YoubotManipulator {
   public:
 	// Unavailable constructors
@@ -53,14 +60,7 @@ namespace youbot {
 	void CheckI2tAndTimeoutErrorProcess(); // runs to error if it finds sg in process msgs
 	void LogStatusProcess();
 
-	struct State {
-	  struct Joint {
-		Data<double> q, dq, tau;
-		Data<YoubotJoint::JointStatus> status;
-	  } joint[5];
-	};
-
-	State GetStateLatest() const;;
+	JointsState GetStateLatest() const;;
 
   private:
 	const YoubotConfig config;

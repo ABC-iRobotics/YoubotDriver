@@ -4,6 +4,8 @@
 #include "YoubotManipulatorMotionLayer.hpp"
 #include <thread>
 
+#include "RawConstantJointSpeedTask.hpp"
+
 namespace youbot {
 
   class YoubotManipulatorModul {
@@ -32,10 +34,10 @@ namespace youbot {
       // Command based operation, checking stop...
       //while (!threadtostop) {
         Eigen::VectorXd dq(5);
-        dq << 0.1, 0.1, 0.1, 0.1, 0.1;
-        man->ConstantJointSpeed(dq,10);
-        // copy the commands
-        //std::vector<Command> saved_commands;
+        dq << 0.1, 0.1, -0.1, -0.1, 0.1;
+        ManipulatorTask::Ptr task = std::make_shared<RawConstantJointSpeedTask>(dq, 10);
+        man->DoTask(task, 5);
+        //man->ConstantJointSpeed(dq,10);
       //}
       threadrunning = false;
     }
