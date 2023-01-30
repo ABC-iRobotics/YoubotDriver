@@ -9,18 +9,18 @@ namespace youbot {
 
   class YoubotManipulatorMotionLayer {
   public:
+    // Not available constructors
+    YoubotManipulatorMotionLayer() = delete;
+    YoubotManipulatorMotionLayer(YoubotManipulatorMotionLayer&) = delete;
+    YoubotManipulatorMotionLayer(const YoubotManipulatorMotionLayer&) = delete;
+
     // Constructor
     YoubotManipulatorMotionLayer(const std::string& configfilepath, bool virtual_ = false);
 
     void Initialize();// Special task, that initializes the commutation and calibrate the robot arm
 
     typedef ManipulatorTask::TaskType TaskType;
-    struct Status {
-      struct Joint {
-        Data<double> q, dq, tau;
-        Data<YoubotJoint::JointStatus> status;
-        Joint() : status(0) {};
-      } joint[5];
+    struct Status : JointsState {
       TaskType motion;
       void LogStatus() const;
     }; // Can be constructed by getting atomic structs

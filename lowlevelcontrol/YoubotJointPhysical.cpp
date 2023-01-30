@@ -540,7 +540,7 @@ void YoubotJointPhysical::StopViaMailbox() {
   log(Log::info, " MotorStop: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
 }
 
-YoubotJointPhysical::JointStatus YoubotJointPhysical::GetJointStatusViaMailbox() {
+JointStatus YoubotJointPhysical::GetJointStatusViaMailbox() {
   auto ptr = GetErrorStatusFlag::InitSharedPtr(GetSlaveIndex());
   center->SendMessage_(ptr);
   auto status = ptr->GetReplyValue();

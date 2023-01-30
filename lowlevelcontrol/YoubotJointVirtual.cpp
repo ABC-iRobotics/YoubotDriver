@@ -55,7 +55,7 @@ unsigned int YoubotJointVirtual::GetEncoderResolutionViaMailbox() {
   return 4000;
 }
 
-YoubotJointVirtual::JointStatus YoubotJointVirtual::_getStatus() {
+JointStatus YoubotJointVirtual::_getStatus() {
   int32_t status = 0;
   if (timeout)
     status |= int32_t(JointStatus::StatusErrorFlags::TIMEOUT);
@@ -199,7 +199,7 @@ void YoubotJointVirtual::StopViaMailbox() {
   log(Log::info, " MotorStop");
 }
 
-YoubotJointVirtual::JointStatus YoubotJointVirtual::GetJointStatusViaMailbox() {
+JointStatus YoubotJointVirtual::GetJointStatusViaMailbox() {
   _update();
   auto status = _getStatus();
   statusLatest.exchange(status);

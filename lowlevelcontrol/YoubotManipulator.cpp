@@ -253,12 +253,8 @@ void youbot::YoubotManipulator::LogStatusProcess() {
 
 youbot::JointsState youbot::YoubotManipulator::GetStateLatest() const {
   JointsState out;
-  for (int i = 0; i < 5; i++) {
-	out.joint[i].q = joints[i]->GetQLatestRad();
-	out.joint[i].dq = joints[i]->GetDQLatestRad();
-	out.joint[i].tau = joints[i]->GetTauLatestNm();
-	out.joint[i].status = joints[i]->GetStatusLatest();
-  }
+  for (int i = 0; i < 5; i++)
+	out.joint[i] = joints[i]->GetLatestState();
   return out;
 }
 

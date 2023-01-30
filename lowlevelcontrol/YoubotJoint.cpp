@@ -62,79 +62,83 @@ void YoubotJoint::CollectBasicParameters() {
   parameters.intialized = true;
 }
 
-bool YoubotJoint::JointStatus::OverCurrent() const {
+JointState YoubotJoint::GetLatestState() const {
+  return JointState(GetQLatestRad(), GetDQLatestRad(), GetTauLatestNm(), statusLatest);
+}
+
+bool JointStatus::OverCurrent() const {
   return value & (uint32_t)StatusErrorFlags::OVER_CURRENT;
 }
 
-bool YoubotJoint::JointStatus::UnderVoltage() const {
+bool JointStatus::UnderVoltage() const {
   return value & (uint32_t)StatusErrorFlags::UNDER_VOLTAGE;
 };
 
-bool YoubotJoint::JointStatus::OverVoltage() const {
+bool JointStatus::OverVoltage() const {
   return value & (uint32_t)StatusErrorFlags::OVER_VOLTAGE;
 };
 
-bool YoubotJoint::JointStatus::OverTemperature() const {
+bool JointStatus::OverTemperature() const {
   return value & (uint32_t)StatusErrorFlags::OVER_TEMPERATURE;
 };
 
-bool YoubotJoint::JointStatus::MotorHalted() const {
+bool JointStatus::MotorHalted() const {
   return value & (uint32_t)StatusErrorFlags::MOTOR_HALTED;
 };
 
-bool YoubotJoint::JointStatus::HallSensorError() const {
+bool JointStatus::HallSensorError() const {
   return value & (uint32_t)StatusErrorFlags::HALL_SENSOR_ERROR;
 };
 
-bool YoubotJoint::JointStatus::EncoderError() const {
+bool JointStatus::EncoderError() const {
   return value & (uint32_t)StatusErrorFlags::ENCODER_ERROR;
 };
 
-bool YoubotJoint::JointStatus::InitializationError() const {
+bool JointStatus::InitializationError() const {
   return value & (uint32_t)StatusErrorFlags::INITIALIZATION_ERROR;
 };
 
-bool YoubotJoint::JointStatus::PWMMode() const {
+bool JointStatus::PWMMode() const {
   return value & (uint32_t)StatusErrorFlags::PWM_MODE_ACTIVE;
 };
 
-bool YoubotJoint::JointStatus::VelocityMode() const {
+bool JointStatus::VelocityMode() const {
   return value & (uint32_t)StatusErrorFlags::VELOCITY_MODE_ACTIVE;
 };
 
-bool YoubotJoint::JointStatus::PositionMode() const {
+bool JointStatus::PositionMode() const {
   return value & (uint32_t)StatusErrorFlags::POSITION_MODE_ACTIVE;
 };
 
-bool YoubotJoint::JointStatus::TorqueMode() const {
+bool JointStatus::TorqueMode() const {
   return value & (uint32_t)StatusErrorFlags::TORQUE_MODE_ACTIVE;
 };
 
-bool YoubotJoint::JointStatus::EmergencyStop() const {
+bool JointStatus::EmergencyStop() const {
   return value & (uint32_t)StatusErrorFlags::EMERGENCY_STOP;
 };
 
-bool YoubotJoint::JointStatus::FreeRunning() const {
+bool JointStatus::FreeRunning() const {
   return value & (uint32_t)StatusErrorFlags::FREERUNNING;
 };
 
-bool YoubotJoint::JointStatus::PositionReached() const {
+bool JointStatus::PositionReached() const {
   return value & (uint32_t)StatusErrorFlags::POSITION_REACHED;
 };
 
-bool YoubotJoint::JointStatus::Initialized() const {
+bool JointStatus::Initialized() const {
   return value & (uint32_t)StatusErrorFlags::INITIALIZED;
 };
 
-bool YoubotJoint::JointStatus::Timeout() const {
+bool JointStatus::Timeout() const {
   return value & (uint32_t)StatusErrorFlags::TIMEOUT;
 };
 
-bool YoubotJoint::JointStatus::I2TExceeded() const {
+bool JointStatus::I2TExceeded() const {
   return value & (uint32_t)StatusErrorFlags::I2T_EXCEEDED;
 };
 
-std::string YoubotJoint::JointStatus::toString() const {
+std::string JointStatus::toString() const {
   std::stringstream ss;
   if (OverCurrent())
     ss <<  " OVER_CURRENT";
@@ -227,7 +231,7 @@ Data<int32_t> youbot::YoubotJoint::GetMALatest() const {
   return mALatest.load();
 }
 
-Data<youbot::YoubotJoint::JointStatus> youbot::YoubotJoint::GetStatusLatest() const {
+Data<youbot::JointStatus> youbot::YoubotJoint::GetStatusLatest() const {
   return statusLatest.load();
 }
 
@@ -315,5 +319,10 @@ double youbot::YoubotJoint::mA2Nm(int32_t mA) const {
 int32_t youbot::YoubotJoint::Nm2mA(double Nm) const {
   return int32_t(Nm / parameters.torqueconstantNmPerA * 1000.);
 }
+
+JointState::JointState() {};
+JointState::JointState(const Data<double>& q, const Data<double>& dq,
+  const Data<double>& tau, const Data<JointStatus>& status) :
+  q(q), dq(dq), tau(tau), status(status) {};
 
 static std::chrono::steady_clock::time_point started_at = std::chrono::steady_clock::now() - std::chrono::minutes(1);

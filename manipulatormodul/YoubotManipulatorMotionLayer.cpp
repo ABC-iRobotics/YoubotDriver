@@ -22,12 +22,8 @@ youbot::YoubotManipulatorMotionLayer::Status youbot::YoubotManipulatorMotionLaye
   if (man)
     for (int i = 0; i < 5; i++) {
       auto j = man->GetJoint(i);
-      if (j) {
-        status.joint[i].q = j->GetQLatestRad();
-        status.joint[i].dq = j->GetDQLatestRad();
-        status.joint[i].tau = j->GetTauLatestNm();
-        status.joint[i].status = j->GetStatusLatest();
-      }
+      if (j)
+        status.joint[i] = j->GetLatestState();
     }
   status.motion = motionStatus.load();
   return status;

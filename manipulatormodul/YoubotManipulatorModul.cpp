@@ -66,10 +66,9 @@ void YoubotManipulatorModul::_thread(const std::string& configfilepath, bool vir
         new_man_task_ = new_man_task;
         new_man_task = {};
       }
-      if (new_man_task_.ptr != nullptr)
-        man->DoTask(new_man_task_.ptr, new_man_task_.time_limit);
-      else
-        man->DoTask(idle_ptr, 0.1);
+      if (new_man_task_.ptr == nullptr)
+        new_man_task_ = { idle_ptr, 0.1 };
+      man->DoTask(new_man_task_.ptr, new_man_task_.time_limit);
     }
   }
   catch (const std::runtime_error& error) {

@@ -9,10 +9,7 @@
 namespace youbot {
 
   struct JointsState {
-	struct JointState {
-	  Data<double> q, dq, tau;
-	  Data<YoubotJoint::JointStatus> status;
-	} joint[5];
+	JointState joint[5];
   };
 
   class YoubotManipulator {
