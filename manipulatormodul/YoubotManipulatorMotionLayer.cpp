@@ -108,6 +108,7 @@ void YoubotManipulatorMotionLayer::Initialize() {
   motionStatus.store(ManipulatorTask::INITIALIZATION);
   // Get Configfile
   YoubotConfig config(configfilepath);
+  config.Init();
   // Initialize logger
   Log::Setup(config.logConfig);
   // Initialize etherCAT bus
