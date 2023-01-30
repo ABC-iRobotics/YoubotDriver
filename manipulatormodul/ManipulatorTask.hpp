@@ -27,6 +27,7 @@ namespace youbot {
   class ManipulatorTask {
   public:
     enum TaskType {
+      NOT_DEFINED,
       INITIALIZATION,
       STOPPED,
       RAW_CONSTANT_JOINTSPEED // currently these types are defined
