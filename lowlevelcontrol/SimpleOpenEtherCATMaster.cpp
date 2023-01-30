@@ -25,7 +25,7 @@ SimpleOpenEtherCATMaster::Type SimpleOpenEtherCATMaster::GetType() const {
   return Type::PHYSICAL;
 }
 
-youbot::intrinsic::SimpleOpenEtherCATMaster::SimpleOpenEtherCATMaster(const std::string& adapterName) {
+void youbot::intrinsic::SimpleOpenEtherCATMaster::Init() {
   if (exist) {
     log(__PRETTY_FUNCTION__, Log::fatal, "SimpleOpenEtherCATMaster is already opened.");
     throw std::runtime_error("Already opened.");

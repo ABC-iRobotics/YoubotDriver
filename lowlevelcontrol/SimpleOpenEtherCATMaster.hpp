@@ -40,8 +40,12 @@ namespace youbot {
 
       char IOmap_[4096] = { 0 }; // used by soem
 
+      const std::string adapterName;
+
     public:
-      SimpleOpenEtherCATMaster(const std::string& adapterName);;
+      SimpleOpenEtherCATMaster(const std::string& adapterName) :adapterName(adapterName) {};
+
+      void Init();
 
       ~SimpleOpenEtherCATMaster();
 

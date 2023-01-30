@@ -8,7 +8,9 @@ using namespace youbot;
 using namespace youbot::intrinsic;
 
 EtherCATMaster::Ptr EtherCATMaster::CreatePhysical(const std::string& adapterName) {
-  return std::make_shared<SimpleOpenEtherCATMaster>(adapterName);
+  auto ptr = std::make_shared<SimpleOpenEtherCATMaster>(adapterName);
+  ptr->Init();
+  return ptr;
 }
 
 EtherCATMaster::Ptr EtherCATMaster::CreateVirtual() {

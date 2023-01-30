@@ -58,16 +58,17 @@ void youbot::YoubotJointPhysical::_loadExchangeDataFromBuffer() {
   UpwmLatest.exchange(PWM);
 }
 
-YoubotJointPhysical::YoubotJointPhysical(int slaveIndex, const std::map<std::string,
-  double>& config, EtherCATMaster::Ptr center)
-    : YoubotJoint(slaveIndex, config, center) {
+YoubotJointPhysical::YoubotJointPhysical(int slaveIndex, const std::map<std::string, double>& config, EtherCATMaster::Ptr center)
+  : YoubotJoint(slaveIndex, config, center) {};
+
+void YoubotJointPhysical::Init() {
   // Check if there is sg like the motor driver on the ethercat bus
-  if (slaveIndex >= center->getSlaveNum())
-    throw std::runtime_error("Slave index " + std::to_string(slaveIndex) + " not found");
-  if (center->getSlaveName(slaveIndex).compare("TMCM-1610") != 0)
-    throw std::runtime_error("Unknown module name " + center->getSlaveName(slaveIndex));
+  if (GetSlaveIndex() >= center->getSlaveNum())
+    throw std::runtime_error("Slave index " + std::to_string(GetSlaveIndex()) + " not found");
+  if (center->getSlaveName(GetSlaveIndex()).compare("TMCM-1610") != 0)
+    throw std::runtime_error("Unknown module name " + center->getSlaveName(GetSlaveIndex()));
   // Set buffer size
-  center->SetProcessFromSlaveSize(20, slaveIndex);
+  center->SetProcessFromSlaveSize(20, GetSlaveIndex());
   center->RegisterAfterExchangeCallback(std::bind(&YoubotJointPhysical::_loadExchangeDataFromBuffer, this));
 }
 

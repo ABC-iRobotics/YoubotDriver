@@ -14,7 +14,10 @@ namespace youbot {
     YoubotJointPhysical(YoubotJointPhysical&) = delete;
     YoubotJointPhysical(const YoubotJointPhysical&) = delete;
 
-    YoubotJointPhysical(int slaveIndex, const std::map<std::string, double>& config, EtherCATMaster::Ptr center);
+    YoubotJointPhysical(int slaveIndex, const std::map<std::string, double>& config,
+      EtherCATMaster::Ptr center);
+
+    void Init();
 
     void ConfigControlParameters(bool forceConfiguration = false) override;
     bool CheckControlParameters() override;
