@@ -46,6 +46,16 @@ namespace youbot {
     bool started = false; // set by initialize
     std::chrono::steady_clock::time_point started_at; // set by initialize
   };
+  
+  class IdleManipulatorTask : public ManipulatorTask {
+  public:
+    ManipulatorCommand GetCommand(const JointsState& new_state) override;
+
+    TaskType GetType() const override;
+
+  protected:
+    bool _taskFinished() const override;
+  };
 }
 #endif
 

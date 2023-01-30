@@ -3,7 +3,6 @@
 
 using namespace youbot;
 
-
 std::string youbot::ManipulatorTask::Type2String(TaskType type) {
   switch (type)
   {
@@ -33,4 +32,18 @@ bool youbot::ManipulatorTask::Finished() const {
   if (!started)
     return false;
   return _taskFinished();
+}
+
+ManipulatorCommand IdleManipulatorTask::GetCommand(const JointsState& new_state) {
+  Eigen::VectorXd dq(5);
+  dq << 0, 0, 0, 0, 0;
+  return ManipulatorCommand(ManipulatorCommand::JOINT_VELOCITY, dq);
+}
+
+ManipulatorTask::TaskType IdleManipulatorTask::GetType() const {
+  return ManipulatorTask::STOPPED;
+}
+
+bool IdleManipulatorTask::_taskFinished() const {
+  return false;
 }
