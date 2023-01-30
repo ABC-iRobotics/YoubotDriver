@@ -59,6 +59,7 @@ void youbot::YoubotManipulatorMotionLayer::StopTask() {
 // Tasks
 
 void youbot::YoubotManipulatorMotionLayer::DoTask(ManipulatorTask::Ptr task, double time_limit) {
+  stoptask = false;
   motionStatus.store(task->GetType());
   taskrunning = true;
   auto start = std::chrono::steady_clock::now();
