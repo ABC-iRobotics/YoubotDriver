@@ -112,7 +112,7 @@ namespace youbot {
     void ReqInitializationViaProcess() override;
     void CheckI2tAndTimeoutError(JointStatus status) override;
 
-    // Cheat funciton
+    // Cheat function
     double GetJointPositionTRUE() const;
   };
 }
