@@ -42,6 +42,13 @@ classdef YoubotManager < handle
             youbotarmmanager(6,obj.ptr,dqDegPsec,1,tlimit);
         end
         
+        function FreeDrive(obj,T)
+            if nargin<2
+                T = 10000;
+            end
+            youbotarmmanager(6,obj.ptr,0,2,T);
+        end
+        
         function q = GetTrueJointAngles(obj)
             q = youbotarmmanager(8,obj.ptr);
         end

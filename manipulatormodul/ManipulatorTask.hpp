@@ -30,6 +30,7 @@ namespace youbot {
       NOT_DEFINED,
       INITIALIZATION,
       STOPPED,
+      ZERO_CURRENT,
       RAW_CONSTANT_JOINTSPEED // currently these types are defined
     };
     static std::string Type2String(TaskType type);
@@ -54,6 +55,16 @@ namespace youbot {
   };
   
   class IdleManipulatorTask : public ManipulatorTask {
+  public:
+    ManipulatorCommand GetCommand(const JointsState& new_state) override;
+
+    TaskType GetType() const override;
+
+  protected:
+    bool _taskFinished() const override;
+  };
+
+  class ZeroCurrentManipulatorTask : public ManipulatorTask {
   public:
     ManipulatorCommand GetCommand(const JointsState& new_state) override;
 

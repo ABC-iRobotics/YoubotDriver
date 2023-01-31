@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
   //youBotArmConfig_fromMoveIt.json");
   //youBotArmConfig_fromKeisler.json");
 
-  YoubotManipulatorModul modul(configpath, true);
+  YoubotManipulatorModul modul(configpath, false);
 
   modul.StartThreadAndInitialize();
 
@@ -28,7 +28,11 @@ int main(int argc, char *argv[])
   Eigen::VectorXd dq(5);
   dq << 0.1, 0.1, -0.1, -0.1, 0.1;
   ManipulatorTask::Ptr task = std::make_shared<RawConstantJointSpeedTask>(dq, 10);
-  modul.NewManipulatorTask(task, 5);
+  //modul.NewManipulatorTask(task, 5);
+
+  ManipulatorTask::Ptr task2 = std::make_shared<ZeroCurrentManipulatorTask>();
+  modul.NewManipulatorTask(task2, 50);
+  
 
   // Lets see what's happening
   for (int i = 0; i < 700; i++) {

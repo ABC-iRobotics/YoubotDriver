@@ -102,6 +102,9 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
       case 1:
         task = std::make_shared<RawConstantJointSpeedTask>(param / 180. * M_PI, tlimit);
         break;
+      case 2:
+        task = std::make_shared<ZeroCurrentManipulatorTask>();
+        break;
       }
       modul->NewManipulatorTask(task, tlimit);
       return;

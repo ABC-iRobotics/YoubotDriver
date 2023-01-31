@@ -47,3 +47,17 @@ ManipulatorTask::TaskType IdleManipulatorTask::GetType() const {
 bool IdleManipulatorTask::_taskFinished() const {
   return false;
 }
+
+ManipulatorCommand ZeroCurrentManipulatorTask::GetCommand(const JointsState& new_state) {
+  Eigen::VectorXd tau(5);
+  tau << 0, 0, 0, 0, 0;
+  return ManipulatorCommand(ManipulatorCommand::JOINT_TORQUE, tau);
+}
+
+ManipulatorTask::TaskType ZeroCurrentManipulatorTask::GetType() const {
+  return ManipulatorTask::ZERO_CURRENT;
+}
+
+bool ZeroCurrentManipulatorTask::_taskFinished() const {
+  return false;
+}
