@@ -35,7 +35,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
         mexErrMsgTxt("Delete: Zero output expected.");
       char input_buf[5000];
       mxGetString(prhs[1], input_buf, 5000);
-      bool isvirtual = mxGetPr(prhs[2]) > 0;
+      bool isvirtual = *mxGetPr(prhs[2]) > 0;
       auto modul = new YoubotManipulatorModul(input_buf, isvirtual);
 
       // Return a handle to a new C++ instance
