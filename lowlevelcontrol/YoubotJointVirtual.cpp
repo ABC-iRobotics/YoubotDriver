@@ -55,6 +55,10 @@ unsigned int YoubotJointVirtual::GetEncoderResolutionViaMailbox() {
   return 4000;
 }
 
+std::string youbot::YoubotJointVirtual::GetCommutationModeViaMailbox() {
+    return "virtual";
+}
+
 JointStatus YoubotJointVirtual::_getStatus() {
   int32_t status = 0;
   if (timeout)

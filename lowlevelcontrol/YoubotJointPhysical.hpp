@@ -46,6 +46,7 @@ namespace youbot {
     void GetFirmwareVersionViaMailbox(int& controllernum,
       int& firmwareversion) override;
     unsigned int GetEncoderResolutionViaMailbox() override;
+    std::string GetCommutationModeViaMailbox() override;
 
     // Process message-based req/get methods will be sent with the next ExcangeMessage/show the results of the latest one
     void ReqStop() override;

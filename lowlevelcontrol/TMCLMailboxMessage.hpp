@@ -86,6 +86,9 @@ namespace youbot {
     typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
       TMCL::AxisParam::ACTUAL_POSITION> GetPosition;
 
+    typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::GAP,
+      TMCL::AxisParam::COMMUTATION_MODE> GetCommutationMode;
+
     typedef TMCLTemplate<uint32_t, TMCL::Module::DRIVE, TMCL::Cmd::SAP,
       TMCL::AxisParam::ACTUAL_POSITION, 10000> SetEncoder;
 

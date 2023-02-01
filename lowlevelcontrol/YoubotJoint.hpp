@@ -77,6 +77,7 @@ namespace youbot {
   class YoubotJoint {
   public:
     struct Parameters {
+      std::string commutationmode;
       uint32_t ticksperround;
       int firmwareversion, controllerNum;
       double cooldowntime_sec;
@@ -142,6 +143,7 @@ namespace youbot {
     virtual void GetFirmwareVersionViaMailbox(int& controllernum,
       int& firmwareversion) = 0;
     virtual unsigned int GetEncoderResolutionViaMailbox() = 0;
+    virtual std::string GetCommutationModeViaMailbox() = 0;
 
     // Process message-based req/get methods will be sent with the next ExcangeMessage/show the results of the latest one
     virtual void ReqStop() = 0;

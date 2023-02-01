@@ -39,6 +39,16 @@ unsigned int YoubotJointPhysical::GetEncoderResolutionViaMailbox() {
   return out;
 }
 
+std::string YoubotJointPhysical::GetCommutationModeViaMailbox() {
+  auto ptr = GetCommutationMode::InitSharedPtr(GetSlaveIndex());
+  center->SendMessage_(ptr);
+  auto out = TMCL::CommutationMode2string((TMCL::CommutationMode)ptr->GetReplyValue());
+  log(Log::info, "Get commutation mode of joint " + std::to_string(GetSlaveIndex()) +
+    " GetCommutationModeViaMailbox: " + out + " (" +
+    TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
+  return out;
+}
+
 int32_t _toInt32(uint8_t* buff) {
   return buff[3] << 24 | buff[2] << 16 | buff[1] << 8 | buff[0];
 }

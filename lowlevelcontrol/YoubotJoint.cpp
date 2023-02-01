@@ -33,6 +33,8 @@ void YoubotJoint::CollectBasicParameters() {
   GetFirmwareVersionViaMailbox(parameters.controllerNum, parameters.firmwareversion);
   // GetTickPerRounds
   parameters.ticksperround = GetEncoderResolutionViaMailbox();
+  // GetCommutationMode
+  parameters.commutationmode = GetCommutationModeViaMailbox();
   // Get cooldowntime_sec
   parameters.cooldowntime_sec = GetThermalWindingTimeSecViaMailbox();
   // Get other values from the config

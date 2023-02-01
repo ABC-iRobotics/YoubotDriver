@@ -150,9 +150,16 @@ namespace youbot {
 
 	  std::string ControllerModeToString(ControllerMode mode);
 
+	  enum class CommutationMode : uint8_t {
+		BLOCK_BASED_ON_HALL = 0,
+		SENSORLESS_BLOCK = 1,
+		SINE_BASED_ON_HALL = 2,
+		SINE_BASED_ON_ENCODER = 3,
+		CONTROLLED_BLOCK = 4,
+		CONTROLLED_SINE = 5
+	  };
+	  std::string CommutationMode2string(CommutationMode mode);
 	  /*
-
-
 	  enum GripperErrorFlags {
 		STALL_GUARD_STATUS = 0x1,
 		GRIPPER_OVER_TEMPERATURE = 0x2,

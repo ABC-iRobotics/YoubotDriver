@@ -81,3 +81,23 @@ std::string TMCL::ControllerModeToString(ControllerMode mode) {
   }
   return "NOT_EXPECTED_INPUT";
 }
+
+std::string youbot::intrinsic::TMCL::CommutationMode2string(CommutationMode mode) {
+	switch (mode)
+	{
+	case youbot::intrinsic::TMCL::CommutationMode::BLOCK_BASED_ON_HALL:
+		return "BLOCK_BASED_ON_HALL";
+	case youbot::intrinsic::TMCL::CommutationMode::SENSORLESS_BLOCK:
+		return "SENSORLESS_BLOCK";
+	case youbot::intrinsic::TMCL::CommutationMode::SINE_BASED_ON_HALL:
+		return "SINE_BASED_ON_HALL";
+	case youbot::intrinsic::TMCL::CommutationMode::SINE_BASED_ON_ENCODER:
+		return "SINE_BASED_ON_ENCODER";
+	case youbot::intrinsic::TMCL::CommutationMode::CONTROLLED_BLOCK:
+		return "CONTROLLED_BLOCK";
+	case youbot::intrinsic::TMCL::CommutationMode::CONTROLLED_SINE:
+		return "CONTROLLED_SINE";
+	default:
+		return "not assumed commutation mode";
+	}
+}
