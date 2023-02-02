@@ -80,9 +80,9 @@ classdef youbotplotter < handle
             T = T*HRoty(q(3))*Tran([0;0;0.135]);
             p3 = T(1:4,4);
 
-            a_ = [0 0; 0 -0.05; 0 0; 1 1];
+            a_ = [0 0; 0 0.05; 0 0; 1 1];
             l{4} = T*a_;
-            T = T*HRoty(-q(4))*Tran([0;0;0.1]);
+            T = T*HRoty(q(4))*Tran([0;0;0.1]);
             p4 = T(1:4,4);
 
             T = T*HRotz(q(5));
