@@ -17,6 +17,55 @@ void youbot::YoubotManipulatorMotionLayer::Status::LogStatus() const {
   }
 }
 
+void youbot::YoubotManipulatorMotionLayer::_SoftLimit(
+  ManipulatorCommand& cmd, const JointsState& status) const {
+  static double limitZoneDeg = 4;
+  static double corrjointspeed = 0.03;
+  static double limitZoneRad = limitZoneDeg / 180 * M_PI;
+  for (int i = 0; i < 5; i++) {
+    auto q = status.joint[i].q.value;
+    auto p = man->GetJoint(i)->GetParameters();
+    auto qmin_lim = p.qMinDeg / 180 * M_PI + limitZoneRad;
+    auto qmax_lim = p.qMaxDeg / 180 * M_PI - limitZoneRad;
+    if (q < qmin_lim) {
+      switch (cmd.type) {
+      case cmd.JOINT_POSITION:
+        if (cmd.value(i) < qmin_lim)
+          cmd.value(i) = qmin_lim;
+        break;
+      case cmd.JOINT_VELOCITY:
+        if (cmd.value(i) < corrjointspeed)
+          cmd.value(i) = corrjointspeed;
+        break;
+      case cmd.JOINT_TORQUE:
+        if (cmd.value(i) < 0)
+          cmd.value(i) = 0;
+        break;
+      default:
+        break;
+      }
+    }
+    if (q > qmax_lim) {
+      switch (cmd.type) {
+      case cmd.JOINT_POSITION:
+        if (cmd.value(i) > qmax_lim)
+          cmd.value(i) = qmax_lim;
+        break;
+      case cmd.JOINT_VELOCITY:
+        if (cmd.value(i) > -corrjointspeed)
+          cmd.value(i) = -corrjointspeed;
+        break;
+      case cmd.JOINT_TORQUE:
+        if (cmd.value(i) > 0)
+          cmd.value(i) = 0;
+        break;
+      default:
+        break;
+      }
+    }
+  }
+}
+
 youbot::YoubotManipulatorMotionLayer::Status youbot::YoubotManipulatorMotionLayer::GetStatus() {
   Status status;
   if (man)
