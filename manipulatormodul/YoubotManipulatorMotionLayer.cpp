@@ -22,7 +22,7 @@ youbot::YoubotManipulatorMotionLayer::Status youbot::YoubotManipulatorMotionLaye
   if (man)
     for (int i = 0; i < 5; i++) {
       auto j = man->GetJoint(i);
-      if (j)
+      if (j != nullptr)
         status.joint[i] = j->GetLatestState();
     }
   status.motion = motionStatus.load();
@@ -30,20 +30,19 @@ youbot::YoubotManipulatorMotionLayer::Status youbot::YoubotManipulatorMotionLaye
 }
 
 Eigen::VectorXd youbot::YoubotManipulatorMotionLayer::GetTrueStatus() const {
-  Eigen::VectorXd out(5);
-  if (center->GetType() == EtherCATMaster::VIRTUAL) {
-    out[0] = std::dynamic_pointer_cast<YoubotJointVirtual>(man->GetJoint(0))->GetJointPositionTRUE();
-    out[1] = std::dynamic_pointer_cast<YoubotJointVirtual>(man->GetJoint(1))->GetJointPositionTRUE();
-    out[2] = std::dynamic_pointer_cast<YoubotJointVirtual>(man->GetJoint(2))->GetJointPositionTRUE();
-    out[3] = std::dynamic_pointer_cast<YoubotJointVirtual>(man->GetJoint(3))->GetJointPositionTRUE();
-    out[4] = std::dynamic_pointer_cast<YoubotJointVirtual>(man->GetJoint(4))->GetJointPositionTRUE();
-  }
-  else {
-    out[0] = man->GetJoint(0)->GetQLatestRad().value;
-    out[1] = man->GetJoint(1)->GetQLatestRad().value;
-    out[2] = man->GetJoint(2)->GetQLatestRad().value;
-    out[3] = man->GetJoint(3)->GetQLatestRad().value;
-    out[4] = man->GetJoint(4)->GetQLatestRad().value;
+  Eigen::VectorXd out = Eigen::VectorXd::Zero(5);
+  if (center != nullptr && man!=nullptr) {
+    if (center->GetType() == EtherCATMaster::VIRTUAL) {
+      for (int i=0;i<5;i++)
+        if (man->GetJoint(i) != nullptr)
+          out[i] = std::dynamic_pointer_cast<YoubotJointVirtual>(
+            man->GetJoint(i))->GetJointPositionTRUE();
+    }
+    else {
+      for (int i = 0; i < 5; i++)
+        if (man->GetJoint(i) != nullptr)
+          out[i] = man->GetJoint(i)->GetQLatestRad().value;
+    }
   }
   return out;
 }
