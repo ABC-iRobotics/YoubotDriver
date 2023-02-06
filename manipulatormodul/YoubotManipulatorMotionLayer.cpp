@@ -62,7 +62,9 @@ void youbot::YoubotManipulatorMotionLayer::DoTask(ManipulatorTask::Ptr task, dou
   man->CheckAndResetErrorFlags();
   task->Initialize(man->GetStateLatest());
   do {
-    auto man_c = task->GetCommand(man->GetStateLatest());
+    auto stateLatest = man->GetStateLatest();
+    auto man_c = task->GetCommand(stateLatest);
+    _SoftLimit(man_c, stateLatest); // apply soft limit
     switch (man_c.type) {
     case ManipulatorCommand::JOINT_POSITION:
       man->ReqJointPositionRad(man_c.value[0], man_c.value[1],
