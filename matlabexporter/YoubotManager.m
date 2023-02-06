@@ -107,17 +107,17 @@ classdef YoubotManager < handle
             % Plot the base
             alpha = atan(40/87);
             phi = (-pi+alpha):0.1:(pi-alpha);
-            plot3(0.087*cos(phi),0.087*sin(phi),0*phi,'k-'); hold on;
+            plot3(0.087*cos(phi),0.087*sin(phi),0*phi,'k-','linewidth',3); hold on;grid on
             axis equal;
             box off
             % bar of the base
             x = [0 -0.02 -0.02 0];
             y = [0.04 0.04 -0.04 -0.04];
-            plot3(x+0.087*cos(pi-alpha),y,x*0,'k-')
+            plot3(x+0.087*cos(pi-alpha),y,x*0,'k-','linewidth',3)
             % base frame
-            plot3([0 0.2],[0,0],[0,0],'r-')
-            plot3([0 0],[0,0.2],[0,0],'g-')
-            plot3([0 0],[0,0],[0,0.2],'b-')
+            plot3([0 0.2],[0,0],[0,0],'r-','linewidth',3)
+            plot3([0 0],[0,0.2],[0,0],'g-','linewidth',3)
+            plot3([0 0],[0,0],[0,0.2],'b-','linewidth',3)
 
             zlim([-0.05,0.8]);
             xlim([-0.4,0.4]);
