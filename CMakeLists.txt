@@ -101,7 +101,7 @@ add_subdirectory(manipulatormodul)
 add_subdirectory(tester)
 add_subdirectory(modultester)
 add_subdirectory(matlabexporter)
-#add_subdirectory(oldshit)
+#add_subdirectory(old)
 
 ## ---------------------------------------------------------------------------------
 ## Additional install methods
