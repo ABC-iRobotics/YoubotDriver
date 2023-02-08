@@ -70,16 +70,16 @@ set(HEADERS
     FourSwedishWheelOmniBaseKinematicConfiguration.hpp
 )
 
-add_executable(oldshit ${SOURCES} ${HEADERS})
+add_executable(old ${SOURCES} ${HEADERS})
 
-target_link_libraries(oldshit soem Boost::thread Boost::date_time
+target_link_libraries(old soem Boost::thread Boost::date_time
   Boost::filesystem Boost::system Boost::regex)
 
-target_include_directories(oldshit PUBLIC ${Boost_INCLUDE_DIRS})
+target_include_directories(old PUBLIC ${Boost_INCLUDE_DIRS})
 
-set_target_properties(oldshit PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(old PROPERTIES LINKER_LANGUAGE CXX)
 
-target_compile_definitions(oldshit PUBLIC
+target_compile_definitions(old PUBLIC
   __STDC_LIMIT_MACROS
   __STDC_WANT_SECURE_LIB__=1
   _USE_MATH_DEFINES
