@@ -9,13 +9,6 @@
 namespace youbot {
 
   /// <summary>
-  /// Describes the state of the 5 joints
-  /// </summary>
-  struct JointsState {
-	JointState joint[5];
-  };
-
-  /// <summary>
   /// Class to cover the low-level functionality (initialization and communication) of the youbot manipulator arm
   /// 
   /// Currently only the 5 joints

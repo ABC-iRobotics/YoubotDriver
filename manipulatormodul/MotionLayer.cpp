@@ -1,4 +1,4 @@
-#include "Module.hpp"
+#include "Manager.hpp"
 #include "adapters.hpp"
 #include "JointVirtual.hpp"
 #include <stdexcept>
@@ -96,13 +96,13 @@ Eigen::VectorXd youbot::MotionLayer::GetTrueStatus() const {
   return out;
 }
 
-void youbot::MotionLayer::StopTask() {
+void youbot::MotionLayer::StopManipulatorTask() {
   stoptask = true;
 }
 
 // Tasks
 
-void youbot::MotionLayer::DoTask(ManipulatorTask::Ptr task, double time_limit) {
+void youbot::MotionLayer::DoManipulatorTask(ManipulatorTask::Ptr task, double time_limit) {
   stoptask = false;
   motionStatus.store(task->GetType());
   taskrunning = true;
@@ -142,7 +142,7 @@ void youbot::MotionLayer::DoTask(ManipulatorTask::Ptr task, double time_limit) {
   motionStatus.store(ManipulatorTask::STOPPED);
 }
 
-bool youbot::MotionLayer::IsRunning() const {
+bool youbot::MotionLayer::IsManipulatorTaskRunning() const {
   return taskrunning;
 }
 

@@ -1,13 +1,13 @@
 
 set(SOURCES
-    Module.cpp
+    Manager.cpp
     MotionLayer.cpp
     ManipulatorTask.cpp
     RawConstantJointSpeedTask.cpp
 )
 
 set(HEADERS
-    Module.hpp
+    Manager.hpp
     MotionLayer.hpp
     ManipulatorTask.hpp
     RawConstantJointSpeedTask.hpp

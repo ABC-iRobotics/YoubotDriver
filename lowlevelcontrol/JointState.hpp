@@ -89,5 +89,12 @@ namespace youbot {
     JointState(const Data<double>& q, const Data<double>& dq,
       const Data<double>& tau, const Data<JointStatus>& status);
   };
+
+  /// <summary>
+  /// Describes the state of the 5 joints
+  /// </summary>
+  struct JointsState {
+    JointState joint[5];
+  };
 }
 #endif

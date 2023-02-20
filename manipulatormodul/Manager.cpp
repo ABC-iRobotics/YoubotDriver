@@ -1,31 +1,31 @@
-#include "Module.hpp"
+#include "Manager.hpp"
 #include <stdexcept>
 #include "Logger.hpp"
 #include "Time.hpp"
 
 using namespace youbot;
 
-youbot::MotionLayer::Status youbot::Module::GetStatus() const {
+youbot::MotionLayer::Status youbot::Manager::GetStatus() const {
   if (man != nullptr)
 	return man->GetStatus();
   else
 	return {};
 }
 
-Module::~Module() {
+Manager::~Manager() {
   if (threadrunning)
     StopThread(false);
 }
 
-void Module::StartThreadAndInitialize() {
+void Manager::StartThreadAndInitialize() {
   threadrunning = true;
   t = std::thread([this] { _thread(configfilepath, virtual_); });
   t.detach();
 }
 
-void Module::StopThread(bool waitin) {
+void Manager::StopThread(bool waitin) {
   if (threadrunning) {
-    man->StopTask();
+    man->StopManipulatorTask();
     threadtostop = true;
     if (waitin) {
       do {
@@ -35,26 +35,26 @@ void Module::StopThread(bool waitin) {
   }
 }
 
-Eigen::VectorXd youbot::Module::GetTrueStatus() const {
+Eigen::VectorXd youbot::Manager::GetTrueStatus() const {
   if (man != nullptr)
     return man->GetTrueStatus();
   else
     return Eigen::VectorXd(5);
 }
 
-youbot::Module::Module(
+youbot::Manager::Manager(
   const std::string& configfilepath, bool virtual_)
   : configfilepath(configfilepath), virtual_(virtual_) {}
 
-void Module::NewManipulatorTask(ManipulatorTask::Ptr task, double time_limit) {
+void Manager::NewManipulatorTask(ManipulatorTask::Ptr task, double time_limit) {
   std::lock_guard<std::mutex> guard(new_task_mutex);
   new_man_task = { task, time_limit };
   if (man != nullptr)
-    man->StopTask();
+    man->StopManipulatorTask();
 }
 
 #include <iostream>
-void Module::_thread(const std::string& configfilepath, bool virtual_) {
+void Manager::_thread(const std::string& configfilepath, bool virtual_) {
   try {
     ManipulatorTask::Ptr idle_ptr = std::make_shared<IdleManipulatorTask>();
     threadtostop = false;
@@ -72,7 +72,7 @@ void Module::_thread(const std::string& configfilepath, bool virtual_) {
       }
       if (new_man_task_.ptr == nullptr)
         new_man_task_ = { idle_ptr, 0.1 };
-      man->DoTask(new_man_task_.ptr, new_man_task_.time_limit);
+      man->DoManipulatorTask(new_man_task_.ptr, new_man_task_.time_limit);
     }
   }
   catch (const std::runtime_error& error) {

@@ -1,5 +1,5 @@
 #include "adapters.hpp"
-#include "Module.hpp"
+#include "Manager.hpp"
 #include "RawConstantJointSpeedTask.hpp"
 #include "Time.hpp"
 #include "Logger.hpp"
@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
   //youBotArmConfig_fromMoveIt.json");
   //youBotArmConfig_fromKeisler.json");
 
-  Module modul(configpath, true);
+  Manager modul(configpath, true);
 
   modul.StartThreadAndInitialize();
 

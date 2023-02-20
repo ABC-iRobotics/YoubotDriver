@@ -1,48 +1,84 @@
 #ifndef MOTION_LAYER_HPP
 #define MOTION_LAYER_HPP
 
-#include "Manipulator.hpp"
+#include "JointState.hpp"
 #include "ManipulatorTask.hpp"
 #include "Eigen/dense"
 
 namespace youbot {
-
+  /// <summary>
+  /// Class that provides functionality to perform tasks with the Manipulator, the Gripper and the Platform
+  /// 
+  /// Currently only one task can be managed - revision is coming soon.
+  /// </summary>
   class MotionLayer {
   public:
-    // Not available constructors
-    MotionLayer() = delete;
-    MotionLayer(MotionLayer&) = delete;
-    MotionLayer(const MotionLayer&) = delete;
+    MotionLayer() = delete; ///< Not available constructor
+    MotionLayer(MotionLayer&) = delete; ///< Not available constructor
+    MotionLayer(const MotionLayer&) = delete; ///< Not available constructor
 
-    // Constructor
-    MotionLayer(const std::string& configfilepath, bool virtual_ = false);
+    MotionLayer(const std::string& configfilepath, bool virtual_ = false);  ///< Constructor: only saves the input
 
-    void Initialize();// Special task, that initializes the commutation and calibrate the robot arm
+    /// <summary>
+    /// Calls constructor of the manipulator, configurate it, initializes the commutation and calibrate the robot arm
+    /// </summary>
+    void Initialize();// Special task, that 
 
     typedef ManipulatorTask::TaskType TaskType;
+
+    /// <summary>
+    /// Status of the manipulator: status of the joints and the type of the current task
+    /// </summary>
     struct Status : JointsState {
       TaskType motion;
       void LogStatus() const;
     }; // Can be constructed by getting atomic structs
 
-    // Get status in a threadsafe way
-    Status GetStatus(); // threadsafe getters by default
-    Eigen::VectorXd GetTrueStatus() const; // threadsafe getters by default
+    /// <summary>
+    /// Get status in a thread-safe way
+    /// </summary>
+    /// <returns></returns>
+    Status GetStatus();
 
-    // Task related methods
-    bool IsRunning() const; // threadsafe
-    void StopTask(); // threadsafe
+    /// <summary>
+    /// Get true status in a thread-safe way of virtual manipulator for monitoring purposes
+    /// </summary>
+    /// <returns></returns>
+    Eigen::VectorXd GetTrueStatus() const;
+
+    /// <summary>
+    /// Do manipulator task
+    /// </summary>
+    /// <param name="task"> a manipulator task to be performed</param>
+    /// <param name="time_limit"> time limit </param>
+    void DoManipulatorTask(ManipulatorTask::Ptr task, double time_limit);
+
+    /// <summary>
+    /// To check if a task is running - thread-safe
+    /// </summary>
+    /// <returns></returns>
+    bool IsManipulatorTaskRunning() const;
+
+    /// <summary>
+    /// Stop the current manipulator task - thread-safe
+    /// </summary>
+    void StopManipulatorTask();
     
-    // Tasks
-    void DoTask(ManipulatorTask::Ptr task, double time_limit);
-
   private:
     // Draft version of softlimits, must be developed later...
+
+    /// <summary>
+    /// Function that is called to restrain the given command to avoid going to the limit.
+    /// 
+    /// It can modify the given command before it is used according to the current joints state
+    /// </summary>
+    /// <param name="cmd"> command that can be modified</param>
+    /// <param name="status"> latest known manipulator state </param>
     void _SoftLimit(ManipulatorCommand& cmd, const JointsState& status) const;
 
-    EtherCATMaster::Ptr center; // Virtual or physical ethercatbus handler
-    std::atomic<ManipulatorTask::TaskType> motionStatus;
-    std::unique_ptr<Manipulator> man = NULL; // initialized manipulator handler
+    EtherCATMaster::Ptr center; ///< Virtual or physical ethercatbus handler
+    std::atomic<ManipulatorTask::TaskType> motionStatus; ///< latest motion status
+    std::unique_ptr<Manipulator> man = NULL; ///< initialized manipulator handler
     bool taskrunning = false;
     bool stoptask = false;
     const std::string configfilepath;
