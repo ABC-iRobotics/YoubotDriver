@@ -8,6 +8,9 @@ namespace youbot {
 
   typedef std::map<std::string, double> NameValueMap;
 
+  /// <summary>
+  /// Content of a config file loaded into NameValueMap-s
+  /// </summary>
   struct YoubotConfig {
 	int gripperIndex, jointIndices[5];
 
@@ -27,8 +30,16 @@ namespace youbot {
 
 	std::map<std::string, std::string> logConfig;
 
+	/// <summary>
+	/// Constructor: only saves the filename
+	/// </summary>
+	/// <param name="filename"> path and filename of the config file </param>
 	YoubotConfig(const std::string& filename);
 
+	/// <summary>
+	/// Loads the contant of the config file into the NameValueMap-s
+	/// without checking, sorting, etc. the values within
+	/// </summary>
 	void Init();
 
 	const std::string filename;

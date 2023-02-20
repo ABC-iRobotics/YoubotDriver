@@ -6,6 +6,9 @@
 
 namespace Log {
 
+  /// <summary>
+  /// Possible importance levels of log messages
+  /// </summary>
   enum LogLevel {
 	trace = 0,
 	debug = 1,
@@ -17,12 +20,29 @@ namespace Log {
 	n_levels = 7
   };
 
+  /// <summary>
+  /// Setup the logger
+  /// </summary>
+  /// <param name="settings"> NamevalueMap (std::map<std::string, std::string>) e.g.:
+  ///   {{"ConsoleLevel","info"},{"LogFileLevel","info"}}
+  /// </param>
   void Setup(const std::map<std::string, std::string>& settings);
 
+  /// <summary>
+  /// Setup the console logging
+  /// </summary>
+  /// <param name="print_over"> messages on this level or higher will be displayed </param>
   void ConsoleSetup(LogLevel print_over);
 
+  /// <summary>
+  /// Setup the file logging
+  /// </summary>
+  /// <param name="print_over"> messages on this level or higher will be saved </param>
   void FileSetup(LogLevel print_over);
 
+  /// <summary>
+  /// Release logger
+  /// </summary>
   void DropLogger();
 };
 

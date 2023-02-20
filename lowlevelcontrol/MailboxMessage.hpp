@@ -6,10 +6,12 @@
 namespace youbot {
 
   /// <summary>
-  /// Base class used for Mailbox communication, initialized with slave ID and message content
+  /// Base class used for Mailbox communication
+  /// 
+  /// Initialized with slave ID and message content
   /// the EtherCAT Master driver will copy the response into it as well.
   /// 
-  /// Subclasses can provide simple wrappers for the different message-answer types  
+  /// Subclasses can provide simple wrappers for the different message-answer types 
   /// </summary>
   class MailboxMessage {
 	int slaveIndex; //0..N-1
