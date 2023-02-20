@@ -53,7 +53,7 @@ int32_t _toInt32(uint8_t* buff) {
   return buff[3] << 24 | buff[2] << 16 | buff[1] << 8 | buff[0];
 }
 
-void youbot::JointPhysical::_loadExchangeDataFromBuffer() {
+void JointPhysical::_loadExchangeDataFromBuffer() {
   static ProcessBuffer buffer;
   center->GetProcessMsg(buffer, GetSlaveIndex());
   auto ticks = _toInt32(&buffer.buffer[0]);
@@ -662,7 +662,7 @@ void JointPhysical::ReqVoltagePWM(int32_t value) {
   center->SetProcessMsg(toSet, GetSlaveIndex());
 }
 
-void youbot::JointPhysical::ReqMotorCurrentmA(int32_t value) {
+void JointPhysical::ReqMotorCurrentmA(int32_t value) {
   static ProcessBuffer toSet(5);
   toSet.buffer[3] = value >> 24;
   toSet.buffer[2] = value >> 16;
@@ -680,7 +680,7 @@ void JointPhysical::ReqInitializationViaProcess() {
   center->SetProcessMsg(toSet, GetSlaveIndex());
 }
 
-void youbot::JointPhysical::CheckI2tAndTimeoutError(JointStatus status) {
+void JointPhysical::CheckI2tAndTimeoutError(JointStatus status) {
   if (status.I2TExceeded()) {
     log(Log::fatal, "I2t exceeded in slave " + std::to_string(GetSlaveIndex()) + " (" + status.toString() + ")");
     SLEEP_MILLISEC(10);
@@ -726,14 +726,14 @@ double JointPhysical::GetJointVelocityRadPerSecViaMailbox() {
   return dq;
 }
 
-long youbot::JointPhysical::GetI2tLimitValueViaMailbox() {
+long JointPhysical::GetI2tLimitValueViaMailbox() {
   auto ptr = GetI2tLimitValue::InitSharedPtr(GetSlaveIndex());
   center->SendMailboxMessage(ptr);
   log(Log::info, " GetI2tLimitValue: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");
   return ptr->GetReplyValue();
 }
 
-long youbot::JointPhysical::GetCurrentI2tValueViaMailbox() {
+long JointPhysical::GetCurrentI2tValueViaMailbox() {
   auto ptr = GetCurrentI2tValue::InitSharedPtr(GetSlaveIndex());
   center->SendMailboxMessage(ptr);
   log(Log::info, " GetCurrentI2tValue: " + std::to_string(ptr->GetReplyValue()) + " (" + TMCL::RecvStatusToString(ptr->GetRecStatusFlag()) + ")");

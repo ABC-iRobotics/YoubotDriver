@@ -84,7 +84,7 @@ Eigen::VectorXd youbot::YoubotManipulatorMotionLayer::GetTrueStatus() const {
     if (center->GetType() == EtherCATMaster::VIRTUAL) {
       for (int i=0;i<5;i++)
         if (man->GetJoint(i) != nullptr)
-          out[i] = std::dynamic_pointer_cast<JointVirtual>(
+          out[i] = std::dynamic_pointer_cast<intrinsic::JointVirtual>(
             man->GetJoint(i))->GetJointPositionTRUE();
     }
     else {

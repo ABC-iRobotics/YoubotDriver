@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
   //youBotArmConfig_fromMoveIt.json");
   //youBotArmConfig_fromKeisler.json");
 
-  YoubotManipulatorModul modul(configpath, false);
+  YoubotManipulatorModul modul(configpath, true);
 
   modul.StartThreadAndInitialize();
 

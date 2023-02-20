@@ -6,6 +6,7 @@
 #include <stdexcept>
 
 using namespace youbot;
+using namespace youbot::intrinsic;
 
 void JointVirtual::GetFirmwareVersionViaMailbox(int& controllernum,
   int& firmwareversion) {
@@ -55,7 +56,7 @@ unsigned int JointVirtual::GetEncoderResolutionViaMailbox() {
   return 4000;
 }
 
-std::string youbot::JointVirtual::GetCommutationModeViaMailbox() {
+std::string JointVirtual::GetCommutationModeViaMailbox() {
     return "virtual";
 }
 
@@ -88,15 +89,15 @@ JointStatus JointVirtual::_getStatus() {
   return status;
 }
 
-int64_t youbot::JointVirtual::ticks() const {
+int64_t JointVirtual::ticks() const {
   return qRad2Ticks(qRad_true) + ticks_offset;
 }
 
-inline void youbot::JointVirtual::settickstozero() {
+inline void JointVirtual::settickstozero() {
   ticks_offset = -qRad2Ticks(qRad_true);
 }
 
-void youbot::JointVirtual::_updateFor(double elapsedTime) {
+void JointVirtual::_updateFor(double elapsedTime) {
   if (timeout || I2terror) { // forcestop
     RPM = 0;
     current_mA = 0;
@@ -144,7 +145,7 @@ void youbot::JointVirtual::_updateFor(double elapsedTime) {
   }
 }
 
-void youbot::JointVirtual::_update() {
+void JointVirtual::_update() {
   auto now = std::chrono::steady_clock::now();
   double dt = double(std::chrono::duration_cast<std::chrono::milliseconds>(now
     - updated_at).count()) / 1000.;
@@ -276,7 +277,7 @@ void JointVirtual::ReqVoltagePWM(int32_t value) {
   processCommand.value = value;
 }
 
-void youbot::JointVirtual::ReqMotorCurrentmA(int32_t value) {
+void JointVirtual::ReqMotorCurrentmA(int32_t value) {
   processCommand.type = ProcessCommand::CURRENT;
   processCommand.value = value;
 }
@@ -285,7 +286,7 @@ void JointVirtual::ReqInitializationViaProcess() {
   processCommand.type = ProcessCommand::INITIALIZE;
 }
 
-void youbot::JointVirtual::CheckI2tAndTimeoutError(JointStatus status) {
+void JointVirtual::CheckI2tAndTimeoutError(JointStatus status) {
   _update();
   if (status.I2TExceeded()) {
     log(Log::fatal, "I2t exceeded in slave " + std::to_string(GetSlaveIndex()) + " (" + status.toString() + ")");
@@ -301,7 +302,7 @@ void youbot::JointVirtual::CheckI2tAndTimeoutError(JointStatus status) {
 
 // Cheat funciton
 
-double youbot::JointVirtual::GetJointPositionTRUE() const {
+double JointVirtual::GetJointPositionTRUE() const {
   return qRad_true;
 }
 
@@ -332,12 +333,12 @@ double JointVirtual::GetJointVelocityRadPerSecViaMailbox() {
   return RPM2qRadPerSec(RPM);
 }
 
-long youbot::JointVirtual::GetI2tLimitValueViaMailbox() {
+long JointVirtual::GetI2tLimitValueViaMailbox() {
   throw std::runtime_error("Not implemented");
   return 10000;
 }
 
-long youbot::JointVirtual::GetCurrentI2tValueViaMailbox() {
+long JointVirtual::GetCurrentI2tValueViaMailbox() {
   throw std::runtime_error("Not implemented");
   return 10000;
 }
@@ -366,7 +367,7 @@ void JointVirtual::SetCalibratedViaMailbox() {
   calibrated_flag = true;
 }
 
-void youbot::JointVirtual::CommutationState::Update() {
+void JointVirtual::CommutationState::Update() {
   if (!initialized && started) {
     // TODO: move
     if (std::chrono::duration_cast<std::chrono::milliseconds>(

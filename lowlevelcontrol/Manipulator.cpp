@@ -12,15 +12,15 @@ Manipulator::Manipulator(const Config& config, EtherCATMaster::Ptr center)
   // Construct joints
   for (int i = 0; i < 5; i++)
 	if (center->GetType() == EtherCATMaster::PHYSICAL) {
-	  auto ptr = std::make_shared<JointPhysical>(config.jointIndices[i], config.jointConfigs[i], center);
+	  auto ptr = std::make_shared<intrinsic::JointPhysical>(config.jointIndices[i], config.jointConfigs[i], center);
 	  ptr->Init();
 	  joints[i] = ptr;
 	}
 	else
-	  joints[i] = std::make_shared<JointVirtual>(config.jointIndices[i], config.jointConfigs[i], center);
+	  joints[i] = std::make_shared<intrinsic::JointVirtual>(config.jointIndices[i], config.jointConfigs[i], center);
 }
 
-JointPhysical::Ptr Manipulator::GetJoint(int i) {
+Joint::Ptr Manipulator::GetJoint(int i) {
   return joints[i];
 }
 
