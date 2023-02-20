@@ -1,23 +1,23 @@
-#ifndef YOUBOT_MANIPULATOR_MODUL_HPP
-#define YOUBOT_MANIPULATOR_MODUL_HPP
+#ifndef MODULE_HPP
+#define MODULE_HPP
 
-#include "YoubotManipulatorMotionLayer.hpp"
+#include "MotionLayer.hpp"
 #include <thread>
 #include <mutex>
 
 namespace youbot {
 
-  class YoubotManipulatorModul {
+  class Module {
   public:
     // Not available constructors
-    YoubotManipulatorModul() = delete;
-    YoubotManipulatorModul(YoubotManipulatorModul&) = delete;
-    YoubotManipulatorModul(const YoubotManipulatorModul&) = delete;
+    Module() = delete;
+    Module(Module&) = delete;
+    Module(const Module&) = delete;
 
-    YoubotManipulatorModul(const std::string& configfilepath, bool virtual_ = false); // Constructor - does nothing
-    ~YoubotManipulatorModul();
+    Module(const std::string& configfilepath, bool virtual_ = false); // Constructor - does nothing
+    ~Module();
 
-    YoubotManipulatorMotionLayer::Status GetStatus() const;
+    MotionLayer::Status GetStatus() const;
     Eigen::VectorXd GetTrueStatus() const;
 
     void StartThreadAndInitialize();
@@ -39,7 +39,7 @@ namespace youbot {
     std::thread t;
     bool threadrunning = false, threadtostop = false;
 
-    std::unique_ptr<YoubotManipulatorMotionLayer> man = NULL;
+    std::unique_ptr<MotionLayer> man = NULL;
     std::string configfilepath;
     bool virtual_;
   };

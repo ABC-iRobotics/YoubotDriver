@@ -1,5 +1,5 @@
-#ifndef YOUBOT_MANIPULATOR_MOTION_LAYER_HPP
-#define YOUBOT_MANIPULATOR_MOTION_LAYER_HPP
+#ifndef MOTION_LAYER_HPP
+#define MOTION_LAYER_HPP
 
 #include "Manipulator.hpp"
 #include "ManipulatorTask.hpp"
@@ -7,15 +7,15 @@
 
 namespace youbot {
 
-  class YoubotManipulatorMotionLayer {
+  class MotionLayer {
   public:
     // Not available constructors
-    YoubotManipulatorMotionLayer() = delete;
-    YoubotManipulatorMotionLayer(YoubotManipulatorMotionLayer&) = delete;
-    YoubotManipulatorMotionLayer(const YoubotManipulatorMotionLayer&) = delete;
+    MotionLayer() = delete;
+    MotionLayer(MotionLayer&) = delete;
+    MotionLayer(const MotionLayer&) = delete;
 
     // Constructor
-    YoubotManipulatorMotionLayer(const std::string& configfilepath, bool virtual_ = false);
+    MotionLayer(const std::string& configfilepath, bool virtual_ = false);
 
     void Initialize();// Special task, that initializes the commutation and calibrate the robot arm
 

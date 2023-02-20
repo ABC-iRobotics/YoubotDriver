@@ -1,29 +1,29 @@
-#include "YoubotManipulatorModul.hpp"
+#include "Module.hpp"
 #include <stdexcept>
 #include "Logger.hpp"
 #include "Time.hpp"
 
 using namespace youbot;
 
-youbot::YoubotManipulatorMotionLayer::Status youbot::YoubotManipulatorModul::GetStatus() const {
+youbot::MotionLayer::Status youbot::Module::GetStatus() const {
   if (man != nullptr)
 	return man->GetStatus();
   else
 	return {};
 }
 
-YoubotManipulatorModul::~YoubotManipulatorModul() {
+Module::~Module() {
   if (threadrunning)
     StopThread(false);
 }
 
-void YoubotManipulatorModul::StartThreadAndInitialize() {
+void Module::StartThreadAndInitialize() {
   threadrunning = true;
   t = std::thread([this] { _thread(configfilepath, virtual_); });
   t.detach();
 }
 
-void YoubotManipulatorModul::StopThread(bool waitin) {
+void Module::StopThread(bool waitin) {
   if (threadrunning) {
     man->StopTask();
     threadtostop = true;
@@ -35,18 +35,18 @@ void YoubotManipulatorModul::StopThread(bool waitin) {
   }
 }
 
-Eigen::VectorXd youbot::YoubotManipulatorModul::GetTrueStatus() const {
+Eigen::VectorXd youbot::Module::GetTrueStatus() const {
   if (man != nullptr)
     return man->GetTrueStatus();
   else
     return Eigen::VectorXd(5);
 }
 
-youbot::YoubotManipulatorModul::YoubotManipulatorModul(
+youbot::Module::Module(
   const std::string& configfilepath, bool virtual_)
   : configfilepath(configfilepath), virtual_(virtual_) {}
 
-void YoubotManipulatorModul::NewManipulatorTask(ManipulatorTask::Ptr task, double time_limit) {
+void Module::NewManipulatorTask(ManipulatorTask::Ptr task, double time_limit) {
   std::lock_guard<std::mutex> guard(new_task_mutex);
   new_man_task = { task, time_limit };
   if (man != nullptr)
@@ -54,12 +54,12 @@ void YoubotManipulatorModul::NewManipulatorTask(ManipulatorTask::Ptr task, doubl
 }
 
 #include <iostream>
-void YoubotManipulatorModul::_thread(const std::string& configfilepath, bool virtual_) {
+void Module::_thread(const std::string& configfilepath, bool virtual_) {
   try {
     ManipulatorTask::Ptr idle_ptr = std::make_shared<IdleManipulatorTask>();
     threadtostop = false;
     if (man == nullptr)
-      man = std::make_unique<YoubotManipulatorMotionLayer>(configfilepath, virtual_);
+      man = std::make_unique<MotionLayer>(configfilepath, virtual_);
     man->Initialize();
 
     // Command based operation, checking stop...

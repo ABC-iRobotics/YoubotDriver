@@ -1,4 +1,4 @@
-#include "YoubotManipulatorMotionLayer.hpp"
+#include "Module.hpp"
 #include "adapters.hpp"
 #include "JointVirtual.hpp"
 #include <stdexcept>
@@ -7,7 +7,7 @@
 
 using namespace youbot;
 
-void youbot::YoubotManipulatorMotionLayer::Status::LogStatus() const {
+void youbot::MotionLayer::Status::LogStatus() const {
   log(Log::info, "Manipulator status: " + ManipulatorTask::Type2String(motion));
   for (int i = 0; i < 5; i++) {
     log(Log::info, "Joint " + std::to_string(i) + ": q=" + std::to_string(joint[i].q.value) + "[rad] dq/dt="
@@ -17,7 +17,7 @@ void youbot::YoubotManipulatorMotionLayer::Status::LogStatus() const {
   }
 }
 
-void youbot::YoubotManipulatorMotionLayer::_SoftLimit(
+void youbot::MotionLayer::_SoftLimit(
   ManipulatorCommand& cmd, const JointsState& status) const {
   static double limitZoneDeg = 4;
   static double corrjointspeed = 0.03;
@@ -66,7 +66,7 @@ void youbot::YoubotManipulatorMotionLayer::_SoftLimit(
   }
 }
 
-youbot::YoubotManipulatorMotionLayer::Status youbot::YoubotManipulatorMotionLayer::GetStatus() {
+youbot::MotionLayer::Status youbot::MotionLayer::GetStatus() {
   Status status;
   if (man)
     for (int i = 0; i < 5; i++) {
@@ -78,7 +78,7 @@ youbot::YoubotManipulatorMotionLayer::Status youbot::YoubotManipulatorMotionLaye
   return status;
 }
 
-Eigen::VectorXd youbot::YoubotManipulatorMotionLayer::GetTrueStatus() const {
+Eigen::VectorXd youbot::MotionLayer::GetTrueStatus() const {
   Eigen::VectorXd out = Eigen::VectorXd::Zero(5);
   if (center != nullptr && man!=nullptr) {
     if (center->GetType() == EtherCATMaster::VIRTUAL) {
@@ -96,13 +96,13 @@ Eigen::VectorXd youbot::YoubotManipulatorMotionLayer::GetTrueStatus() const {
   return out;
 }
 
-void youbot::YoubotManipulatorMotionLayer::StopTask() {
+void youbot::MotionLayer::StopTask() {
   stoptask = true;
 }
 
 // Tasks
 
-void youbot::YoubotManipulatorMotionLayer::DoTask(ManipulatorTask::Ptr task, double time_limit) {
+void youbot::MotionLayer::DoTask(ManipulatorTask::Ptr task, double time_limit) {
   stoptask = false;
   motionStatus.store(task->GetType());
   taskrunning = true;
@@ -142,15 +142,15 @@ void youbot::YoubotManipulatorMotionLayer::DoTask(ManipulatorTask::Ptr task, dou
   motionStatus.store(ManipulatorTask::STOPPED);
 }
 
-bool youbot::YoubotManipulatorMotionLayer::IsRunning() const {
+bool youbot::MotionLayer::IsRunning() const {
   return taskrunning;
 }
 
-YoubotManipulatorMotionLayer::YoubotManipulatorMotionLayer(
+MotionLayer::MotionLayer(
   const std::string& configfilepath, bool virtual_)
  : configfilepath(configfilepath), virtual_(virtual_) {};
 
-void YoubotManipulatorMotionLayer::Initialize() {
+void MotionLayer::Initialize() {
   motionStatus.store(ManipulatorTask::INITIALIZATION);
   // Get Configfile
   Config config(configfilepath);
