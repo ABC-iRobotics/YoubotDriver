@@ -40,8 +40,8 @@ namespace youbot {
     // Exchange prepared slave buffers
     virtual void ExchangeProcessMsg() = 0;
 
-    virtual MailboxStatus SendMessage_(MailboxMessage::MailboxMessagePtr ptr) = 0;
 
+    virtual MailboxStatus SendMailboxMessage(MailboxMessage::MailboxMessagePtr ptr) = 0;
     virtual int getSlaveNum() const = 0; // cnt: 0..N-1
 
     virtual std::string getSlaveName(int cnt) const = 0; // cnt: 0..N-1
