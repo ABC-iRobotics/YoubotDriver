@@ -12,6 +12,7 @@ set(SOURCES
 		YoubotJointVirtual.cpp
 		YoubotConfig.cpp
 		YoubotManipulator.cpp
+    YoubotJointState.cpp
 		ProcessBuffer.cpp
 	  )
 
@@ -25,6 +26,8 @@ set(HEADERS
 		YoubotConfig.hpp
 		YoubotManipulator.hpp
 		ProcessBuffer.hpp
+    YoubotJointState.hpp
+    Data.hpp
 )
 
 set(INTRINSIC_HEADERS
