@@ -1,7 +1,7 @@
 #ifndef MANIPULATOR_TASK_HPP
 #define MANIPULATOR_TASK_HPP
 
-#include "YoubotManipulator.hpp"
+#include "Manipulator.hpp"
 #include "Eigen/dense"
 
 #include "Time.hpp"

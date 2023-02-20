@@ -1,7 +1,7 @@
 #ifndef YOUBOT_MANIPULATOR_MOTION_LAYER_HPP
 #define YOUBOT_MANIPULATOR_MOTION_LAYER_HPP
 
-#include "YoubotManipulator.hpp"
+#include "Manipulator.hpp"
 #include "ManipulatorTask.hpp"
 #include "Eigen/dense"
 
@@ -42,7 +42,7 @@ namespace youbot {
 
     EtherCATMaster::Ptr center; // Virtual or physical ethercatbus handler
     std::atomic<ManipulatorTask::TaskType> motionStatus;
-    std::unique_ptr<YoubotManipulator> man = NULL; // initialized manipulator handler
+    std::unique_ptr<Manipulator> man = NULL; // initialized manipulator handler
     bool taskrunning = false;
     bool stoptask = false;
     const std::string configfilepath;

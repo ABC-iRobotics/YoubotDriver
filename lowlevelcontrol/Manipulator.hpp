@@ -1,9 +1,9 @@
-#ifndef YOUBOT_MANIPULATOR_HPP
-#define YOUBOT_MANIPULATOR_HPP
+#ifndef MANIPULATOR_HPP
+#define MANIPULATOR_HPP
 
 #include <vector>
 #include "YoubotJoint.hpp"
-#include "YoubotConfig.hpp"
+#include "Config.hpp"
 #include "EtherCATMaster.hpp"
 
 namespace youbot {
@@ -12,17 +12,17 @@ namespace youbot {
 	JointState joint[5];
   };
 
-  class YoubotManipulator {
+  class Manipulator {
   public:
 	// Unavailable constructors
-	YoubotManipulator() = delete;
-	YoubotManipulator(YoubotManipulator&) = delete;
-	YoubotManipulator(const YoubotManipulator&) = delete;
+	Manipulator() = delete;
+	Manipulator(Manipulator&) = delete;
+	Manipulator(const Manipulator&) = delete;
 
 	// Constructor
-	YoubotManipulator(const YoubotConfig& config, EtherCATMaster::Ptr center);
+	Manipulator(const Config& config, EtherCATMaster::Ptr center);
 	// Destructor
-	~YoubotManipulator() {};
+	~Manipulator() {};
 
 	// Main initialization of the robot joints
 	void InitializeManipulator(bool forceConfiguration = false);
@@ -60,7 +60,7 @@ namespace youbot {
 	JointsState GetStateLatest() const;;
 
   private:
-	const YoubotConfig config;
+	const Config config;
 	EtherCATMaster::Ptr center;
 	std::vector<YoubotJoint::Ptr> joints = {NULL, NULL, NULL, NULL, NULL};
   };

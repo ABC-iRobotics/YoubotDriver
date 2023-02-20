@@ -153,7 +153,7 @@ YoubotManipulatorMotionLayer::YoubotManipulatorMotionLayer(
 void YoubotManipulatorMotionLayer::Initialize() {
   motionStatus.store(ManipulatorTask::INITIALIZATION);
   // Get Configfile
-  YoubotConfig config(configfilepath);
+  Config config(configfilepath);
   config.Init();
   // Initialize logger
   Log::Setup(config.logConfig);
@@ -175,7 +175,7 @@ void YoubotManipulatorMotionLayer::Initialize() {
   }
   // Initialize manipulator
   if (!man)
-    man = std::make_unique<YoubotManipulator>(config, center);
+    man = std::make_unique<Manipulator>(config, center);
   man->InitializeManipulator();
   man->Calibrate();
   motionStatus.store(ManipulatorTask::STOPPED);

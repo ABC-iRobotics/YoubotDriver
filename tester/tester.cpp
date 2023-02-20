@@ -1,5 +1,5 @@
 #include "adapters.hpp"
-#include "YoubotManipulator.hpp"
+#include "Manipulator.hpp"
 #include "Time.hpp"
 #include "Logger.hpp"
 
@@ -7,7 +7,7 @@ using namespace youbot;
 
 EtherCATMaster::Ptr center;
 
-void GoToZero(YoubotManipulator& man, int time_ms) {
+void GoToZero(Manipulator& man, int time_ms) {
   log(Log::info, "Goint to zero started!");
   auto start = std::chrono::steady_clock::now();
   man.ReqJointPositionRad(0, 0, 0, 0, 0);
@@ -19,7 +19,7 @@ void GoToZero(YoubotManipulator& man, int time_ms) {
     std::chrono::steady_clock::now() - start).count() < time_ms);
 }
 
-void StopThere(YoubotManipulator& man, int time_ms) {
+void StopThere(Manipulator& man, int time_ms) {
   log(Log::info, "Stopped!");
   auto start = std::chrono::steady_clock::now();
   man.ReqManipulatorStop();
@@ -31,7 +31,7 @@ void StopThere(YoubotManipulator& man, int time_ms) {
     std::chrono::steady_clock::now() - start).count() < time_ms);
 }
 
-void GoTowardsZero(YoubotManipulator& man, int time_ms, double velocityRadPerSec, YoubotConfig& config) {
+void GoTowardsZero(Manipulator& man, int time_ms, double velocityRadPerSec, Config& config) {
   log(Log::info, "GoTowardsZero!");
   auto start = std::chrono::steady_clock::now();
   for (int i = 0; i < 5; i++) {
@@ -47,7 +47,7 @@ void GoTowardsZero(YoubotManipulator& man, int time_ms, double velocityRadPerSec
     std::chrono::steady_clock::now() - start).count() < time_ms);
 }
 
-void FreeDriveMode(YoubotManipulator& man, int time_ms) {
+void FreeDriveMode(Manipulator& man, int time_ms) {
   log(Log::info, "FreeDriveMode!");
   auto start = std::chrono::steady_clock::now();
   man.ReqJointTorqueNm(0, 0, 0, 0, 0);
@@ -59,7 +59,7 @@ void FreeDriveMode(YoubotManipulator& man, int time_ms) {
     std::chrono::steady_clock::now() - start).count() < time_ms);
 }
 
-void WaveDemo(YoubotManipulator& man, int time_ms) {
+void WaveDemo(Manipulator& man, int time_ms) {
   log(Log::info, "WaveDemo!");
   auto start = std::chrono::steady_clock::now();
   do {
@@ -78,7 +78,7 @@ void WaveDemo(YoubotManipulator& man, int time_ms) {
     std::chrono::steady_clock::now() - start).count() < time_ms);
 }
 
-void ZeroVelocityDemo(YoubotManipulator& man, int time_ms) {
+void ZeroVelocityDemo(Manipulator& man, int time_ms) {
   log(Log::info, "ZeroVelocityDemo!");
   auto start = std::chrono::steady_clock::now();
   man.ReqJointSpeedRadPerSec(0, 0, 0, 0, 0);
@@ -93,7 +93,7 @@ void ZeroVelocityDemo(YoubotManipulator& man, int time_ms) {
 int main(int argc, char *argv[])
 {
   // Get Configfile
-  YoubotConfig config(std::string(CONFIG_FOLDER) + "youBotArmConfig_fromKeisler.json");
+  Config config(std::string(CONFIG_FOLDER) + "youBotArmConfig_fromKeisler.json");
   //youBotArmConfig_fromfactory.json");
   //youBotArmConfig_fromMoveIt.json");
   //youBotArmConfig_fromKeisler.json");
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
   else
     center = EtherCATMaster::CreateVirtual();
 
-  YoubotManipulator man(config, center);
+  Manipulator man(config, center);
   man.InitializeManipulator();
   man.Calibrate();
   

@@ -1,4 +1,4 @@
-#include "YoubotManipulator.hpp"
+#include "Manipulator.hpp"
 #include "YoubotJointPhysical.hpp"
 #include "YoubotJointVirtual.hpp"
 #include <stdexcept>
@@ -7,7 +7,7 @@
 
 using namespace youbot;
 
-YoubotManipulator::YoubotManipulator(const YoubotConfig& config, EtherCATMaster::Ptr center)
+Manipulator::Manipulator(const Config& config, EtherCATMaster::Ptr center)
   : config(config), center(center) {
   // Construct joints
   for (int i = 0; i < 5; i++)
@@ -20,38 +20,38 @@ YoubotManipulator::YoubotManipulator(const YoubotConfig& config, EtherCATMaster:
 	  joints[i] = std::make_shared<YoubotJointVirtual>(config.jointIndices[i], config.jointConfigs[i], center);
 }
 
-YoubotJointPhysical::Ptr YoubotManipulator::GetJoint(int i) {
+YoubotJointPhysical::Ptr Manipulator::GetJoint(int i) {
   return joints[i];
 }
 
-void YoubotManipulator::CollectBasicJointParameters() {
+void Manipulator::CollectBasicJointParameters() {
   for (int i = 0; i < 5; i++)
 	joints[i]->ConfigControlParameters();
 }
 
-void YoubotManipulator::ConfigJointControlParameters(bool forceConfiguration) {
+void Manipulator::ConfigJointControlParameters(bool forceConfiguration) {
   for (int i = 0; i < 5; i++)
 	joints[i]->ConfigControlParameters(forceConfiguration);
 }
 
-bool YoubotManipulator::CheckJointControlParameters() {
+bool Manipulator::CheckJointControlParameters() {
   for (int i = 0; i < 5; i++)
 	if (!joints[i]->CheckControlParameters())
 	  return false;
   return true;
 }
 
-void YoubotManipulator::InitializeManipulator(bool forceConfiguration) {
+void Manipulator::InitializeManipulator(bool forceConfiguration) {
   for (int i = 0; i < 5; i++)
 	joints[i]->InitializeJoint(forceConfiguration);
 }
 
-void YoubotManipulator::InitJointCommutation() {
+void Manipulator::InitJointCommutation() {
   for (auto& it : joints)
 	it->InitCommutation();
 }
 
-void YoubotManipulator::Calibrate(bool forceCalibration) {
+void Manipulator::Calibrate(bool forceCalibration) {
   // Check if all joints are calibrated
   if (!forceCalibration)
 	if (IsAllJointsCalibratedViaMailbox())
@@ -170,7 +170,7 @@ void YoubotManipulator::Calibrate(bool forceCalibration) {
   }
 }
 
-void YoubotManipulator::ReqJointPositionRad(double q0,
+void Manipulator::ReqJointPositionRad(double q0,
   double q1, double q2, double q3, double q4) {
   joints[0]->ReqJointPositionRad(q0);
   joints[1]->ReqJointPositionRad(q1);
@@ -179,7 +179,7 @@ void YoubotManipulator::ReqJointPositionRad(double q0,
   joints[4]->ReqJointPositionRad(q4);
 }
 
-void YoubotManipulator::GetQLatest(double& q0,
+void Manipulator::GetQLatest(double& q0,
   double& q1, double& q2, double& q3, double& q4) {
   q0 = joints[0]->GetQLatestRad().value;
   q1 = joints[1]->GetQLatestRad().value;
@@ -188,7 +188,7 @@ void YoubotManipulator::GetQLatest(double& q0,
   q4 = joints[4]->GetQLatestRad().value;
 }
 
-void youbot::YoubotManipulator::ReqJointSpeedRadPerSec(double dq0, double dq1, double dq2, double dq3, double dq4) {
+void youbot::Manipulator::ReqJointSpeedRadPerSec(double dq0, double dq1, double dq2, double dq3, double dq4) {
   joints[0]->ReqJointSpeedRadPerSec(dq0);
   joints[1]->ReqJointSpeedRadPerSec(dq1);
   joints[2]->ReqJointSpeedRadPerSec(dq2);
@@ -196,7 +196,7 @@ void youbot::YoubotManipulator::ReqJointSpeedRadPerSec(double dq0, double dq1, d
   joints[4]->ReqJointSpeedRadPerSec(dq4);
 }
 
-void youbot::YoubotManipulator::GetDQLatest(double& dq0, double& dq1, double& dq2, double& dq3, double& dq4) {
+void youbot::Manipulator::GetDQLatest(double& dq0, double& dq1, double& dq2, double& dq3, double& dq4) {
   dq0 = joints[0]->GetDQLatestRad().value;
   dq1 = joints[1]->GetDQLatestRad().value;
   dq2 = joints[2]->GetDQLatestRad().value;
@@ -204,7 +204,7 @@ void youbot::YoubotManipulator::GetDQLatest(double& dq0, double& dq1, double& dq
   dq4 = joints[4]->GetDQLatestRad().value;
 }
 
-void youbot::YoubotManipulator::ReqJointTorqueNm(double tau0, double tau1, double tau2, double tau3, double tau4) {
+void youbot::Manipulator::ReqJointTorqueNm(double tau0, double tau1, double tau2, double tau3, double tau4) {
   joints[0]->ReqJointTorqueNm(tau0);
   joints[1]->ReqJointTorqueNm(tau1);
   joints[2]->ReqJointTorqueNm(tau2);
@@ -212,7 +212,7 @@ void youbot::YoubotManipulator::ReqJointTorqueNm(double tau0, double tau1, doubl
   joints[4]->ReqJointTorqueNm(tau4);
 }
 
-void youbot::YoubotManipulator::ReqZeroVoltage() {
+void youbot::Manipulator::ReqZeroVoltage() {
   joints[0]->ReqVoltagePWM(0);
   joints[1]->ReqVoltagePWM(0);
   joints[2]->ReqVoltagePWM(0);
@@ -220,7 +220,7 @@ void youbot::YoubotManipulator::ReqZeroVoltage() {
   joints[4]->ReqVoltagePWM(0);
 }
 
-void youbot::YoubotManipulator::GetTauLatest(double& tau0, double& tau1, double& tau2, double& tau3, double& tau4) {
+void youbot::Manipulator::GetTauLatest(double& tau0, double& tau1, double& tau2, double& tau3, double& tau4) {
   tau0 = joints[0]->GetTauLatestNm().value;
   tau1 = joints[1]->GetTauLatestNm().value;
   tau2 = joints[2]->GetTauLatestNm().value;
@@ -228,7 +228,7 @@ void youbot::YoubotManipulator::GetTauLatest(double& tau0, double& tau1, double&
   tau4 = joints[4]->GetTauLatestNm().value;
 }
 
-void youbot::YoubotManipulator::CheckAndResetI2tFlagsViaMailbox() {
+void youbot::Manipulator::CheckAndResetI2tFlagsViaMailbox() {
   for (int i = 0; i < 5; i++) {
 	// RESET I2t flags
 	auto status = joints[i]->GetJointStatusViaMailbox();
@@ -238,31 +238,31 @@ void youbot::YoubotManipulator::CheckAndResetI2tFlagsViaMailbox() {
   }
 }
 
-void youbot::YoubotManipulator::CheckI2tAndTimeoutErrorProcess() {
+void youbot::Manipulator::CheckI2tAndTimeoutErrorProcess() {
   for (int i = 0; i < 5; i++) {
 	auto status = joints[i]->GetStatusLatest().value;
 	joints[i]->CheckI2tAndTimeoutError(status);
   }
 }
 
-void youbot::YoubotManipulator::LogStatusProcess() {
+void youbot::Manipulator::LogStatusProcess() {
   log(Log::info, "Manipulator status: ");
   for (int i = 0; i < 5; i++)
 	joints[i]->LogLatestState();
 }
 
-youbot::JointsState youbot::YoubotManipulator::GetStateLatest() const {
+youbot::JointsState youbot::Manipulator::GetStateLatest() const {
   JointsState out;
   for (int i = 0; i < 5; i++)
 	out.joint[i] = joints[i]->GetLatestState();
   return out;
 }
 
-void YoubotManipulator::ReqManipulatorStop() {
+void Manipulator::ReqManipulatorStop() {
   for (auto& it : joints)
 	it->ReqStop();
 }
-void YoubotManipulator::CheckAndResetErrorFlags() {
+void Manipulator::CheckAndResetErrorFlags() {
   for (int i = 0; i < 5; i++) {
 	auto status = joints[i]->GetJointStatusViaMailbox();
 	if (status.I2TExceeded())
@@ -272,7 +272,7 @@ void YoubotManipulator::CheckAndResetErrorFlags() {
 	joints[i]->ResetTimeoutViaMailbox();
 }
 
-bool youbot::YoubotManipulator::IsAllJointsCalibratedViaMailbox() {
+bool youbot::Manipulator::IsAllJointsCalibratedViaMailbox() {
   for (int i = 0; i < 5; i++)
 	if (!joints[i]->IsCalibratedViaMailbox())
 	  return false;

@@ -10,9 +10,9 @@ set(SOURCES
 		YoubotJoint.cpp
 		YoubotJointPhysical.cpp
 		YoubotJointVirtual.cpp
-		YoubotConfig.cpp
-		YoubotManipulator.cpp
-    YoubotJointState.cpp
+		Config.cpp
+		Manipulator.cpp
+		YoubotJointState.cpp
 		ProcessBuffer.cpp
 	  )
 
@@ -23,11 +23,11 @@ set(HEADERS
 		EtherCATMaster.hpp
 		MailboxMessage.hpp
 		YoubotJoint.hpp
-		YoubotConfig.hpp
-		YoubotManipulator.hpp
+		Config.hpp
+		Manipulator.hpp
 		ProcessBuffer.hpp
-    YoubotJointState.hpp
-    Data.hpp
+		YoubotJointState.hpp
+		Data.hpp
 )
 
 set(INTRINSIC_HEADERS
