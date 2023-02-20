@@ -26,7 +26,7 @@ std::string VirtualEtherCATMaster::getSlaveName(int cnt) const {
   return "";
 }
 
-VirtualEtherCATMaster::MailboxStatus VirtualEtherCATMaster::SendMessage_(MailboxMessage::MailboxMessagePtr ptr) {
+VirtualEtherCATMaster::MailboxStatus VirtualEtherCATMaster::SendMailboxMessage(MailboxMessage::Ptr ptr) {
   throw std::runtime_error("No imlpemented");
   return MailboxStatus(0);
 }

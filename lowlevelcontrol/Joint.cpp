@@ -1,4 +1,4 @@
-#include "YoubotJoint.hpp"
+#include "Joint.hpp"
 #include "Time.hpp"
 #include "Logger.hpp"
 #include <sstream>
@@ -6,30 +6,30 @@
 
 using namespace youbot;
 
-YoubotJoint::YoubotJoint(int slaveIndex, const std::map<std::string,double>& config,
+Joint::Joint(int slaveIndex, const std::map<std::string,double>& config,
   EtherCATMaster::Ptr center) : config(config), slaveIndex(slaveIndex), center(center) {}
 
-void YoubotJoint::InitializeJoint(bool forceConfiguration) {
+void Joint::InitializeJoint(bool forceConfiguration) {
   CollectBasicParameters();
   ConfigControlParameters(forceConfiguration);
   InitCommutation();
 }
 
-const YoubotJoint::Parameters& YoubotJoint::GetParameters() const {
+const Joint::Parameters& Joint::GetParameters() const {
   if (!parameters.intialized)
     throw::std::runtime_error("");
   return parameters;
 }
 
-const std::map<std::string, double>& YoubotJoint::GetConfig() const {
+const std::map<std::string, double>& Joint::GetConfig() const {
   return config;
 }
 
-int YoubotJoint::GetSlaveIndex() const {
+int Joint::GetSlaveIndex() const {
   return slaveIndex;
 }
 
-void YoubotJoint::CollectBasicParameters() {
+void Joint::CollectBasicParameters() {
   GetFirmwareVersionViaMailbox(parameters.controllerNum, parameters.firmwareversion);
   // GetTickPerRounds
   parameters.ticksperround = GetEncoderResolutionViaMailbox();
@@ -64,124 +64,11 @@ void YoubotJoint::CollectBasicParameters() {
   parameters.intialized = true;
 }
 
-JointState YoubotJoint::GetLatestState() const {
+JointState Joint::GetLatestState() const {
   return JointState(GetQLatestRad(), GetDQLatestRad(), GetTauLatestNm(), statusLatest);
 }
 
-bool JointStatus::OverCurrent() const {
-  return value & (uint32_t)StatusErrorFlags::OVER_CURRENT;
-}
-
-bool JointStatus::UnderVoltage() const {
-  return value & (uint32_t)StatusErrorFlags::UNDER_VOLTAGE;
-};
-
-bool JointStatus::OverVoltage() const {
-  return value & (uint32_t)StatusErrorFlags::OVER_VOLTAGE;
-};
-
-bool JointStatus::OverTemperature() const {
-  return value & (uint32_t)StatusErrorFlags::OVER_TEMPERATURE;
-};
-
-bool JointStatus::MotorHalted() const {
-  return value & (uint32_t)StatusErrorFlags::MOTOR_HALTED;
-};
-
-bool JointStatus::HallSensorError() const {
-  return value & (uint32_t)StatusErrorFlags::HALL_SENSOR_ERROR;
-};
-
-bool JointStatus::EncoderError() const {
-  return value & (uint32_t)StatusErrorFlags::ENCODER_ERROR;
-};
-
-bool JointStatus::InitializationError() const {
-  return value & (uint32_t)StatusErrorFlags::INITIALIZATION_ERROR;
-};
-
-bool JointStatus::PWMMode() const {
-  return value & (uint32_t)StatusErrorFlags::PWM_MODE_ACTIVE;
-};
-
-bool JointStatus::VelocityMode() const {
-  return value & (uint32_t)StatusErrorFlags::VELOCITY_MODE_ACTIVE;
-};
-
-bool JointStatus::PositionMode() const {
-  return value & (uint32_t)StatusErrorFlags::POSITION_MODE_ACTIVE;
-};
-
-bool JointStatus::TorqueMode() const {
-  return value & (uint32_t)StatusErrorFlags::TORQUE_MODE_ACTIVE;
-};
-
-bool JointStatus::EmergencyStop() const {
-  return value & (uint32_t)StatusErrorFlags::EMERGENCY_STOP;
-};
-
-bool JointStatus::FreeRunning() const {
-  return value & (uint32_t)StatusErrorFlags::FREERUNNING;
-};
-
-bool JointStatus::PositionReached() const {
-  return value & (uint32_t)StatusErrorFlags::POSITION_REACHED;
-};
-
-bool JointStatus::Initialized() const {
-  return value & (uint32_t)StatusErrorFlags::INITIALIZED;
-};
-
-bool JointStatus::Timeout() const {
-  return value & (uint32_t)StatusErrorFlags::TIMEOUT;
-};
-
-bool JointStatus::I2TExceeded() const {
-  return value & (uint32_t)StatusErrorFlags::I2T_EXCEEDED;
-};
-
-std::string JointStatus::toString() const {
-  std::stringstream ss;
-  if (OverCurrent())
-    ss <<  " OVER_CURRENT";
-  if (UnderVoltage())
-    ss << " UNDER_VOLTAGE";
-  if (OverVoltage())
-    ss << " OVER_VOLTAGE";
-  if (OverTemperature())
-    ss << " OVER_TEMPERATURE";
-  if (MotorHalted())
-    ss << " MOTOR_HALTED";
-  if (HallSensorError())
-    ss << " HALL_SENSOR_ERROR";
-  if (EncoderError())
-    ss << " ENCODER_ERROR";
-  if (InitializationError())
-    ss << " INITIALIZATION_ERROR";
-  if (PWMMode())
-    ss << " PWM_MODE_ACTIVE";
-  if (VelocityMode())
-    ss << " VELOCITY_MODE_ACTIVE";
-  if (PositionMode())
-    ss << " POSITION_MODE_ACTIVE";
-  if (TorqueMode())
-    ss << " TORQUE_MODE_ACTIVE";
-  if (EmergencyStop())
-    ss << " EMERGENCY_STOP";
-  if (FreeRunning())
-    ss << " FREERUNNING";
-  if (PositionReached())
-    ss << " POSITION_REACHED";
-  if (Initialized())
-    ss << " INITIALIZED";
-  if (Timeout())
-    ss << " TIMEOUT";
-  if (I2TExceeded())
-    ss << " I2T_EXCEEDED";
-  return ss.str();
-}
-
-void YoubotJoint::LogLatestState() const {
+void Joint::LogLatestState() const {
   auto ticks = ticksLatest.load().value;
   auto mA = mALatest.load().value;
   auto RPM = RPMLatest.load().value;
@@ -193,56 +80,51 @@ void YoubotJoint::LogLatestState() const {
   log(Log::info, "Status: " + statusLatest.load().value.toString());
 }
 
-void YoubotJoint::ReqJointSpeedRadPerSec(double value) {
+void Joint::ReqJointSpeedRadPerSec(double value) {
   ReqMotorSpeedRPM(qRadPerSec2RPM(value));
 }
 
-void youbot::YoubotJoint::ReqJointTorqueNm(double value) {
+void youbot::Joint::ReqJointTorqueNm(double value) {
   ReqMotorCurrentmA(Nm2mA(value));
 }
 
-// Thread safe getters
-// Get joint quantity
-
-Data<double> youbot::YoubotJoint::GetQLatestRad() const {
+Data<double> youbot::Joint::GetQLatestRad() const {
   auto temp = ticksLatest.load();
   return Data<double>(Ticks2qRad(temp.value), temp.origin);
 }
 
-Data<double> youbot::YoubotJoint::GetDQLatestRad() const {
+Data<double> youbot::Joint::GetDQLatestRad() const {
   auto temp = RPMLatest.load();
   return Data<double>(RPM2qRadPerSec(temp.value), temp.origin);
 }
 
-Data<double> youbot::YoubotJoint::GetTauLatestNm() const {
+Data<double> youbot::Joint::GetTauLatestNm() const {
   auto temp = mALatest.load();
   return Data<double>(mA2Nm(temp.value), temp.origin);
 }
 
-// Get motor quantity
-
-Data<int32_t> youbot::YoubotJoint::GetTicksLatest() const {
+Data<int32_t> youbot::Joint::GetTicksLatest() const {
   return ticksLatest.load();
 }
 
-Data<int32_t> youbot::YoubotJoint::GetRPMLatest() const {
+Data<int32_t> youbot::Joint::GetRPMLatest() const {
   return RPMLatest.load();
 }
 
-Data<int32_t> youbot::YoubotJoint::GetMALatest() const {
+Data<int32_t> youbot::Joint::GetMALatest() const {
   return mALatest.load();
 }
 
-Data<youbot::JointStatus> youbot::YoubotJoint::GetStatusLatest() const {
+Data<youbot::JointStatus> youbot::Joint::GetStatusLatest() const {
   return statusLatest.load();
 }
 
-void YoubotJoint::ReqJointPositionRad(double rad) {
+void Joint::ReqJointPositionRad(double rad) {
   int32_t ticks = qRad2Ticks(rad);
   ReqMotorPositionTick(ticks);
 }
 
-void youbot::YoubotJoint::CheckI2tAndTimeoutError(JointStatus status) {
+void youbot::Joint::CheckI2tAndTimeoutError(JointStatus status) {
   if (status.I2TExceeded()) {
     log(Log::fatal, "I2t exceeded in slave " + std::to_string(slaveIndex) + " (" + status.toString() + ")");
     SLEEP_MILLISEC(10);
@@ -255,7 +137,7 @@ void youbot::YoubotJoint::CheckI2tAndTimeoutError(JointStatus status) {
   }
 }
 
-void YoubotJoint::InitCommutation() {
+void Joint::InitCommutation() {
   auto status = GetJointStatusViaMailbox();
   if (status.Initialized()) {
     log(Log::info, "Initialization of Joint " + std::to_string(slaveIndex) + " already initialized, status: " + status.toString());
@@ -298,33 +180,26 @@ void YoubotJoint::InitCommutation() {
   throw std::runtime_error("One joint is not initialized and cannot be done it... ");
 }
 
-double YoubotJoint::Ticks2qRad(int32_t ticks) const {
+double Joint::Ticks2qRad(int32_t ticks) const {
   return double(ticks) * 2. * M_PI * parameters.gearRatio / double(parameters.ticksperround) + parameters.qCalibrationRad;
 }
 
-int32_t YoubotJoint::qRad2Ticks(double qDeg) const {
+int32_t Joint::qRad2Ticks(double qDeg) const {
   return int32_t((qDeg - parameters.qCalibrationRad) / (2. * M_PI * parameters.gearRatio / double(parameters.ticksperround)));
 }
 
-double youbot::YoubotJoint::RPM2qRadPerSec(int32_t RPM) const {
+double youbot::Joint::RPM2qRadPerSec(int32_t RPM) const {
   return double(RPM) / 60. * parameters.gearRatio * 2. * M_PI;
 }
 
-int32_t youbot::YoubotJoint::qRadPerSec2RPM(double radpersec) const {
+int32_t youbot::Joint::qRadPerSec2RPM(double radpersec) const {
   return radpersec * 60. / parameters.gearRatio / (2. * M_PI);
 }
 
-double youbot::YoubotJoint::mA2Nm(int32_t mA) const {
+double youbot::Joint::mA2Nm(int32_t mA) const {
   return double(mA) / 1000. * parameters.torqueconstantNmPerA;
 }
 
-int32_t youbot::YoubotJoint::Nm2mA(double Nm) const {
+int32_t youbot::Joint::Nm2mA(double Nm) const {
   return int32_t(Nm / parameters.torqueconstantNmPerA * 1000.);
 }
-
-JointState::JointState() {};
-JointState::JointState(const Data<double>& q, const Data<double>& dq,
-  const Data<double>& tau, const Data<JointStatus>& status) :
-  q(q), dq(dq), tau(tau), status(status) {};
-
-static std::chrono::steady_clock::time_point started_at = std::chrono::steady_clock::now() - std::chrono::minutes(1);

@@ -1,31 +1,31 @@
-#include "YoubotManipulatorModul.hpp"
+#include "Manager.hpp"
 #include <stdexcept>
 #include "Logger.hpp"
 #include "Time.hpp"
 
 using namespace youbot;
 
-youbot::YoubotManipulatorMotionLayer::Status youbot::YoubotManipulatorModul::GetStatus() const {
+youbot::MotionLayer::Status youbot::Manager::GetStatus() const {
   if (man != nullptr)
 	return man->GetStatus();
   else
 	return {};
 }
 
-YoubotManipulatorModul::~YoubotManipulatorModul() {
+Manager::~Manager() {
   if (threadrunning)
     StopThread(false);
 }
 
-void YoubotManipulatorModul::StartThreadAndInitialize() {
+void Manager::StartThreadAndInitialize() {
   threadrunning = true;
   t = std::thread([this] { _thread(configfilepath, virtual_); });
   t.detach();
 }
 
-void YoubotManipulatorModul::StopThread(bool waitin) {
+void Manager::StopThread(bool waitin) {
   if (threadrunning) {
-    man->StopTask();
+    man->StopManipulatorTask();
     threadtostop = true;
     if (waitin) {
       do {
@@ -35,31 +35,31 @@ void YoubotManipulatorModul::StopThread(bool waitin) {
   }
 }
 
-Eigen::VectorXd youbot::YoubotManipulatorModul::GetTrueStatus() const {
+Eigen::VectorXd youbot::Manager::GetTrueStatus() const {
   if (man != nullptr)
     return man->GetTrueStatus();
   else
     return Eigen::VectorXd(5);
 }
 
-youbot::YoubotManipulatorModul::YoubotManipulatorModul(
+youbot::Manager::Manager(
   const std::string& configfilepath, bool virtual_)
   : configfilepath(configfilepath), virtual_(virtual_) {}
 
-void YoubotManipulatorModul::NewManipulatorTask(ManipulatorTask::Ptr task, double time_limit) {
+void Manager::NewManipulatorTask(ManipulatorTask::Ptr task, double time_limit) {
   std::lock_guard<std::mutex> guard(new_task_mutex);
   new_man_task = { task, time_limit };
   if (man != nullptr)
-    man->StopTask();
+    man->StopManipulatorTask();
 }
 
 #include <iostream>
-void YoubotManipulatorModul::_thread(const std::string& configfilepath, bool virtual_) {
+void Manager::_thread(const std::string& configfilepath, bool virtual_) {
   try {
     ManipulatorTask::Ptr idle_ptr = std::make_shared<IdleManipulatorTask>();
     threadtostop = false;
     if (man == nullptr)
-      man = std::make_unique<YoubotManipulatorMotionLayer>(configfilepath, virtual_);
+      man = std::make_unique<MotionLayer>(configfilepath, virtual_);
     man->Initialize();
 
     // Command based operation, checking stop...
@@ -72,7 +72,7 @@ void YoubotManipulatorModul::_thread(const std::string& configfilepath, bool vir
       }
       if (new_man_task_.ptr == nullptr)
         new_man_task_ = { idle_ptr, 0.1 };
-      man->DoTask(new_man_task_.ptr, new_man_task_.time_limit);
+      man->DoManipulatorTask(new_man_task_.ptr, new_man_task_.time_limit);
     }
   }
   catch (const std::runtime_error& error) {

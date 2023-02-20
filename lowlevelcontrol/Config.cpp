@@ -1,19 +1,19 @@
-#include "YoubotConfig.hpp"
+#include "Config.hpp"
 #include <fstream>
 #include "json.hpp"
 #include "Logger.hpp"
 
 using namespace youbot;
 
-YoubotConfig::YoubotConfig(const std::string& filename) : filename(filename) {};
+Config::Config(const std::string& filename) : filename(filename) {};
 
-void YoubotConfig::Init() {
+void Config::Init() {
   std::ifstream configFile;
   configFile.open(filename, std::ios_base::in);
 
   if (!configFile.is_open()) {
     log(__PRETTY_FUNCTION__,__LINE__,__FILE__, Log::fatal, "FATAL ERROR: cannot open json file '" + filename);
-    throw std::runtime_error("FATAL ERROR: cannot open json file '" + filename + "' (in YoubotConfig::YoubotConfig)");
+    throw std::runtime_error("FATAL ERROR: cannot open json file '" + filename + "' (in Config::Config)");
   }
 
   nlohmann::json config;
@@ -22,7 +22,7 @@ void YoubotConfig::Init() {
   }
   catch (...) {
     log(__PRETTY_FUNCTION__, __LINE__, __FILE__, Log::fatal, "FATAL ERROR: parsing config file '" + filename);
-    std::throw_with_nested(std::runtime_error("FATAL ERROR: parsing config file '" + filename + "' (in YoubotConfig::YoubotConfig)"));
+    std::throw_with_nested(std::runtime_error("FATAL ERROR: parsing config file '" + filename + "' (in Config::Config)"));
   }
   if (config.find("JointIndices") != config.end()) {
     auto indices = config.at("JointIndices");

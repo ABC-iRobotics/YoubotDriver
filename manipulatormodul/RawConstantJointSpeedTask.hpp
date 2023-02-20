@@ -5,6 +5,9 @@
 
 namespace youbot {
 
+  /// <summary>
+  /// Task that communicates the same joint speed constantly
+  /// </summary>
   class RawConstantJointSpeedTask : public ManipulatorTask {
   public:
     RawConstantJointSpeedTask(const Eigen::VectorXd& dq, double time_limit);;

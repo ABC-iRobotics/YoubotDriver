@@ -7,7 +7,6 @@ using namespace youbot;
 char jointdrivername1[] = "TMCM-1610";
 char jointdrivername2[] = "TMCM-174";
 char jointdrivername3[] = "TMCM-1632";
-char jointdrivername4[] = "TMCM-1610";
 
 char IOmap[4096];
 ec_ODlistt ODlist;
@@ -790,7 +789,6 @@ bool youbot::checkIfYouBotEtherCatAdapter(char* ifname, bool printSDO, bool prin
 
         if (strcmp(jointdrivername1, ec_slave[cnt].name) ||
           strcmp(jointdrivername2, ec_slave[cnt].name) ||
-          strcmp(jointdrivername3, ec_slave[cnt].name) ||
           strcmp(jointdrivername3, ec_slave[cnt].name)) {
           log(Log::info, "  Can be a youBot joint!");
           numofjointdrivers++;

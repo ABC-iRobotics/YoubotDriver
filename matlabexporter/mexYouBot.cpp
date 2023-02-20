@@ -12,7 +12,7 @@
 #include "class_handle.hpp"
 
 /* youBot headers */
-#include "YoubotManipulatorModul.hpp"
+#include "Manager.hpp"
 #include "RawConstantJointSpeedTask.hpp"
 
 using namespace youbot;
@@ -36,10 +36,10 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
       char input_buf[5000];
       mxGetString(prhs[1], input_buf, 5000);
       bool isvirtual = *mxGetPr(prhs[2]) > 0;
-      auto modul = new YoubotManipulatorModul(input_buf, isvirtual);
+      auto modul = new Manager(input_buf, isvirtual);
 
       // Return a handle to a new C++ instance
-      plhs[0] = convertPtr2Mat<YoubotManipulatorModul>(modul);
+      plhs[0] = convertPtr2Mat<Manager>(modul);
       return;
     }
 
@@ -50,7 +50,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
           "Input arguments must be 2 in delete (mode==2) mode!");
       if (nlhs != 0)
         mexErrMsgTxt("Delete: Zero output expected.");
-      destroyObject<YoubotManipulatorModul>(prhs[1]);
+      destroyObject<Manager>(prhs[1]);
       Log::DropLogger();
       return;
     }
@@ -62,7 +62,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
           "Input arguments must be 2 in start process msgs (mode==5) mode!");
       if (nlhs != 0)
         mexErrMsgTxt("Start process thread: Zero output expected.");
-      auto modul = convertMat2Ptr<YoubotManipulatorModul>(prhs[1]);
+      auto modul = convertMat2Ptr<Manager>(prhs[1]);
       modul->StartThreadAndInitialize();
       return;
     }
@@ -74,7 +74,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
           "Input arguments must be 2 in stop process msgs (mode==7) mode!");
       if (nlhs != 0)
         mexErrMsgTxt("Stop process thread: Zero output expected.");
-      auto modul = convertMat2Ptr<YoubotManipulatorModul>(prhs[1]);
+      auto modul = convertMat2Ptr<Manager>(prhs[1]);
       modul->StopThread();
       return;
     }
@@ -86,7 +86,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
           "Input arguments must be 4 in new task (mode==6) mode!");
       if (nlhs != 0)
         mexErrMsgTxt("New task: Zero output expected.");
-      auto modul = convertMat2Ptr<YoubotManipulatorModul>(prhs[1]);
+      auto modul = convertMat2Ptr<Manager>(prhs[1]);
       int N = mxGetN(prhs[2]) * mxGetM(prhs[2]);
       double* p = mxGetPr(prhs[2]);
       Eigen::VectorXd param(N);
@@ -115,7 +115,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
       if (nrhs != 2)
         mexErrMsgIdAndTxt("MATLAB:youBot:inputmismatch",
           "Input arguments must be 2 in get full status (mode==9) mode!");
-      auto modul = convertMat2Ptr<YoubotManipulatorModul>(prhs[1]);
+      auto modul = convertMat2Ptr<Manager>(prhs[1]);
       auto out = modul->GetStatus();
       // Check parameters
       if (nlhs >= 1) {
@@ -163,7 +163,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
       if (nrhs != 2)
         mexErrMsgIdAndTxt("MATLAB:youBot:inputmismatch",
           "Input arguments must be 2 in get true joints (mode==8) mode!");
-      auto modul = convertMat2Ptr<YoubotManipulatorModul>(prhs[1]);
+      auto modul = convertMat2Ptr<Manager>(prhs[1]);
       auto out = modul->GetTrueStatus();
       // Check parameters
       if (nlhs == 1) {

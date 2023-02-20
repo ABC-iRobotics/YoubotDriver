@@ -1,5 +1,5 @@
-#ifndef YOUBOT_CONFIG_HPP
-#define YOUBOT_CONFIG_HPP
+#ifndef CONFIG_HPP
+#define CONFIG_HPP
 
 #include <string>
 #include <map>
@@ -8,7 +8,10 @@ namespace youbot {
 
   typedef std::map<std::string, double> NameValueMap;
 
-  struct YoubotConfig {
+  /// <summary>
+  /// Content of a config file loaded into NameValueMap-s
+  /// </summary>
+  struct Config {
 	int gripperIndex, jointIndices[5];
 
 	int& waistIndex = jointIndices[0];
@@ -27,8 +30,16 @@ namespace youbot {
 
 	std::map<std::string, std::string> logConfig;
 
-	YoubotConfig(const std::string& filename);
+	/// <summary>
+	/// Constructor: only saves the filename
+	/// </summary>
+	/// <param name="filename"> path and filename of the config file </param>
+	Config(const std::string& filename);
 
+	/// <summary>
+	/// Loads the contant of the config file into the NameValueMap-s
+	/// without checking, sorting, etc. the values within
+	/// </summary>
 	void Init();
 
 	const std::string filename;
