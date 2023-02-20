@@ -1,6 +1,6 @@
 #include "YoubotManipulatorMotionLayer.hpp"
 #include "adapters.hpp"
-#include "YoubotJointVirtual.hpp"
+#include "JointVirtual.hpp"
 #include <stdexcept>
 #include "Logger.hpp"
 #include "Time.hpp"
@@ -84,7 +84,7 @@ Eigen::VectorXd youbot::YoubotManipulatorMotionLayer::GetTrueStatus() const {
     if (center->GetType() == EtherCATMaster::VIRTUAL) {
       for (int i=0;i<5;i++)
         if (man->GetJoint(i) != nullptr)
-          out[i] = std::dynamic_pointer_cast<YoubotJointVirtual>(
+          out[i] = std::dynamic_pointer_cast<JointVirtual>(
             man->GetJoint(i))->GetJointPositionTRUE();
     }
     else {

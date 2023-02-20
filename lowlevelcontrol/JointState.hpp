@@ -1,5 +1,5 @@
-#ifndef YOUBOT_JOINT_STATE_HPP
-#define YOUBOT_JOINT_STATE_HPP
+#ifndef JOINT_STATE_HPP
+#define JOINT_STATE_HPP
 
 #include <string>
 #include <atomic>

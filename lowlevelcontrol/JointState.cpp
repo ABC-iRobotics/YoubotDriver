@@ -1,4 +1,4 @@
-#include "YoubotJointState.hpp"
+#include "JointState.hpp"
 #include "Time.hpp"
 #include "Logger.hpp"
 #include <sstream>

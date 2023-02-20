@@ -1,4 +1,4 @@
-#include "YoubotJointVirtual.hpp"
+#include "JointVirtual.hpp"
 #include "VirtualEtherCATMaster.hpp"
 #include "Time.hpp"
 #include "Logger.hpp"
@@ -7,13 +7,13 @@
 
 using namespace youbot;
 
-void YoubotJointVirtual::GetFirmwareVersionViaMailbox(int& controllernum,
+void JointVirtual::GetFirmwareVersionViaMailbox(int& controllernum,
   int& firmwareversion) {
   controllernum = 1610;
   firmwareversion = 148;
 }
 
-void YoubotJointVirtual::_calledAtExchange() {
+void JointVirtual::_calledAtExchange() {
   _update();
   // Update latest values
   ticksLatest.exchange(ticks());
@@ -51,15 +51,15 @@ void YoubotJointVirtual::_calledAtExchange() {
   }
 }
 
-unsigned int YoubotJointVirtual::GetEncoderResolutionViaMailbox() {
+unsigned int JointVirtual::GetEncoderResolutionViaMailbox() {
   return 4000;
 }
 
-std::string youbot::YoubotJointVirtual::GetCommutationModeViaMailbox() {
+std::string youbot::JointVirtual::GetCommutationModeViaMailbox() {
     return "virtual";
 }
 
-JointStatus YoubotJointVirtual::_getStatus() {
+JointStatus JointVirtual::_getStatus() {
   int32_t status = 0;
   if (timeout)
     status |= int32_t(JointStatus::StatusErrorFlags::TIMEOUT);
@@ -88,15 +88,15 @@ JointStatus YoubotJointVirtual::_getStatus() {
   return status;
 }
 
-int64_t youbot::YoubotJointVirtual::ticks() const {
+int64_t youbot::JointVirtual::ticks() const {
   return qRad2Ticks(qRad_true) + ticks_offset;
 }
 
-inline void youbot::YoubotJointVirtual::settickstozero() {
+inline void youbot::JointVirtual::settickstozero() {
   ticks_offset = -qRad2Ticks(qRad_true);
 }
 
-void youbot::YoubotJointVirtual::_updateFor(double elapsedTime) {
+void youbot::JointVirtual::_updateFor(double elapsedTime) {
   if (timeout || I2terror) { // forcestop
     RPM = 0;
     current_mA = 0;
@@ -144,7 +144,7 @@ void youbot::YoubotJointVirtual::_updateFor(double elapsedTime) {
   }
 }
 
-void youbot::YoubotJointVirtual::_update() {
+void youbot::JointVirtual::_update() {
   auto now = std::chrono::steady_clock::now();
   double dt = double(std::chrono::duration_cast<std::chrono::milliseconds>(now
     - updated_at).count()) / 1000.;
@@ -168,62 +168,62 @@ void youbot::YoubotJointVirtual::_update() {
   updated_at = now;
 }
 
-YoubotJointVirtual::YoubotJointVirtual(int slaveIndex, const std::map<std::string,
+JointVirtual::JointVirtual(int slaveIndex, const std::map<std::string,
   double>& config, EtherCATMaster::Ptr center)
-  : YoubotJoint(slaveIndex, config, center) {
-  center->RegisterAfterExchangeCallback(std::bind(&YoubotJointVirtual::_calledAtExchange, this));
+  : Joint(slaveIndex, config, center) {
+  center->RegisterAfterExchangeCallback(std::bind(&JointVirtual::_calledAtExchange, this));
 }
 
-void YoubotJointVirtual::ConfigControlParameters(bool forceConfiguration) {
+void JointVirtual::ConfigControlParameters(bool forceConfiguration) {
   configurated = true;
 }
 
-bool YoubotJointVirtual::CheckControlParameters() {
+bool JointVirtual::CheckControlParameters() {
   return configurated;
 }
 
-void YoubotJointVirtual::RotateJointRightViaMailbox(double speedJointRadPerSec) {
+void JointVirtual::RotateJointRightViaMailbox(double speedJointRadPerSec) {
   _update();
   controlMode = VELOCITY;
   target = qRadPerSec2RPM(speedJointRadPerSec);
   log(Log::info, " RotateRightMotorRPM: " + std::to_string(target));
 }
 
-void YoubotJointVirtual::RotateJointLeftViaMailbox(double speedJointRadPerSec) {
+void JointVirtual::RotateJointLeftViaMailbox(double speedJointRadPerSec) {
   _update();
   controlMode = VELOCITY;
   target = -qRadPerSec2RPM(speedJointRadPerSec);
   log(Log::info, " RotateLeftMotorRPM: " + std::to_string(-target));
 }
 
-void YoubotJointVirtual::StopViaMailbox() {
+void JointVirtual::StopViaMailbox() {
   _update();
   controlMode = VELOCITY;
   target = 0;
   log(Log::info, " MotorStop");
 }
 
-JointStatus YoubotJointVirtual::GetJointStatusViaMailbox() {
+JointStatus JointVirtual::GetJointStatusViaMailbox() {
   _update();
   auto status = _getStatus();
   statusLatest.exchange(status);
   return status;
 }
 
-void YoubotJointVirtual::ResetTimeoutViaMailbox() {
+void JointVirtual::ResetTimeoutViaMailbox() {
   _update();
   timeout = false;
   log(Log::info, " ResetTimeoutViaMailbox");
 }
 
-void YoubotJointVirtual::ResetI2TExceededViaMailbox() {
+void JointVirtual::ResetI2TExceededViaMailbox() {
   _update();
   SLEEP_MILLISEC(long(GetParameters().cooldowntime_sec * 1000));
   I2terror = false;
   log(Log::info, "  ClearI2TFlag:  waiting done");
 }
 
-void YoubotJointVirtual::StartInitializationViaMailbox() {
+void JointVirtual::StartInitializationViaMailbox() {
   StopViaMailbox();
   auto status = GetJointStatusViaMailbox();
   log(Log::info, status.toString());
@@ -240,52 +240,52 @@ void YoubotJointVirtual::StartInitializationViaMailbox() {
   log(Log::info, "  SetInitialize: OK");
 }
 
-bool YoubotJointVirtual::IsConfiguratedViaMailbox() {
+bool JointVirtual::IsConfiguratedViaMailbox() {
   return configurated_flag;
 }
 
-void YoubotJointVirtual::SetConfiguratedViaMailbox() {
+void JointVirtual::SetConfiguratedViaMailbox() {
   configurated_flag = true;
 }
 
-void YoubotJointVirtual::ReqNoAction() {
+void JointVirtual::ReqNoAction() {
   processCommand.type = ProcessCommand::NO_MORE_ACTION;
 }
 
-void YoubotJointVirtual::ReqMotorPositionTick(int ticks) {
+void JointVirtual::ReqMotorPositionTick(int ticks) {
   processCommand.type = ProcessCommand::POSITION;
   processCommand.value = ticks;
 }
 
-void YoubotJointVirtual::ReqMotorSpeedRPM(int32_t value) {
+void JointVirtual::ReqMotorSpeedRPM(int32_t value) {
   processCommand.type = ProcessCommand::VELOCITY;
   processCommand.value = value;
 }
 
-void YoubotJointVirtual::ReqEncoderReference(int32_t value) {
+void JointVirtual::ReqEncoderReference(int32_t value) {
   processCommand.type = ProcessCommand::ENCODER_ZERO;
 }
 
-void YoubotJointVirtual::ReqStop() {
+void JointVirtual::ReqStop() {
   processCommand.type = ProcessCommand::VELOCITY;
   processCommand.value = 0;
 }
 
-void YoubotJointVirtual::ReqVoltagePWM(int32_t value) {
+void JointVirtual::ReqVoltagePWM(int32_t value) {
   processCommand.type = ProcessCommand::PWM;
   processCommand.value = value;
 }
 
-void youbot::YoubotJointVirtual::ReqMotorCurrentmA(int32_t value) {
+void youbot::JointVirtual::ReqMotorCurrentmA(int32_t value) {
   processCommand.type = ProcessCommand::CURRENT;
   processCommand.value = value;
 }
 
-void YoubotJointVirtual::ReqInitializationViaProcess() {
+void JointVirtual::ReqInitializationViaProcess() {
   processCommand.type = ProcessCommand::INITIALIZE;
 }
 
-void youbot::YoubotJointVirtual::CheckI2tAndTimeoutError(JointStatus status) {
+void youbot::JointVirtual::CheckI2tAndTimeoutError(JointStatus status) {
   _update();
   if (status.I2TExceeded()) {
     log(Log::fatal, "I2t exceeded in slave " + std::to_string(GetSlaveIndex()) + " (" + status.toString() + ")");
@@ -301,72 +301,72 @@ void youbot::YoubotJointVirtual::CheckI2tAndTimeoutError(JointStatus status) {
 
 // Cheat funciton
 
-double youbot::YoubotJointVirtual::GetJointPositionTRUE() const {
+double youbot::JointVirtual::GetJointPositionTRUE() const {
   return qRad_true;
 }
 
-double YoubotJointVirtual::GetCurrentAViaMailbox() {
+double JointVirtual::GetCurrentAViaMailbox() {
   _update();
   auto mA = current_mA;
   mALatest.exchange(mA);
   return double(mA) / 1000.;
 }
 
-void YoubotJointVirtual::RotateMotorRightViaMailbox(int32_t speedMotorRPM) {
+void JointVirtual::RotateMotorRightViaMailbox(int32_t speedMotorRPM) {
   _update();
   controlMode = VELOCITY;
   target = speedMotorRPM;
   log(Log::info, " RotateRightMotorRPM: " + std::to_string(speedMotorRPM));
 }
 
-void YoubotJointVirtual::RotateMotorLeftViaMailbox(int32_t speedMotorRPM) {
+void JointVirtual::RotateMotorLeftViaMailbox(int32_t speedMotorRPM) {
   _update();
   controlMode = VELOCITY;
   target = -speedMotorRPM;
   log(Log::info, " RotateLeftMotorRPM: " + std::to_string(speedMotorRPM));
 }
 
-double YoubotJointVirtual::GetJointVelocityRadPerSecViaMailbox() {
+double JointVirtual::GetJointVelocityRadPerSecViaMailbox() {
   _update();
   RPMLatest.exchange(RPM);
   return RPM2qRadPerSec(RPM);
 }
 
-long youbot::YoubotJointVirtual::GetI2tLimitValueViaMailbox() {
+long youbot::JointVirtual::GetI2tLimitValueViaMailbox() {
   throw std::runtime_error("Not implemented");
   return 10000;
 }
 
-long youbot::YoubotJointVirtual::GetCurrentI2tValueViaMailbox() {
+long youbot::JointVirtual::GetCurrentI2tValueViaMailbox() {
   throw std::runtime_error("Not implemented");
   return 10000;
 }
 
-void YoubotJointVirtual::SetJointVelocityRadPerSecViaMailbox(double value) {
+void JointVirtual::SetJointVelocityRadPerSecViaMailbox(double value) {
   _update();
   controlMode = VELOCITY;
   target = qRadPerSec2RPM(value);
 }
 
-double YoubotJointVirtual::GetThermalWindingTimeSecViaMailbox() {
+double JointVirtual::GetThermalWindingTimeSecViaMailbox() {
   return 10.;
 }
 
-void YoubotJointVirtual::SetTargetCurrentAViaMailbox(double current) {
+void JointVirtual::SetTargetCurrentAViaMailbox(double current) {
   _update();
   controlMode = CURRENT;
   target = current*1000.;
 }
 
-bool YoubotJointVirtual::IsCalibratedViaMailbox() {
+bool JointVirtual::IsCalibratedViaMailbox() {
   return calibrated_flag;
 }
 
-void YoubotJointVirtual::SetCalibratedViaMailbox() {
+void JointVirtual::SetCalibratedViaMailbox() {
   calibrated_flag = true;
 }
 
-void youbot::YoubotJointVirtual::CommutationState::Update() {
+void youbot::JointVirtual::CommutationState::Update() {
   if (!initialized && started) {
     // TODO: move
     if (std::chrono::duration_cast<std::chrono::milliseconds>(

@@ -1,14 +1,14 @@
-#ifndef YOUBOT_JOINT_ABSTRACT_HPP
-#define YOUBOT_JOINT_ABSTRACT_HPP
+#ifndef JOINT_HPP
+#define JOINT_HPP
 
 #include <map>
 #include <string>
 #include "EtherCATMaster.hpp"
-#include "YoubotJointState.hpp"
+#include "JointState.hpp"
 
 namespace youbot {
 
-  class YoubotJoint {
+  class Joint {
   public:
     struct Parameters {
       std::string commutationmode;
@@ -23,12 +23,12 @@ namespace youbot {
     };
 
     // Not available constructors
-    YoubotJoint() = delete;
-    YoubotJoint(YoubotJoint&) = delete;
-    YoubotJoint(const YoubotJoint&) = delete;
+    Joint() = delete;
+    Joint(Joint&) = delete;
+    Joint(const Joint&) = delete;
 
     // Constructor
-    YoubotJoint(int slaveIndex, const std::map<std::string, double>& config,
+    Joint(int slaveIndex, const std::map<std::string, double>& config,
       EtherCATMaster::Ptr center);
 
     // Main initialization routine
@@ -113,7 +113,7 @@ namespace youbot {
 
     void LogLatestState() const;
 
-    typedef std::shared_ptr<YoubotJoint> Ptr;
+    typedef std::shared_ptr<Joint> Ptr;
 
   private:
     const int slaveIndex;

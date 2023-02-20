@@ -1,14 +1,14 @@
-#ifndef YOUBOT_JOINT_VIRTUAL_HPP
-#define YOUBOT_JOINT_VIRTUAL_HPP
+#ifndef JOINT_VIRTUAL_HPP
+#define JOINT_VIRTUAL_HPP
 
 #include "EtherCATMaster.hpp"
-#include "YoubotJoint.hpp"
+#include "Joint.hpp"
 #include <map>
 #include <chrono>
 
 namespace youbot {
 
-  class YoubotJointVirtual : public YoubotJoint {
+  class JointVirtual : public Joint {
     struct ProcessCommand {
       enum {
         POSITION,
@@ -62,11 +62,11 @@ namespace youbot {
 
   public:
     // Deleted constructor
-    YoubotJointVirtual() = delete;
-    YoubotJointVirtual(YoubotJointVirtual&) = delete;
-    YoubotJointVirtual(const YoubotJointVirtual&) = delete;
+    JointVirtual() = delete;
+    JointVirtual(JointVirtual&) = delete;
+    JointVirtual(const JointVirtual&) = delete;
 
-    YoubotJointVirtual(int slaveIndex,
+    JointVirtual(int slaveIndex,
       const std::map<std::string, double>& config, EtherCATMaster::Ptr center);
 
     void ConfigControlParameters(bool forceConfiguration = false) override;

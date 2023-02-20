@@ -1,20 +1,20 @@
-#ifndef YOUBOT_JOINT_REAL_HPP
-#define YOUBOT_JOINT_REAL_HPP
+#ifndef JOINT_PHYSICAL_HPP
+#define JOINT_PHYSICAL_HPP
 
 #include "EtherCATMaster.hpp"
-#include "YoubotJoint.hpp"
+#include "Joint.hpp"
 #include <map>
 
 namespace youbot {
 
-  class YoubotJointPhysical : public YoubotJoint {
+  class JointPhysical : public Joint {
   public:
     // Deleted constructor
-    YoubotJointPhysical() = delete;
-    YoubotJointPhysical(YoubotJointPhysical&) = delete;
-    YoubotJointPhysical(const YoubotJointPhysical&) = delete;
+    JointPhysical() = delete;
+    JointPhysical(JointPhysical&) = delete;
+    JointPhysical(const JointPhysical&) = delete;
 
-    YoubotJointPhysical(int slaveIndex, const std::map<std::string, double>& config,
+    JointPhysical(int slaveIndex, const std::map<std::string, double>& config,
       EtherCATMaster::Ptr center);
 
     void Init();

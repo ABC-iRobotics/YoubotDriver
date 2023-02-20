@@ -7,12 +7,12 @@ set(SOURCES
 		TMCLMailboxMessage.cpp
 		TMCLDefinitions.cpp
 		EtherCATMaster.cpp
-		YoubotJoint.cpp
-		YoubotJointPhysical.cpp
-		YoubotJointVirtual.cpp
+		Joint.cpp
+		JointPhysical.cpp
+		JointVirtual.cpp
 		Config.cpp
 		Manipulator.cpp
-		YoubotJointState.cpp
+		JointState.cpp
 		ProcessBuffer.cpp
 	  )
 
@@ -22,19 +22,19 @@ set(HEADERS
 		Logger.hpp
 		EtherCATMaster.hpp
 		MailboxMessage.hpp
-		YoubotJoint.hpp
+		Joint.hpp
 		Config.hpp
 		Manipulator.hpp
 		ProcessBuffer.hpp
-		YoubotJointState.hpp
+		JointState.hpp
 		Data.hpp
 )
 
 set(INTRINSIC_HEADERS
 		SimpleOpenEtherCATMaster.hpp
 		VirtualEtherCATMaster.hpp
-		YoubotJointPhysical.hpp
-		YoubotJointVirtual.hpp
+		JointPhysical.hpp
+		JointVirtual.hpp
 		TMCLMailboxMessage.hpp
 		TMCLDefinitions.hpp
 )
