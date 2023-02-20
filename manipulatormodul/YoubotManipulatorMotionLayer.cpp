@@ -108,7 +108,7 @@ void youbot::YoubotManipulatorMotionLayer::DoTask(ManipulatorTask::Ptr task, dou
   taskrunning = true;
   auto start = std::chrono::steady_clock::now();
   int elapsed_ms;
-  man->CheckAndResetErrorFlags();
+  man->CheckAndResetErrorFlagsViaMailbox();
   task->Initialize(man->GetStateLatest());
   do {
     auto stateLatest = man->GetStateLatest();

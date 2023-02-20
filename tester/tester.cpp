@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
   man.Calibrate();
   
   SLEEP_SEC(1);
-  man.CheckAndResetErrorFlags();
+  man.CheckAndResetErrorFlagsViaMailbox();
   
   GoTowardsZero(man, 5000, 0.05, config);
 

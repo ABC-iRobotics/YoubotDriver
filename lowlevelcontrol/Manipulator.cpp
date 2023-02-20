@@ -26,7 +26,7 @@ Joint::Ptr Manipulator::GetJoint(int i) {
 
 void Manipulator::CollectBasicJointParameters() {
   for (int i = 0; i < 5; i++)
-	joints[i]->ConfigControlParameters();
+	joints[i]->CollectBasicParameters();
 }
 
 void Manipulator::ConfigJointControlParameters(bool forceConfiguration) {
@@ -262,7 +262,7 @@ void Manipulator::ReqManipulatorStop() {
   for (auto& it : joints)
 	it->ReqStop();
 }
-void Manipulator::CheckAndResetErrorFlags() {
+void Manipulator::CheckAndResetErrorFlagsViaMailbox() {
   for (int i = 0; i < 5; i++) {
 	auto status = joints[i]->GetJointStatusViaMailbox();
 	if (status.I2TExceeded())
