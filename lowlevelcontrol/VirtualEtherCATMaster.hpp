@@ -27,7 +27,7 @@ namespace youbot {
 
       std::string getSlaveName(int cnt) const override;
 
-      virtual MailboxStatus SendMailboxMessage(MailboxMessage::MailboxMessagePtr ptr) override;
+      virtual MailboxStatus SendMailboxMessage(MailboxMessage::Ptr ptr) override;
 
       virtual void GetProcessMsg(ProcessBuffer& buff, uint8_t slaveNumber) const override;
 

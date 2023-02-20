@@ -70,7 +70,7 @@ namespace youbot {
 	/// <returns> Size of the buffer for the received message </returns>
 	int getFromSlaveBuffSize() const { return fromSlaveBuffSize; }
 
-	typedef std::shared_ptr<MailboxMessage> MailboxMessagePtr;
+	typedef std::shared_ptr<MailboxMessage> Ptr;
   };
 }
 #endif

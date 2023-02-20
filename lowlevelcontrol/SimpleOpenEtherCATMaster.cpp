@@ -133,7 +133,7 @@ std::string SimpleOpenEtherCATMaster::getSlaveName(int cnt) const {
   return ec_slave[cnt + 1].name;
 }
 
-SimpleOpenEtherCATMaster::MailboxStatus SimpleOpenEtherCATMaster::SendMailboxMessage(MailboxMessage::MailboxMessagePtr ptr) {
+SimpleOpenEtherCATMaster::MailboxStatus SimpleOpenEtherCATMaster::SendMailboxMessage(MailboxMessage::Ptr ptr) {
   //copy from buffer
   int i = ptr->getSlaveIndex();
   {
