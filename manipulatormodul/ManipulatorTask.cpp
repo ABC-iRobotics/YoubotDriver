@@ -52,9 +52,7 @@ bool youbot::ManipulatorTask::Finished() const {
 }
 
 ManipulatorCommand IdleManipulatorTask::GetCommand(const JointsState& new_state) {
-  Eigen::VectorXd dq(5);
-  dq << 0, 0, 0, 0, 0;
-  return ManipulatorCommand(BLDCCommand::JOINT_VELOCITY, dq);
+  return ManipulatorCommand(BLDCCommand::MOTOR_STOP, Eigen::VectorXd(5));
 }
 
 ManipulatorTask::TaskType IdleManipulatorTask::GetType() const {
