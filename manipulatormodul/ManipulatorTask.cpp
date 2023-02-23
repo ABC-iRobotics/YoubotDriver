@@ -17,8 +17,25 @@ std::string youbot::ManipulatorTask::Type2String(TaskType type) {
   }
 }
 
-youbot::ManipulatorCommand::ManipulatorCommand(Type type, const Eigen::VectorXd& value)
-    : type(type), value(value) {}
+youbot::ManipulatorCommand::ManipulatorCommand(BLDCCommand::Type type,
+  const Eigen::VectorXd& value) {
+  for (int i = 0; i < 5; i++)
+    commands[i] = { type, value[i] };
+}
+
+youbot::ManipulatorCommand::ManipulatorCommand(BLDCCommand::Type type,
+  const Eigen::VectorXi& value) {
+  for (int i = 0; i < 5; i++)
+    commands[i] = { type, value[i] };
+}
+
+youbot::ManipulatorCommand::ManipulatorCommand(const BLDCCommand& cmd0, const BLDCCommand& cmd1, const BLDCCommand& cmd2, const BLDCCommand& cmd3, const BLDCCommand& cmd4) {
+  commands[0] = cmd0;
+  commands[1] = cmd1;
+  commands[2] = cmd2;
+  commands[3] = cmd3;
+  commands[4] = cmd4;
+}
 
 // Called by the motion layer
 
@@ -37,7 +54,7 @@ bool youbot::ManipulatorTask::Finished() const {
 ManipulatorCommand IdleManipulatorTask::GetCommand(const JointsState& new_state) {
   Eigen::VectorXd dq(5);
   dq << 0, 0, 0, 0, 0;
-  return ManipulatorCommand(ManipulatorCommand::JOINT_VELOCITY, dq);
+  return ManipulatorCommand(BLDCCommand::JOINT_VELOCITY, dq);
 }
 
 ManipulatorTask::TaskType IdleManipulatorTask::GetType() const {
@@ -51,7 +68,7 @@ bool IdleManipulatorTask::_taskFinished() const {
 ManipulatorCommand ZeroCurrentManipulatorTask::GetCommand(const JointsState& new_state) {
   Eigen::VectorXd tau(5);
   tau << 0, 0, 0, 0, 0;
-  return ManipulatorCommand(ManipulatorCommand::JOINT_TORQUE, tau);
+  return ManipulatorCommand(BLDCCommand::JOINT_TORQUE, tau);
 }
 
 ManipulatorTask::TaskType ZeroCurrentManipulatorTask::GetType() const {

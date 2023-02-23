@@ -9,22 +9,75 @@
 namespace youbot {
 
   /// <summary>
+/// Command that can be forwarded to the BLDC controllers
+/// 
+/// Templates are used to allow to use it with double and int as well.
+/// </summary>
+  class BLDCCommand {
+  public:
+    /// <summary>
+    /// Command types currently used and handled in the MotionLayer
+    /// 
+    /// "int" for MOTOR_TICK, MOTOR_RPM, MOTOR_CURRENT_MA, ENCODER_SET_REFERENCE;
+    /// "double" for JOINT_POSITION, JOINT_VELOCITY, JOINT_TORQUE
+    /// </summary>
+    enum Type {
+      NOT_DEFINED, // will cause std::runtime_error
+      JOINT_POSITION, //forbidden for TMCM-1610 firmware 1.48
+      JOINT_VELOCITY,
+      JOINT_TORQUE,
+      MOTOR_TICK,
+      MOTOR_RPM,
+      MOTOR_CURRENT_MA,
+      MOTOR_VOLTAGE,
+      MOTOR_STOP,
+      ENCODER_SET_REFERENCE, // be careful
+      INITIALIZE // be careful
+    };
+
+    BLDCCommand() : type(NOT_DEFINED), i_value(0), d_value(0) {}; ///! Empty constructor
+
+    template <class T>
+    BLDCCommand(Type type_, T value_) : type(type_), i_value(value_), d_value(value_) {} ///! constructor for double input
+
+    template <class T>
+    void Set(T value_) { i_value = value_; d_value = value_; } ///! Set the value
+
+    /// <summary>
+    /// Get the current value
+    /// </summary>
+    /// <typeparam name="T"> double/int according to the aims </typeparam>
+    /// <returns></returns>
+    template <class T>
+    T Get() const {
+      if constexpr (std::is_same_v<T, int>)
+        return i_value;
+      if constexpr (std::is_same_v<T, double>)
+        return d_value;
+      throw std::runtime_error("not allowed input");
+    }
+
+    Type GetType() const { return type; } ///! Get the command type
+
+  private:
+    Type type;
+    int i_value;
+    double d_value;
+  };
+
+  /// <summary>
   /// The ManipulatorCommand is a low level settings for the manipulator, e.g. use given joint velocity
   /// it is defined by a vector (e.g. joint velocities) and the type specifier e.g. "joint velocity"
   /// </summary>
   struct ManipulatorCommand {
-    /// <summary>
-    /// Command types currently used and handled in the MotionLayer
-    /// </summary>
-    enum Type {
-      JOINT_POSITION, //forbidden
-      JOINT_VELOCITY,
-      JOINT_TORQUE,
-      ENCODER_SET_REFERENCE
-    } type;
-    Eigen::VectorXd value;
+    BLDCCommand commands[5];
 
-    ManipulatorCommand(Type type, const Eigen::VectorXd& value); ///< Constructor
+    ManipulatorCommand(BLDCCommand::Type type, const Eigen::VectorXd& value); ///< Constructor for same type and double values 
+
+    ManipulatorCommand(BLDCCommand::Type type, const Eigen::VectorXi& value); ///< Constructor for same type and int values 
+
+    ManipulatorCommand(const BLDCCommand& cmd0, const BLDCCommand& cmd1, const BLDCCommand& cmd2,
+      const BLDCCommand& cmd3, const BLDCCommand& cmd4); ///< Constructor to use different command types
   };
 
   /// <summary>
@@ -39,6 +92,7 @@ namespace youbot {
     enum TaskType {
       NOT_DEFINED,
       INITIALIZATION,
+      CALIBRATION,
       STOPPED,
       ZERO_CURRENT,
       RAW_CONSTANT_JOINTSPEED // currently these types are defined

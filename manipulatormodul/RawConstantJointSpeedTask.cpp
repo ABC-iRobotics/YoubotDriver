@@ -7,7 +7,7 @@ youbot::RawConstantJointSpeedTask::RawConstantJointSpeedTask(const Eigen::Vector
   dq(dq), time_limit(time_limit) {}
 
 ManipulatorCommand youbot::RawConstantJointSpeedTask::GetCommand(const JointsState& new_state) {
-  return ManipulatorCommand(ManipulatorCommand::JOINT_VELOCITY, dq);
+  return ManipulatorCommand(BLDCCommand::JOINT_VELOCITY, dq);
 }
 
 ManipulatorTask::TaskType youbot::RawConstantJointSpeedTask::GetType() const {

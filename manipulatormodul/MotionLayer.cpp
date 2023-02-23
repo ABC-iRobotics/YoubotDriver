@@ -27,37 +27,38 @@ void youbot::MotionLayer::_SoftLimit(
     auto p = man->GetJoint(i)->GetParameters();
     auto qmin_lim = p.qMinDeg / 180 * M_PI + limitZoneRad;
     auto qmax_lim = p.qMaxDeg / 180 * M_PI - limitZoneRad;
+    auto& cmd_ = cmd.commands[i];
     if (q < qmin_lim) {
-      switch (cmd.type) {
-      case cmd.JOINT_POSITION:
-        if (cmd.value(i) < qmin_lim)
-          cmd.value(i) = qmin_lim;
+      switch (cmd_.GetType()) {
+      case cmd_.JOINT_POSITION:
+        if (cmd_.Get<double>() < qmin_lim)
+          cmd_.Set(qmin_lim);
         break;
-      case cmd.JOINT_VELOCITY:
-        if (cmd.value(i) < corrjointspeed)
-          cmd.value(i) = corrjointspeed;
+      case cmd_.JOINT_VELOCITY:
+        if (cmd_.Get<double>() < corrjointspeed)
+          cmd_.Set(corrjointspeed);
         break;
-      case cmd.JOINT_TORQUE:
-        if (cmd.value(i) < 0)
-          cmd.value(i) = 0;
+      case cmd_.JOINT_TORQUE:
+        if (cmd_.Get<double>() < 0)
+          cmd_.Set(0);
         break;
       default:
         break;
       }
     }
     if (q > qmax_lim) {
-      switch (cmd.type) {
-      case cmd.JOINT_POSITION:
-        if (cmd.value(i) > qmax_lim)
-          cmd.value(i) = qmax_lim;
+      switch (cmd_.GetType()) {
+      case cmd_.JOINT_POSITION:
+        if (cmd_.Get<double>() > qmax_lim)
+          cmd_.Set(qmax_lim);
         break;
-      case cmd.JOINT_VELOCITY:
-        if (cmd.value(i) > -corrjointspeed)
-          cmd.value(i) = -corrjointspeed;
+      case cmd_.JOINT_VELOCITY:
+        if (cmd_.Get<double>() > -corrjointspeed)
+          cmd_.Set(-corrjointspeed);
         break;
-      case cmd.JOINT_TORQUE:
-        if (cmd.value(i) > 0)
-          cmd.value(i) = 0;
+      case cmd_.JOINT_TORQUE:
+        if (cmd_.Get<double>() > 0)
+          cmd_.Set(0);
         break;
       default:
         break;
@@ -101,7 +102,6 @@ void youbot::MotionLayer::StopManipulatorTask() {
 }
 
 // Tasks
-
 void youbot::MotionLayer::DoManipulatorTask(ManipulatorTask::Ptr task, double time_limit) {
   stoptask = false;
   motionStatus.store(task->GetType());
@@ -113,25 +113,41 @@ void youbot::MotionLayer::DoManipulatorTask(ManipulatorTask::Ptr task, double ti
   do {
     auto stateLatest = man->GetStateLatest();
     auto man_c = task->GetCommand(stateLatest);
-    _SoftLimit(man_c, stateLatest); // apply soft limit
-    switch (man_c.type) {
-    case ManipulatorCommand::JOINT_POSITION:
-      man->ReqJointPositionRad(man_c.value[0], man_c.value[1],
-        man_c.value[2], man_c.value[3], man_c.value[4]);
-      break;
-    case ManipulatorCommand::JOINT_VELOCITY:
-      man->ReqJointSpeedRadPerSec(man_c.value[0], man_c.value[1],
-        man_c.value[2], man_c.value[3], man_c.value[4]);
-      break;
-    case ManipulatorCommand::JOINT_TORQUE:
-      man->ReqJointTorqueNm(man_c.value[0], man_c.value[1],
-        man_c.value[2], man_c.value[3], man_c.value[4]);
-      break;
-      /*
-      case ManipulatorCommand::ENCODER_SET_REFERENCE:
-      man->Req(man_c.value[0], man_c.value[1],
-      man_c.value[2], man_c.value[3], man_c.value[4]);
-      break;*/
+    _SoftLimit(man_c, stateLatest); // apply soft limit - todo only if commutation initialized and calibrated
+    for (int i = 0; i < 5; i++) {
+      auto& cmd_ = man_c.commands[i];
+      auto& j = man->GetJoint(i);
+      switch (cmd_.GetType()) {
+      case BLDCCommand::JOINT_POSITION:
+        j->ReqJointPositionRad(cmd_.Get<double>());
+        break;
+      case BLDCCommand::JOINT_VELOCITY:
+        j->ReqJointSpeedRadPerSec(cmd_.Get<double>());
+        break;
+      case BLDCCommand::JOINT_TORQUE:
+        j->ReqJointTorqueNm(cmd_.Get<double>());
+        break;
+      case BLDCCommand::MOTOR_TICK:
+        j->ReqMotorPositionTick(cmd_.Get<int>());
+        break;
+      case BLDCCommand::MOTOR_RPM:
+        j->ReqMotorSpeedRPM(cmd_.Get<int>());
+        break;
+      case BLDCCommand::MOTOR_CURRENT_MA:
+        j->ReqMotorCurrentmA(cmd_.Get<int>());
+        break;
+      case BLDCCommand::MOTOR_VOLTAGE:
+        j->ReqVoltagePWM(cmd_.Get<int>());
+        break;
+      case BLDCCommand::INITIALIZE:
+        j->ReqInitializationViaProcess();
+        break;
+      case BLDCCommand::ENCODER_SET_REFERENCE:
+        j->ReqEncoderReference(cmd_.Get<int>());
+        break;
+      default:
+        break;
+      }
     }
     center->ExchangeProcessMsg();
     SLEEP_MILLISEC(10);// compute adaptively the remained time..
