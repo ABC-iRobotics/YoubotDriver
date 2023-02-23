@@ -13,6 +13,24 @@ namespace youbot {
   /// </summary>
   class MotionLayer {
   public:
+    struct ManipulatorStatus {
+      enum Flag : uint16_t {
+        START_UP = 0x1,
+        CONFIGURATED = 0x2,
+        COMMUTATION_INITIALIZED = 0x4,
+        CALIBRATED = 0x8
+      };
+      bool IsConfigInProgress() const;
+      bool IsConfigurated() const;
+      bool IsCommutationInitialized() const;
+      bool IsCalibrated() const;
+      bool Is(Flag flag) const;
+      void Set(Flag flag, bool in);
+      std::string ToString() const;
+
+      uint16_t value = 0;
+    };
+
     MotionLayer() = delete; ///< Not available constructor
     MotionLayer(MotionLayer&) = delete; ///< Not available constructor
     MotionLayer(const MotionLayer&) = delete; ///< Not available constructor
@@ -30,6 +48,7 @@ namespace youbot {
     /// Status of the manipulator: status of the joints and the type of the current task
     /// </summary>
     struct Status : JointsState {
+      ManipulatorStatus manipulatorStatus;
       TaskType motion;
       void LogStatus() const;
     }; // Can be constructed by getting atomic structs
@@ -78,6 +97,7 @@ namespace youbot {
 
     EtherCATMaster::Ptr center; ///< Virtual or physical ethercatbus handler
     std::atomic<ManipulatorTask::TaskType> motionStatus; ///< latest motion status
+    std::atomic<ManipulatorStatus> manipulatorStatus;
     std::unique_ptr<Manipulator> man = NULL; ///< initialized manipulator handler
     bool taskrunning = false;
     bool stoptask = false;

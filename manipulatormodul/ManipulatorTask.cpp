@@ -97,7 +97,7 @@ ManipulatorCommand youbot::InitializeCommutationManipulatorTask::GetCommand(cons
     return { cmd[0], cmd[1], cmd[2], cmd[3], cmd[4] };
 }
 
-TaskType youbot::InitializeCommutationManipulatorTask::GetType() const {
+ManipulatorTask::TaskType youbot::InitializeCommutationManipulatorTask::GetType() const {
   return INITIALIZATION;
 }
 
