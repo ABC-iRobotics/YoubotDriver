@@ -32,7 +32,7 @@ namespace youbot {
       MOTOR_VOLTAGE,
       MOTOR_STOP,
       ENCODER_SET_REFERENCE, // be careful
-      INITIALIZE // be careful
+      INITIALIZE_COMMUTATION // be careful
     };
 
     BLDCCommand() : type(NOT_DEFINED), i_value(0), d_value(0) {}; ///! Empty constructor
@@ -136,6 +136,21 @@ namespace youbot {
   /// Task that returns zero current commands
   /// </summary>
   class ZeroCurrentManipulatorTask : public ManipulatorTask {
+  public:
+    ManipulatorCommand GetCommand(const JointsState& new_state) override;
+
+    TaskType GetType() const override;
+
+  protected:
+    bool _taskFinished() const override;
+  };
+
+  /// <summary>
+  /// Task that send out commutation initialization command and finishes as all of the joints are initialized
+  /// </summary>
+  class InitializeCommutationManipulatorTask : public ManipulatorTask {
+    bool finished = false;
+
   public:
     ManipulatorCommand GetCommand(const JointsState& new_state) override;
 
