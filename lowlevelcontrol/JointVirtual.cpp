@@ -32,6 +32,10 @@ void JointVirtual::_calledAtExchange() {
     controlMode = VELOCITY;
     target = processCommand.value;
     break;
+  case ProcessCommand::STOP:
+    controlMode = VELOCITY;
+    target = 0;
+    break;
   case ProcessCommand::CURRENT:
     controlMode = CURRENT;
     target = processCommand.value;

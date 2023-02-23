@@ -18,7 +18,8 @@ namespace youbot {
           PWM,
           ENCODER_ZERO,
           INITIALIZE,
-          NO_MORE_ACTION
+          NO_MORE_ACTION,
+          STOP
         } type;
         int32_t value;
       } processCommand;
