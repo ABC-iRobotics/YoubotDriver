@@ -22,7 +22,7 @@ namespace youbot {
     /// <summary>
     /// Calls constructor of the manipulator, configurate it, initializes the commutation and calibrate the robot arm
     /// </summary>
-    void Initialize();// Special task, that 
+    void Initialize(); 
 
     typedef ManipulatorTask::TaskType TaskType;
 
@@ -65,12 +65,12 @@ namespace youbot {
     void StopManipulatorTask();
     
   private:
-    // Draft version of softlimits, must be developed later...
-
     /// <summary>
     /// Function that is called to restrain the given command to avoid going to the limit.
     /// 
     /// It can modify the given command before it is used according to the current joints state
+    /// 
+    /// Draft version of softlimits, must be developed later...
     /// </summary>
     /// <param name="cmd"> command that can be modified</param>
     /// <param name="status"> latest known manipulator state </param>
