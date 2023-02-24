@@ -2,15 +2,19 @@
 set(SOURCES
     Manager.cpp
     MotionLayer.cpp
-    ManipulatorTask.cpp
-    RawConstantJointSpeedTask.cpp
+    MTask.cpp
+    MTaskRawConstantJointSpeed.cpp
+    MTaskCalibration.cpp
+    MTaskCommutation.cpp
 )
 
 set(HEADERS
     Manager.hpp
     MotionLayer.hpp
-    ManipulatorTask.hpp
-    RawConstantJointSpeedTask.hpp
+    MTask.hpp
+    MTaskRawConstantJointSpeed.hpp
+    MTaskCalibration.hpp
+    MTaskCommutation.hpp
 )
 
 set(INTRINSIC_HEADERS

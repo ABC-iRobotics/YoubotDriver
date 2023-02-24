@@ -2,6 +2,8 @@
 #include <stdexcept>
 #include "Logger.hpp"
 #include "Time.hpp"
+#include "MTaskCommutation.hpp"
+#include "MTaskCalibration.hpp"
 
 using namespace youbot;
 
@@ -46,17 +48,16 @@ youbot::Manager::Manager(
   const std::string& configfilepath, bool virtual_)
   : configfilepath(configfilepath), virtual_(virtual_) {}
 
-void Manager::NewManipulatorTask(ManipulatorTask::Ptr task, double time_limit) {
+void Manager::NewManipulatorTask(MTask::Ptr task, double time_limit) {
   std::lock_guard<std::mutex> guard(new_task_mutex);
   new_man_task = { task, time_limit };
   if (man != nullptr)
     man->StopManipulatorTask();
 }
 
-#include <iostream>
 void Manager::_thread(const std::string& configfilepath, bool virtual_) {
   try {
-    ManipulatorTask::Ptr idle_ptr = std::make_shared<IdleManipulatorTask>();
+    MTask::Ptr idle_ptr = std::make_shared<IdleManipulatorTask>();
     threadtostop = false;
     if (man == nullptr)
       man = std::make_unique<MotionLayer>(configfilepath, virtual_);
@@ -81,13 +82,13 @@ void Manager::_thread(const std::string& configfilepath, bool virtual_) {
       NewTask new_man_task_;
       // if auto commutation then start it as soon as possible
       if (autocommutation) {
-        new_man_task_ = { std::make_shared<InitializeCommutationManipulatorTask>() , 5 };
+        new_man_task_ = { std::make_shared<MTaskCommutation>() , 5 };
         autocommutation = false;
       }
       // if autocalibration and initialized then do it or delete the need of autocalibration
       if (new_man_task_.ptr == nullptr && autocalibration) {
         if (man->GetStatus().manipulatorStatus.IsCommutationInitialized())
-          new_man_task_ = { std::make_shared<CalibrateManipulatorTask>() , 15 };
+          new_man_task_ = { std::make_shared<MTaskCalibration>() , 15 };
         autocalibration = false;
       }
       if (new_man_task_.ptr == nullptr) {
@@ -102,7 +103,6 @@ void Manager::_thread(const std::string& configfilepath, bool virtual_) {
   }
   catch (const std::runtime_error& error) {
     log(Log::fatal, "Error in the spearated thread: " + std::string(error.what()) + "Thread stopped");
-    std::cout << "Error in the spearated thread: " + std::string(error.what()) + " (Thread stopped)" << std::endl;
     SLEEP_MILLISEC(100);
   }
   threadrunning = false;

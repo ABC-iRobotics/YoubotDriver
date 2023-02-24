@@ -29,14 +29,14 @@ namespace youbot {
     void StartThreadAndInitialize(); ///< Start the motion-layer on a detached thread, initialize the manipulator and start running
     void StopThread(bool waitin = true); ///< Stop thread, destruct related instances
 
-    void NewManipulatorTask(ManipulatorTask::Ptr task, double time_limit); ///< Give new manipulator task
+    void NewManipulatorTask(MTask::Ptr task, double time_limit); ///< Give new manipulator task
 
   private:
     struct NewTask {
-      ManipulatorTask::Ptr ptr;
+      MTask::Ptr ptr;
       double time_limit;
       NewTask() : ptr(NULL), time_limit(0) {}
-      NewTask(ManipulatorTask::Ptr ptr_, double time_limit_) : ptr(ptr_), time_limit(time_limit_) {}
+      NewTask(MTask::Ptr ptr_, double time_limit_) : ptr(ptr_), time_limit(time_limit_) {}
     } new_man_task = {};
     std::mutex new_task_mutex;
 

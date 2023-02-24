@@ -2,7 +2,7 @@
 #define MOTION_LAYER_HPP
 
 #include "JointState.hpp"
-#include "ManipulatorTask.hpp"
+#include "MTask.hpp"
 #include "Eigen/dense"
 
 namespace youbot {
@@ -42,7 +42,7 @@ namespace youbot {
     /// </summary>
     void Initialize(); 
 
-    typedef ManipulatorTask::TaskType TaskType;
+    typedef MTask::TaskType TaskType;
 
     /// <summary>
     /// Status of the manipulator: status of the joints and the type of the current task
@@ -70,7 +70,7 @@ namespace youbot {
     /// </summary>
     /// <param name="task"> a manipulator task to be performed</param>
     /// <param name="time_limit"> time limit </param>
-    void DoManipulatorTask(ManipulatorTask::Ptr task, double time_limit);
+    void DoManipulatorTask(MTask::Ptr task, double time_limit);
 
     /// <summary>
     /// To check if a task is running - thread-safe
@@ -96,7 +96,7 @@ namespace youbot {
     void _SoftLimit(ManipulatorCommand& cmd, const JointsState& status) const;
 
     EtherCATMaster::Ptr center; ///< Virtual or physical ethercatbus handler
-    std::atomic<ManipulatorTask::TaskType> motionStatus; ///< latest motion status
+    std::atomic<MTask::TaskType> motionStatus; ///< latest motion status
     std::atomic<ManipulatorStatus> manipulatorStatus;
     std::unique_ptr<Manipulator> man = NULL; ///< initialized manipulator handler
     bool taskrunning = false;

@@ -7,13 +7,15 @@
 /* MEX header */
 #include <mex.h> 
 #include "matrix.h"
-#include "Logger.hpp"
-
 #include "class_handle.hpp"
 
 /* youBot headers */
 #include "Manager.hpp"
-#include "RawConstantJointSpeedTask.hpp"
+#include "Logger.hpp"
+#include "Time.hpp"
+#include "MTaskRawConstantJointSpeed.hpp"
+#include "MTaskCommutation.hpp"
+#include "MTaskCalibration.hpp"
 
 using namespace youbot;
 
@@ -92,7 +94,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
       Eigen::VectorXd param(N);
       for (int n = 0; n < N; n++)
         param[n] = p[n];
-      ManipulatorTask::Ptr task;
+      MTask::Ptr task;
       int type = (int)*mxGetPr(prhs[3]);
       double tlimit = *mxGetPr(prhs[4]);
       switch (type) {
@@ -100,7 +102,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
         task = std::make_shared<IdleManipulatorTask>();
         break;
       case 1:
-        task = std::make_shared<RawConstantJointSpeedTask>(param / 180. * M_PI, tlimit);
+        task = std::make_shared<MTaskRawConstantJointSpeed>(param / 180. * M_PI, tlimit);
         break;
       case 2:
         task = std::make_shared<ZeroCurrentManipulatorTask>();
@@ -140,13 +142,13 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
         plhs[3] = mxCreateDoubleMatrix(1, 1, mxREAL);
         double* mode = mxGetPr(plhs[3]);
         switch (out.motion) {
-        case ManipulatorTask::INITIALIZATION:
+        case MTask::INITIALIZATION:
           *mode = 0;
           break;
-        case ManipulatorTask::STOPPED:
+        case MTask::STOPPED:
           *mode = 1;
           break;
-        case ManipulatorTask::RAW_CONSTANT_JOINTSPEED:
+        case MTask::RAW_CONSTANT_JOINTSPEED:
           *mode = 2;
           break;
         default:

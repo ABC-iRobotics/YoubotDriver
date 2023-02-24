@@ -8,7 +8,7 @@
 using namespace youbot;
 
 void youbot::MotionLayer::Status::LogStatus() const {
-  log(Log::info, "Manipulator status: " + ManipulatorTask::Type2String(motion));
+  log(Log::info, "Manipulator status: " + MTask::Type2String(motion));
   for (int i = 0; i < 5; i++) {
     log(Log::info, "Joint " + std::to_string(i) + ": q=" + std::to_string(joint[i].q.value) + "[rad] dq/dt="
       + std::to_string(joint[i].dq.value) + "[rad/s] tau="
@@ -103,7 +103,7 @@ void youbot::MotionLayer::StopManipulatorTask() {
 }
 
 // Tasks
-void youbot::MotionLayer::DoManipulatorTask(ManipulatorTask::Ptr task, double time_limit) {
+void youbot::MotionLayer::DoManipulatorTask(MTask::Ptr task, double time_limit) {
   stoptask = false;
   motionStatus.store(task->GetType());
   taskrunning = true;
@@ -173,12 +173,12 @@ void youbot::MotionLayer::DoManipulatorTask(ManipulatorTask::Ptr task, double ti
     elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
       std::chrono::steady_clock::now() - start).count();
     if (task->Finished()) {
-      if (task->GetType() == ManipulatorTask::INITIALIZATION) {
+      if (task->GetType() == MTask::INITIALIZATION) {
         auto status = manipulatorStatus.load();
         status.Set(ManipulatorStatus::COMMUTATION_INITIALIZED, true);
         manipulatorStatus.store(status);
       }
-      if (task->GetType() == ManipulatorTask::CALIBRATION) {
+      if (task->GetType() == MTask::CALIBRATION) {
         auto status = manipulatorStatus.load();
         status.Set(ManipulatorStatus::CALIBRATED, true);
         manipulatorStatus.store(status);
@@ -187,7 +187,7 @@ void youbot::MotionLayer::DoManipulatorTask(ManipulatorTask::Ptr task, double ti
     }
   } while (elapsed_ms < time_limit * 1000. && !stoptask);
   taskrunning = false;
-  motionStatus.store(ManipulatorTask::STOPPED);
+  motionStatus.store(MTask::STOPPED);
 }
 
 bool youbot::MotionLayer::IsManipulatorTaskRunning() const {
@@ -252,7 +252,7 @@ void MotionLayer::Initialize() {
     status.Set(ManipulatorStatus::CONFIGURATED, true);
     manipulatorStatus.store(status);
   }
-  motionStatus.store(ManipulatorTask::STOPPED);
+  motionStatus.store(MTask::STOPPED);
 }
 
 bool youbot::MotionLayer::ManipulatorStatus::IsConfigInProgress() const {

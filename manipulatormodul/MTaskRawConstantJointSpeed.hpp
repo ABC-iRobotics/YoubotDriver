@@ -1,16 +1,16 @@
 #ifndef RAWCONSTANTJOINTSPEED_TASK_HPP
 #define RAWCONSTANTJOINTSPEED_TASK_HPP
 
-#include "ManipulatorTask.hpp"
+#include "MTask.hpp"
 
 namespace youbot {
 
   /// <summary>
   /// Task that communicates the same joint speed constantly
   /// </summary>
-  class RawConstantJointSpeedTask : public ManipulatorTask {
+  class MTaskRawConstantJointSpeed : public MTask {
   public:
-    RawConstantJointSpeedTask(const Eigen::VectorXd& dq, double time_limit);;
+    MTaskRawConstantJointSpeed(const Eigen::VectorXd& dq, double time_limit);;
 
     ManipulatorCommand GetCommand(
       const JointsState& new_state) override;

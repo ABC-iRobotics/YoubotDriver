@@ -4,8 +4,6 @@
 #include "Manipulator.hpp"
 #include "Eigen/dense"
 
-#include "Time.hpp"
-
 namespace youbot {
 
   /// <summary>
@@ -84,7 +82,7 @@ namespace youbot {
   /// The manipulator task is a user defined (overridden) object that provides ManipulatorCommands
   /// for the current time moment and current manipulator status
   /// </summary>
-  class ManipulatorTask {
+  class MTask {
   public:
     /// <summary>
     /// Task types currently implemented
@@ -109,7 +107,7 @@ namespace youbot {
 
     bool Finished() const; ///< Returns if the task is finished
 
-    typedef std::shared_ptr<ManipulatorTask> Ptr;
+    typedef std::shared_ptr<MTask> Ptr;
 
   protected:
     virtual bool _taskFinished() const = 0; 
@@ -122,7 +120,7 @@ namespace youbot {
   /// <summary>
   /// Task that returns zero velocity command
   /// </summary>
-  class IdleManipulatorTask : public ManipulatorTask {
+  class IdleManipulatorTask : public MTask {
   public:
     ManipulatorCommand GetCommand(const JointsState& new_state) override;
 
@@ -135,7 +133,7 @@ namespace youbot {
   /// <summary>
   /// Task that returns zero current commands
   /// </summary>
-  class ZeroCurrentManipulatorTask : public ManipulatorTask {
+  class ZeroCurrentManipulatorTask : public MTask {
   public:
     ManipulatorCommand GetCommand(const JointsState& new_state) override;
 
@@ -143,42 +141,6 @@ namespace youbot {
 
   protected:
     bool _taskFinished() const override;
-  };
-
-  /// <summary>
-  /// Task that send out commutation initialization command and finishes as all of the joints are initialized
-  /// </summary>
-  class InitializeCommutationManipulatorTask : public ManipulatorTask {
-    bool finished = false;
-
-  public:
-    ManipulatorCommand GetCommand(const JointsState& new_state) override;
-
-    TaskType GetType() const override;
-
-  protected:
-    bool _taskFinished() const override;
-  };
-
-  /// <summary>
- /// Task that send out commutation initialization command and finishes as all of the joints are initialized
- /// </summary>
-  class CalibrateManipulatorTask : public ManipulatorTask {
-    bool finished = false;
-
-  public:
-    ManipulatorCommand GetCommand(const JointsState& new_state) override {
-      return ManipulatorCommand(BLDCCommand::MOTOR_STOP,Eigen::VectorXd(5));
-    }
-
-    TaskType GetType() const override {
-      return CALIBRATION;
-    }
-
-  protected:
-    bool _taskFinished() const override {
-      return true;
-    }
   };
 }
 #endif

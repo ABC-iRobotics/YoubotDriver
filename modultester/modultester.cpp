@@ -1,8 +1,10 @@
 #include "adapters.hpp"
 #include "Manager.hpp"
-#include "RawConstantJointSpeedTask.hpp"
+#include "MTaskRawConstantJointSpeed.hpp"
 #include "Time.hpp"
 #include "Logger.hpp"
+#include "MTaskCommutation.hpp"
+#include "MTaskCalibration.hpp"
 
 using namespace youbot;
 
@@ -28,18 +30,18 @@ int main(int argc, char *argv[])
 
   // Commutation initialization
   {
-    ManipulatorTask::Ptr task0 = std::make_shared<InitializeCommutationManipulatorTask>();
+    MTask::Ptr task0 = std::make_shared<MTaskCommutation>();
     modul.NewManipulatorTask(task0, 5);
     // Wait until initialization ends
     do {
       SLEEP_MILLISEC(10);
       modul.GetStatus().LogStatus();
-    } while (modul.GetStatus().motion == ManipulatorTask::INITIALIZATION);
+    } while (modul.GetStatus().motion == MTask::INITIALIZATION);
   }
   
   // Free drive
   {
-    ManipulatorTask::Ptr task2 = std::make_shared<ZeroCurrentManipulatorTask>();
+    MTask::Ptr task2 = std::make_shared<ZeroCurrentManipulatorTask>();
     modul.NewManipulatorTask(task2, 50);
     for (int i = 0; i < 7000; i++) {
       SLEEP_MILLISEC(10);
@@ -50,7 +52,7 @@ int main(int argc, char *argv[])
   // Create and start a task
   Eigen::VectorXd dq(5);
   dq << 0.1, 0.1, -0.1, 0.1, -0.1;
-  ManipulatorTask::Ptr task = std::make_shared<RawConstantJointSpeedTask>(dq, 10);
+  MTask::Ptr task = std::make_shared<MTaskRawConstantJointSpeed>(dq, 10);
   modul.NewManipulatorTask(task, 5);
 
   
