@@ -19,10 +19,33 @@ int main(int argc, char *argv[])
 
   modul.StartThreadAndInitialize();
 
-  // Wait until initialization ends
+  std::string sg = modul.GetStatus().manipulatorStatus.ToString();
+  // Wait until configuration ends
   do {
-    SLEEP_SEC(1);
-  } while (modul.GetStatus().motion == ManipulatorTask::INITIALIZATION);
+    SLEEP_MILLISEC(10);
+  } while (!modul.GetStatus().manipulatorStatus.IsConfigurated());
+  std::string sg2 = modul.GetStatus().manipulatorStatus.ToString();
+
+  // Commutation initialization
+  {
+    ManipulatorTask::Ptr task0 = std::make_shared<InitializeCommutationManipulatorTask>();
+    modul.NewManipulatorTask(task0, 5);
+    // Wait until initialization ends
+    do {
+      SLEEP_MILLISEC(10);
+      modul.GetStatus().LogStatus();
+    } while (modul.GetStatus().motion == ManipulatorTask::INITIALIZATION);
+  }
+  
+  // Free drive
+  {
+    ManipulatorTask::Ptr task2 = std::make_shared<ZeroCurrentManipulatorTask>();
+    modul.NewManipulatorTask(task2, 50);
+    for (int i = 0; i < 7000; i++) {
+      SLEEP_MILLISEC(10);
+      modul.GetStatus().LogStatus();
+    }
+  }
 
   // Create and start a task
   Eigen::VectorXd dq(5);
@@ -30,7 +53,7 @@ int main(int argc, char *argv[])
   ManipulatorTask::Ptr task = std::make_shared<RawConstantJointSpeedTask>(dq, 10);
   modul.NewManipulatorTask(task, 5);
 
-  ManipulatorTask::Ptr task2 = std::make_shared<ZeroCurrentManipulatorTask>();
+  
   //modul.NewManipulatorTask(task2, 50);
   
   // Lets see what's happening
