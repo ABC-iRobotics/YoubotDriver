@@ -99,7 +99,8 @@ Eigen::VectorXd youbot::MotionLayer::GetTrueStatus() const {
 }
 
 void youbot::MotionLayer::StopManipulatorTask() {
-  stoptask = true;
+  if (motionStatus.load() != MTask::COMMUTATION)
+    stoptask = true;
 }
 
 // Tasks

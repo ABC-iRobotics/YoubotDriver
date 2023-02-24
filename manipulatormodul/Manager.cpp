@@ -80,7 +80,7 @@ void Manager::_thread(const std::string& configfilepath, bool virtual_) {
     // Command based operation, checking stop...
     while (!threadtostop) { // How can I stop commutation OR calibration? it will stop it again...
       NewTask new_man_task_;
-      // if auto commutation then start it as soon as possible
+      // if auto commutation then start it first
       if (autocommutation) {
         new_man_task_ = { std::make_shared<MTaskCommutation>() , 5 };
         autocommutation = false;
