@@ -231,17 +231,6 @@ void MotionLayer::Initialize() {
   man->CollectBasicJointParameters();
   man->ConfigJointControlParameters();
   man->CheckAndResetErrorFlagsViaMailbox();
-  {
-    bool commutation_initialized = true;
-    auto status = man->GetStateLatest();
-    for (int i = 0; i < 5; i++)
-      commutation_initialized &= status.joint[i].status.value.Initialized();
-    if (commutation_initialized) {
-      auto status = manipulatorStatus.load();
-      status.Set(ManipulatorStatus::COMMUTATION_INITIALIZED, true);
-      manipulatorStatus.store(status);
-    }
-  }
   /*
   // Commutation
   man->InitializeManipulator();

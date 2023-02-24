@@ -29,6 +29,7 @@ namespace youbot {
 	NameValueMap& wristYawConfig = jointConfigs[4];
 
 	std::map<std::string, std::string> logConfig;
+	std::map<std::string, std::string> manipulatorConfig;
 
 	/// <summary>
 	/// Constructor: only saves the filename
