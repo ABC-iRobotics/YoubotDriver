@@ -13,6 +13,12 @@
 		"LogFileLevel" : "info",
 		"_comment" : "trace,debug,info,warning,error,fatal,off,n_levels can be added LogFileName"
 	},
+	
+	"Manipulator" : {
+		"AutoCommutation" : "true",
+		"AutoCalibration" : "true",
+		"ForceCalibration" : "false"
+	},
 
 	"WaistJoint" : {
 		"GearRatio" : 0.006410256410256,
