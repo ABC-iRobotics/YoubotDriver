@@ -107,6 +107,12 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
       case 2:
         task = std::make_shared<MTaskZeroCurrent>();
         break;
+      case 3:
+        task = std::make_shared<MTaskCommutation>();
+        break;
+      case 4:
+        task = std::make_shared<MTaskCalibration>();
+        break;
       }
       modul->NewManipulatorTask(task, tlimit);
       return;
