@@ -48,7 +48,10 @@ void JointVirtual::_calledAtExchange() {
     settickstozero();
     break;
   case ProcessCommand::INITIALIZE:
-    throw std::runtime_error("not implemented"); // not used
+    if (!commutationState.started) {
+      commutationState.started = true;
+      commutationState.started_at = std::chrono::steady_clock::now();
+    }
     break;
   case ProcessCommand::NO_MORE_ACTION:
     throw std::runtime_error("not implemented"); // not understood
@@ -136,6 +139,9 @@ void JointVirtual::_updateFor(double elapsedTime) {
     }
     }
   }
+  auto p = GetParameters().intialized;
+  if (RPM == 0 && !GetParameters().intialized)
+    return;
   // Stop the joint at the limit
   if (qRad_true < (GetParameters().qMinDeg) / 180 * M_PI) {
     qRad_true = (GetParameters().qMinDeg) / 180 * M_PI;
