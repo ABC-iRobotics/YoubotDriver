@@ -241,6 +241,7 @@ void MotionLayer::Initialize() {
       manipulatorStatus.store(status);
     }
   }
+  /*
   // Commutation
   man->InitializeManipulator();
   {
@@ -254,7 +255,7 @@ void MotionLayer::Initialize() {
     auto status = manipulatorStatus.load();
     status.Set(ManipulatorStatus::CALIBRATED, true);
     manipulatorStatus.store(status);
-  }
+  }*/
   {
     auto status = manipulatorStatus.load();
     status.Set(ManipulatorStatus::START_UP, false);
