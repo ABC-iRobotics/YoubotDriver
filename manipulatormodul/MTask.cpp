@@ -6,8 +6,8 @@ using namespace youbot;
 std::string youbot::MTask::Type2String(TaskType type) {
   switch (type)
   {
-  case youbot::MTask::INITIALIZATION:
-    return "INITIALIZATION";
+  case youbot::MTask::COMMUTATION:
+    return "COMMUTATION";
   case youbot::MTask::STOPPED:
     return "STOPPED";
   case youbot::MTask::RAW_CONSTANT_JOINTSPEED:
@@ -63,16 +63,16 @@ bool IdleManipulatorTask::_taskFinished() const {
   return false;
 }
 
-ManipulatorCommand ZeroCurrentManipulatorTask::GetCommand(const JointsState& new_state) {
+ManipulatorCommand MTaskZeroCurrent::GetCommand(const JointsState& new_state) {
   Eigen::VectorXd tau(5);
   tau << 0, 0, 0, 0, 0;
   return ManipulatorCommand(BLDCCommand::JOINT_TORQUE, tau);
 }
 
-MTask::TaskType ZeroCurrentManipulatorTask::GetType() const {
+MTask::TaskType MTaskZeroCurrent::GetType() const {
   return MTask::ZERO_CURRENT;
 }
 
-bool ZeroCurrentManipulatorTask::_taskFinished() const {
+bool MTaskZeroCurrent::_taskFinished() const {
   return false;
 }

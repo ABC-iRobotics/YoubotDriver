@@ -173,7 +173,7 @@ void youbot::MotionLayer::DoManipulatorTask(MTask::Ptr task, double time_limit) 
     elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
       std::chrono::steady_clock::now() - start).count();
     if (task->Finished()) {
-      if (task->GetType() == MTask::INITIALIZATION) {
+      if (task->GetType() == MTask::COMMUTATION) {
         auto status = manipulatorStatus.load();
         status.Set(ManipulatorStatus::COMMUTATION_INITIALIZED, true);
         manipulatorStatus.store(status);

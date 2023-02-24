@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
   
   // Free drive
   {
-    MTask::Ptr task2 = std::make_shared<ZeroCurrentManipulatorTask>();
+    MTask::Ptr task2 = std::make_shared<MTaskZeroCurrent>();
     modul.NewManipulatorTask(task2, 50);
     for (int i = 0; i < 7000; i++) {
       SLEEP_MILLISEC(10);

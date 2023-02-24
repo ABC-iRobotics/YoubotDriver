@@ -105,7 +105,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
         task = std::make_shared<MTaskRawConstantJointSpeed>(param / 180. * M_PI, tlimit);
         break;
       case 2:
-        task = std::make_shared<ZeroCurrentManipulatorTask>();
+        task = std::make_shared<MTaskZeroCurrent>();
         break;
       }
       modul->NewManipulatorTask(task, tlimit);
@@ -142,7 +142,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
         plhs[3] = mxCreateDoubleMatrix(1, 1, mxREAL);
         double* mode = mxGetPr(plhs[3]);
         switch (out.motion) {
-        case MTask::INITIALIZATION:
+        case MTask::COMMUTATION:
           *mode = 0;
           break;
         case MTask::STOPPED:

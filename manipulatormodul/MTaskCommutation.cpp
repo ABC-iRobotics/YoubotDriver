@@ -24,7 +24,7 @@ ManipulatorCommand youbot::MTaskCommutation::GetCommand(const JointsState& new_s
 }
 
 MTask::TaskType youbot::MTaskCommutation::GetType() const {
-  return INITIALIZATION;
+  return COMMUTATION;
 }
 
 bool youbot::MTaskCommutation::_taskFinished() const {

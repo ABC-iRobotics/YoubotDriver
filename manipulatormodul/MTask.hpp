@@ -89,7 +89,7 @@ namespace youbot {
     /// </summary>
     enum TaskType {
       NOT_DEFINED,
-      INITIALIZATION,
+      COMMUTATION,
       CALIBRATION,
       STOPPED,
       ZERO_CURRENT,
@@ -133,7 +133,7 @@ namespace youbot {
   /// <summary>
   /// Task that returns zero current commands
   /// </summary>
-  class ZeroCurrentManipulatorTask : public MTask {
+  class MTaskZeroCurrent : public MTask {
   public:
     ManipulatorCommand GetCommand(const JointsState& new_state) override;
 
