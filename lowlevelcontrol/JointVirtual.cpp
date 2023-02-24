@@ -139,9 +139,6 @@ void JointVirtual::_updateFor(double elapsedTime) {
     }
     }
   }
-  auto p = GetParameters().intialized;
-  if (RPM == 0 && !GetParameters().intialized)
-    return;
   // Stop the joint at the limit
   if (qRad_true < (GetParameters().qMinDeg) / 180 * M_PI) {
     qRad_true = (GetParameters().qMinDeg) / 180 * M_PI;
