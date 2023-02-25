@@ -32,11 +32,11 @@ int main(int argc, char *argv[])
   {
     MTask::Ptr task0 = std::make_shared<MTaskCommutation>();
     modul.NewManipulatorTask(task0, 5);
-    // Wait until initialization ends
+    // Wait until COMMUTATION initialization ends
     do {
       SLEEP_MILLISEC(10);
       modul.GetStatus().LogStatus();
-    } while (modul.GetStatus().motion == MTask::INITIALIZATION);
+    } while (modul.GetStatus().motion == MTask::COMMUTATION);
   }
   
   // Free drive
