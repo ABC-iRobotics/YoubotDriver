@@ -166,6 +166,9 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
         case MTask::CALIBRATION:
           *mode_ = 4;
           break;
+        case MTask::ZERO_CURRENT:
+          *mode_ = 5;
+          break;
         default:
           *mode_ = 10;
         }

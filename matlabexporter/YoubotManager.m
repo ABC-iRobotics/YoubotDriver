@@ -90,6 +90,8 @@ classdef YoubotManager < handle
             switch (mode_)
                 case 10
                     mode.task = "conversion is not defined in c++";
+                case 5
+                    mode.task = "zero current";
                 case 4
                     mode.task = "calibration";
                 case 3
