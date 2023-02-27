@@ -52,12 +52,57 @@ classdef YoubotManager < handle
             youbotarmmanager(6,obj.ptr,0,2,T);
         end
         
+        function Commutation(obj,T)
+            if nargin<2
+                T = 10000;
+            end
+            youbotarmmanager(6,obj.ptr,0,3,T);
+        end
+        
+        function Calibration(obj,T)
+            if nargin<2
+                T = 10000;
+            end
+            youbotarmmanager(6,obj.ptr,0,4,T);
+        end
+        
         function q = GetTrueJointAngles(obj)
             q = youbotarmmanager(8,obj.ptr);
         end
         
+        % YoubotManager.GetStatus: returns the state ofthe manipulator arm
+        % q: joint angles in deg
+        % dq: joint speed in deg/s
+        % tau: joint torque in Nm
+        % mode.task: current task
+        % mode.*: bool flags about properties as
+        % configinprogress/isconfigurated/commutated/calibrated
         function [q,dq,tau,mode] = GetStatus(obj)
-            [q,dq,tau,mode] = youbotarmmanager(9,obj.ptr);
+            [q,dq,tau,mode_] = youbotarmmanager(9,obj.ptr);
+            mode.calibrated = (mode_ >= 10000);
+            mode_ = mode_ - (mode_ >= 10000)*10000;
+            mode.commutated = (mode_ >= 1000);
+            mode_ = mode_ - (mode_ >= 1000)*1000;
+            mode.isconfigurated = (mode_ >= 200);
+            mode_ = mode_ - (mode_ >= 200)*200;
+            mode.configinprogress = (mode_ >= 100);
+            mode_ = mode_ - (mode_ >= 100)*100;
+            switch (mode_)
+                case 10
+                    mode.task = "conversion is not defined in c++";
+                case 4
+                    mode.task = "calibration";
+                case 3
+                    mode.task = "commutation";
+                case 2
+                    mode.task = "raw constant joint speed";
+                case 1
+                    mode.task = "stop";
+                case 0
+                    mode.task = "initialization";
+                otherwise
+                    mode.task = "conversion is not defined in MATLAB";
+            end
         end
 
         function StartPlot(obj)
