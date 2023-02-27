@@ -1,7 +1,7 @@
 #ifndef MANIPULATOR_TASK_HPP
 #define MANIPULATOR_TASK_HPP
 
-#include "Manipulator.hpp"
+#include "JointState.hpp"
 #include "Eigen/dense"
 
 namespace youbot {
@@ -115,32 +115,6 @@ namespace youbot {
     JointsState start_state; // set by initialize
     bool started = false; // set by initialize
     std::chrono::steady_clock::time_point started_at; // set by initialize
-  };
-  
-  /// <summary>
-  /// Task that returns zero velocity command
-  /// </summary>
-  class IdleManipulatorTask : public MTask {
-  public:
-    ManipulatorCommand GetCommand(const JointsState& new_state) override;
-
-    TaskType GetType() const override;
-
-  protected:
-    bool _taskFinished() const override;
-  };
-
-  /// <summary>
-  /// Task that returns zero current commands
-  /// </summary>
-  class MTaskZeroCurrent : public MTask {
-  public:
-    ManipulatorCommand GetCommand(const JointsState& new_state) override;
-
-    TaskType GetType() const override;
-
-  protected:
-    bool _taskFinished() const override;
   };
 }
 #endif

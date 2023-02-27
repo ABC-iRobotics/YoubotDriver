@@ -50,29 +50,3 @@ bool youbot::MTask::Finished() const {
     return false;
   return _taskFinished();
 }
-
-ManipulatorCommand IdleManipulatorTask::GetCommand(const JointsState& new_state) {
-  return ManipulatorCommand(BLDCCommand::MOTOR_STOP, Eigen::VectorXd(5));
-}
-
-MTask::TaskType IdleManipulatorTask::GetType() const {
-  return MTask::STOPPED;
-}
-
-bool IdleManipulatorTask::_taskFinished() const {
-  return false;
-}
-
-ManipulatorCommand MTaskZeroCurrent::GetCommand(const JointsState& new_state) {
-  Eigen::VectorXd tau(5);
-  tau << 0, 0, 0, 0, 0;
-  return ManipulatorCommand(BLDCCommand::JOINT_TORQUE, tau);
-}
-
-MTask::TaskType MTaskZeroCurrent::GetType() const {
-  return MTask::ZERO_CURRENT;
-}
-
-bool MTaskZeroCurrent::_taskFinished() const {
-  return false;
-}

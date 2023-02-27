@@ -4,6 +4,8 @@
 #include "Time.hpp"
 #include "MTaskCommutation.hpp"
 #include "MTaskCalibration.hpp"
+#include "MTaskStop.hpp"
+#include "Config.hpp"
 
 using namespace youbot;
 
@@ -57,7 +59,7 @@ void Manager::NewManipulatorTask(MTask::Ptr task, double time_limit) {
 
 void Manager::_thread(const std::string& configfilepath, bool virtual_) {
   try {
-    MTask::Ptr idle_ptr = std::make_shared<IdleManipulatorTask>();
+    MTask::Ptr idle_ptr = std::make_shared<MTaskStop>();
     threadtostop = false;
     if (man == nullptr)
       man = std::make_unique<MotionLayer>(configfilepath, virtual_);

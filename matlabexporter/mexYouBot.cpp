@@ -16,6 +16,8 @@
 #include "MTaskRawConstantJointSpeed.hpp"
 #include "MTaskCommutation.hpp"
 #include "MTaskCalibration.hpp"
+#include "MTaskZeroCurrent.hpp"
+#include "MTaskStop.hpp"
 
 using namespace youbot;
 
@@ -99,7 +101,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
       double tlimit = *mxGetPr(prhs[4]);
       switch (type) {
       case 0:
-        task = std::make_shared<IdleManipulatorTask>();
+        task = std::make_shared<MTaskStop>();
         break;
       case 1:
         task = std::make_shared<MTaskRawConstantJointSpeed>(param / 180. * M_PI, tlimit);

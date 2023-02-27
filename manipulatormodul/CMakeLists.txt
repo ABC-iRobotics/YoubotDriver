@@ -6,6 +6,8 @@ set(SOURCES
     MTaskRawConstantJointSpeed.cpp
     MTaskCalibration.cpp
     MTaskCommutation.cpp
+    MTaskStop.cpp
+    MTaskZeroCurrent.cpp
 )
 
 set(HEADERS
@@ -15,6 +17,8 @@ set(HEADERS
     MTaskRawConstantJointSpeed.hpp
     MTaskCalibration.hpp
     MTaskCommutation.hpp
+    MTaskStop.hpp
+    MTaskZeroCurrent.hpp
 )
 
 set(INTRINSIC_HEADERS

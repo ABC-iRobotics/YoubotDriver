@@ -1,7 +1,7 @@
 #ifndef MOTION_LAYER_HPP
 #define MOTION_LAYER_HPP
 
-#include "JointState.hpp"
+#include "Manipulator.hpp"
 #include "MTask.hpp"
 #include "Eigen/dense"
 

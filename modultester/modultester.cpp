@@ -5,6 +5,8 @@
 #include "Logger.hpp"
 #include "MTaskCommutation.hpp"
 #include "MTaskCalibration.hpp"
+#include "MTaskZeroCurrent.hpp"
+#include "MTaskStop.hpp"
 
 using namespace youbot;
 
