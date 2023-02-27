@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
   } while (!modul.GetStatus().manipulatorStatus.IsConfigurated());
   std::string sg2 = modul.GetStatus().manipulatorStatus.ToString();
 
-  // Commutation initialization
+  // Commutation initialization - if it was not, just to test it
   {
     MTask::Ptr task0 = std::make_shared<MTaskCommutation>();
     modul.NewManipulatorTask(task0, 5);
