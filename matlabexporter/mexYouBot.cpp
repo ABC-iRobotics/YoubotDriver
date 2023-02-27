@@ -109,6 +109,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
         break;
       case 3:
         task = std::make_shared<MTaskCommutation>();
+        tlimit = 10; // Commutation cannot be stopped, ~ 1 sec is needed
         break;
       case 4:
         task = std::make_shared<MTaskCalibration>();
@@ -146,20 +147,34 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
       }
       if (nlhs == 4) {
         plhs[3] = mxCreateDoubleMatrix(1, 1, mxREAL);
-        double* mode = mxGetPr(plhs[3]);
+        double* mode_ = mxGetPr(plhs[3]);
         switch (out.motion) {
-        case MTask::COMMUTATION:
-          *mode = 0;
+        case MTask::NOT_DEFINED:
+          *mode_ = 0;
           break;
         case MTask::STOPPED:
-          *mode = 1;
+          *mode_ = 1;
           break;
         case MTask::RAW_CONSTANT_JOINTSPEED:
-          *mode = 2;
+          *mode_ = 2;
+          break;
+        case MTask::COMMUTATION:
+          *mode_ = 3;
+          break;
+        case MTask::CALIBRATION:
+          *mode_ = 4;
           break;
         default:
-          *mode = 10;
+          *mode_ = 10;
         }
+        if (out.manipulatorStatus.IsConfigInProgress())
+          *mode_ += 100;
+        if (out.manipulatorStatus.IsConfigurated())
+          *mode_ += 200;
+        if (out.manipulatorStatus.IsCommutationInitialized())
+          *mode_ += 1000;
+        if (out.manipulatorStatus.IsCalibrated())
+          *mode_ += 10000;
       }
       if (nlhs > 4)
         mexErrMsgTxt("Get jointvariables: Four or less outputs expected.");
