@@ -20,34 +20,23 @@ int main(int argc, char *argv[])
   //youBotArmConfig_fromKeisler.json");
 
   Manager modul(configpath, false);
-
   modul.StartThreadAndInitialize();
-
-  std::string sg = modul.GetStatus().manipulatorStatus.ToString();
-  // Wait until configuration ends
-  do {
+  while (modul.GetStatus().motion != MTask::STOPPED) // while till config and auto tasks end
     SLEEP_MILLISEC(10);
-  } while (!modul.GetStatus().manipulatorStatus.IsConfigurated());
-
-  SLEEP_MILLISEC(100)
-  // Wait until commutation and calibration ends
-  do {
-    SLEEP_MILLISEC(10);
-  } while (modul.GetStatus().motion == MTask::CALIBRATION);
 
   // Create and start a task
-  Eigen::VectorXd dq(5);
-  dq << 0.1, 0.1, -0.1, 0.1, -0.1;
-  MTask::Ptr task = std::make_shared<MTaskRawConstantJointSpeed>(dq, 10);
-  modul.NewManipulatorTask(task, 5);
-
-  auto start = std::chrono::steady_clock::now();
-  do {
-    //modul.GetStatus().LogStatus();
-    SLEEP_MILLISEC(10);
-  } while (std::chrono::duration_cast<std::chrono::seconds>(
-    std::chrono::steady_clock::now() - start).count() < 5);
-
+  {
+    Eigen::VectorXd dq(5);
+    dq << 0.1, 0.1, -0.1, 0.1, -0.1;
+    MTask::Ptr task = std::make_shared<MTaskRawConstantJointSpeed>(dq, 10);
+    modul.NewManipulatorTask(task, 5);
+    auto start = std::chrono::steady_clock::now();
+    do {
+      //modul.GetStatus().LogStatus();
+      SLEEP_MILLISEC(10);
+    } while (std::chrono::duration_cast<std::chrono::seconds>(
+      std::chrono::steady_clock::now() - start).count() < 5);
+  }
 
 
   // Stop and go home

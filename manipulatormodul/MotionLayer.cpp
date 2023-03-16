@@ -204,6 +204,7 @@ void MotionLayer::Initialize() {
   {
     auto status = manipulatorStatus.load();
     status.Set(ManipulatorStatus::START_UP, true);
+    motionStatus.store(MTask::NOT_DEFINED);
     manipulatorStatus.store(status);
   }
   // Get Configfile
@@ -265,7 +266,6 @@ void MotionLayer::Initialize() {
       status.Set(ManipulatorStatus::CALIBRATED, true);
     manipulatorStatus.store(status);
   }
-  motionStatus.store(MTask::STOPPED);
 }
 
 bool youbot::MotionLayer::ManipulatorStatus::IsConfigInProgress() const {

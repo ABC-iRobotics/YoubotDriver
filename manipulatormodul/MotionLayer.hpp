@@ -50,6 +50,7 @@ namespace youbot {
     struct Status : JointsState {
       ManipulatorStatus manipulatorStatus;
       TaskType motion;
+      Status() : motion(MTask::NOT_DEFINED) {}
       void LogStatus() const;
     }; // Can be constructed by getting atomic structs
 
