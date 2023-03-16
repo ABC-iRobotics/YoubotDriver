@@ -3,6 +3,17 @@ virtual = 1; % choose if virtual or real robot is needed
 obj = YoubotManager("../config/youBotArmConfig_fromKeisler.json",virtual);
 obj.StartThread(); % Start the initialization process
 
+% Start realtime plotter
+obj.StartPlot; % the window must be closed before calling the destructor of YoubotManager
+
+% Wait till init and autotasks end
+[~,~,~,mode] = GetStatus(obj);
+while mode.task ~= "stop"
+    pause(0.001);
+    [~,~,~,mode] = GetStatus(obj);
+end
+
+%%
 obj.SetJointVelocity([5 5 -5 5 -5],10); % given joint velocity (deg/s) for given time limit
 
 % To show the GetStatus function, especially the mode variable

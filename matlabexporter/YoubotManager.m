@@ -38,32 +38,32 @@ classdef YoubotManager < handle
         end
         
         function StopJoints(obj)
-            youbotarmmanager(6,obj.ptr,[],0,0);
+            youbotarmmanager(6,obj.ptr,[],3,0);
         end
         
         function SetJointVelocity(obj, dqDegPsec, tlimit)
-            youbotarmmanager(6,obj.ptr,dqDegPsec,1,tlimit);
+            youbotarmmanager(6,obj.ptr,dqDegPsec,5,tlimit);
         end
         
         function FreeDrive(obj,T)
             if nargin<2
                 T = 10000;
             end
-            youbotarmmanager(6,obj.ptr,0,2,T);
+            youbotarmmanager(6,obj.ptr,0,4,T);
         end
         
         function Commutation(obj,T)
             if nargin<2
                 T = 10000;
             end
-            youbotarmmanager(6,obj.ptr,0,3,T);
+            youbotarmmanager(6,obj.ptr,0,1,T);
         end
         
         function Calibration(obj,T)
             if nargin<2
                 T = 10000;
             end
-            youbotarmmanager(6,obj.ptr,0,4,T);
+            youbotarmmanager(6,obj.ptr,0,2,T);
         end
         
         function q = GetTrueJointAngles(obj)
@@ -88,20 +88,20 @@ classdef YoubotManager < handle
             mode.configinprogress = (mode_ >= 100);
             mode_ = mode_ - (mode_ >= 100)*100;
             switch (mode_)
-                case 10
-                    mode.task = "conversion is not defined in c++";
-                case 5
-                    mode.task = "zero current";
-                case 4
-                    mode.task = "calibration";
-                case 3
-                    mode.task = "commutation";
-                case 2
-                    mode.task = "raw constant joint speed";
-                case 1
-                    mode.task = "stop";
                 case 0
                     mode.task = "initialization";
+                case 1
+                    mode.task = "commutation";
+                case 2
+                    mode.task = "calibration";
+                case 3
+                    mode.task = "stop";
+                case 4
+                    mode.task = "zero current";
+                case 5
+                    mode.task = "raw constant joint speed";
+                case 10
+                    mode.task = "conversion is not defined in c++";
                 otherwise
                     mode.task = "conversion is not defined in MATLAB";
             end

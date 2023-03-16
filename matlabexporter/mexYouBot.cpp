@@ -100,21 +100,21 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
       int type = (int)*mxGetPr(prhs[3]);
       double tlimit = *mxGetPr(prhs[4]);
       switch (type) {
-      case 0:
-        task = std::make_shared<MTaskStop>();
-        break;
       case 1:
-        task = std::make_shared<MTaskRawConstantJointSpeed>(param / 180. * M_PI, tlimit);
-        break;
-      case 2:
-        task = std::make_shared<MTaskZeroCurrent>();
-        break;
-      case 3:
         task = std::make_shared<MTaskCommutation>();
         tlimit = 10; // Commutation cannot be stopped, ~ 1 sec is needed
         break;
-      case 4:
+      case 2:
         task = std::make_shared<MTaskCalibration>();
+        break;
+      case 3:
+        task = std::make_shared<MTaskStop>();
+        break;
+      case 4:
+        task = std::make_shared<MTaskZeroCurrent>();
+        break;
+      case 5:
+        task = std::make_shared<MTaskRawConstantJointSpeed>(param / 180. * M_PI, tlimit);
         break;
       }
       modul->NewManipulatorTask(task, tlimit);
@@ -154,19 +154,19 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
         case MTask::NOT_DEFINED:
           *mode_ = 0;
           break;
-        case MTask::STOPPED:
+        case MTask::COMMUTATION:
           *mode_ = 1;
           break;
-        case MTask::RAW_CONSTANT_JOINTSPEED:
+        case MTask::CALIBRATION:
           *mode_ = 2;
           break;
-        case MTask::COMMUTATION:
+        case MTask::STOPPED:
           *mode_ = 3;
           break;
-        case MTask::CALIBRATION:
+        case MTask::ZERO_CURRENT:
           *mode_ = 4;
           break;
-        case MTask::ZERO_CURRENT:
+        case MTask::RAW_CONSTANT_JOINTSPEED:
           *mode_ = 5;
           break;
         default:
