@@ -66,17 +66,17 @@ void Manager::_thread(const std::string& configfilepath, bool virtual_) {
     // Check if auto commutation and autocalibration is necessary
     bool autocommutation = false;
     bool autocalibration = false;
-    {
-      Config config(configfilepath);
-      config.Init();
-      if (config.manipulatorConfig.find("AutoCommutation") != config.manipulatorConfig.end())
-        if (config.manipulatorConfig.at("AutoCommutation").compare("true") == 0) {
-          autocommutation = true;
-          if (config.manipulatorConfig.find("AutoCalibration") != config.manipulatorConfig.end())
-            if (config.manipulatorConfig.at("AutoCalibration").compare("true") == 0)
-              autocalibration = true;
-        }
-    }
+    
+    Config config(configfilepath);
+    config.Init();
+    if (config.manipulatorConfig.find("AutoCommutation") != config.manipulatorConfig.end())
+      if (config.manipulatorConfig.at("AutoCommutation").compare("true") == 0) {
+        autocommutation = true;
+        if (config.manipulatorConfig.find("AutoCalibration") != config.manipulatorConfig.end())
+          if (config.manipulatorConfig.at("AutoCalibration").compare("true") == 0)
+            autocalibration = true;
+      }
+    
     // Initialize the manipulator (parameters, config, ...)
     man->Initialize();
     // Command based operation, checking stop...
@@ -89,8 +89,11 @@ void Manager::_thread(const std::string& configfilepath, bool virtual_) {
       }
       // if autocalibration and initialized then do it or delete the need of autocalibration
       if (new_man_task_.ptr == nullptr && autocalibration) {
-        if (man->GetStatus().manipulatorStatus.IsCommutationInitialized())
-          new_man_task_ = { std::make_shared<MTaskCalibration>() , 15 };
+        if (man->GetStatus().manipulatorStatus.IsCommutationInitialized()) {
+          auto ptr = std::make_shared<MTaskCalibration>();
+          ptr->Initialize(&config);
+          new_man_task_ = { ptr , 15 };
+        }
         autocalibration = false;
       }
       if (new_man_task_.ptr == nullptr) {

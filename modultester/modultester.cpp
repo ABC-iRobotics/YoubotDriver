@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
   //youBotArmConfig_fromMoveIt.json");
   //youBotArmConfig_fromKeisler.json");
 
-  Manager modul(configpath, true);
+  Manager modul(configpath, false);
 
   modul.StartThreadAndInitialize();
 
@@ -28,34 +28,33 @@ int main(int argc, char *argv[])
   do {
     SLEEP_MILLISEC(10);
   } while (!modul.GetStatus().manipulatorStatus.IsConfigurated());
-  std::string sg2 = modul.GetStatus().manipulatorStatus.ToString();
 
-  // Commutation initialization - if it was not, just to test it
-  {
-    MTask::Ptr task0 = std::make_shared<MTaskCommutation>();
-    modul.NewManipulatorTask(task0, 5);
-    // Wait until COMMUTATION initialization ends
-    do {
-      SLEEP_MILLISEC(10);
-      modul.GetStatus().LogStatus();
-    } while (modul.GetStatus().motion == MTask::COMMUTATION);
-  }
-  
-  // Free drive
-  {
-    MTask::Ptr task2 = std::make_shared<MTaskZeroCurrent>();
-    modul.NewManipulatorTask(task2, 50);
-    for (int i = 0; i < 7000; i++) {
-      SLEEP_MILLISEC(10);
-      modul.GetStatus().LogStatus();
-    }
-  }
+  // Wait until commutation and calibration ends
+  do {
+    SLEEP_MILLISEC(10);
+  } while (!modul.GetStatus().manipulatorStatus.IsCalibrated());
 
   // Create and start a task
   Eigen::VectorXd dq(5);
   dq << 0.1, 0.1, -0.1, 0.1, -0.1;
   MTask::Ptr task = std::make_shared<MTaskRawConstantJointSpeed>(dq, 10);
   modul.NewManipulatorTask(task, 5);
+
+  auto start = std::chrono::steady_clock::now();
+  do {
+    //modul.GetStatus().LogStatus();
+    SLEEP_MILLISEC(10);
+  } while (std::chrono::duration_cast<std::chrono::seconds>(
+    std::chrono::steady_clock::now() - start).count() < 5);
+
+
+
+  // Stop and go home
+  modul.StopThread();
+
+  return 0;
+
+ 
 
   
   //modul.NewManipulatorTask(task2, 50);

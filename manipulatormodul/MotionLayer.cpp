@@ -181,6 +181,7 @@ void youbot::MotionLayer::DoManipulatorTask(MTask::Ptr task, double time_limit) 
       }
       if (task->GetType() == MTask::CALIBRATION) {
         auto status = manipulatorStatus.load();
+        man->SetAllJointsCalibratedViaMailbox();
         status.Set(ManipulatorStatus::CALIBRATED, true);
         manipulatorStatus.store(status);
       }
