@@ -65,16 +65,17 @@ void Joint::CollectBasicParameters() {
 }
 
 JointState Joint::GetLatestState() const {
-  return JointState(GetQLatestRad(), GetDQLatestRad(), GetTauLatestNm(), statusLatest);
+  return JointState(GetQLatestRad(), GetTicksLatest(),
+    GetDQLatestRad(), GetRPMLatest(), GetTauLatestNm(), statusLatest);
 }
 
 void Joint::LogLatestState() const {
-  auto ticks = ticksLatest.load().value;
+  auto motorticks = ticksLatest.load().value;
   auto mA = mALatest.load().value;
   auto RPM = RPMLatest.load().value;
-  auto qRad = Ticks2qRad(ticks);
+  auto qRad = Ticks2qRad(motorticks);
   log(Log::info, "Pos: " + std::to_string(qRad) + "[rad] (" + std::to_string(qRad/M_PI*180.) + "[deg],"
-    + std::to_string((int)ticks) + "[tick]) Vel: " +
+    + std::to_string((int)motorticks) + "[tick]) Vel: " +
     std::to_string(RPM2qRadPerSec(RPM)) + "[rad/s] (" + std::to_string((int)RPM) + "RPM) torque: " +
     std::to_string(mA2Nm(mA)) + "[NM] (" + std::to_string(mA) + "[mA])");
   log(Log::info, "Status: " + statusLatest.load().value.toString());
@@ -120,8 +121,8 @@ Data<youbot::JointStatus> youbot::Joint::GetStatusLatest() const {
 }
 
 void Joint::ReqJointPositionRad(double rad) {
-  int32_t ticks = qRad2Ticks(rad);
-  ReqMotorPositionTick(ticks);
+  int32_t motorticks = qRad2Ticks(rad);
+  ReqMotorPositionTick(motorticks);
 }
 
 void youbot::Joint::CheckI2tAndTimeoutError(JointStatus status) {
@@ -180,8 +181,8 @@ void Joint::InitCommutation() {
   throw std::runtime_error("One joint is not initialized and cannot be done it... ");
 }
 
-double Joint::Ticks2qRad(int32_t ticks) const {
-  return double(ticks) * 2. * M_PI * parameters.gearRatio / double(parameters.ticksperround) + parameters.qCalibrationRad;
+double Joint::Ticks2qRad(int32_t motorticks) const {
+  return double(motorticks) * 2. * M_PI * parameters.gearRatio / double(parameters.ticksperround) + parameters.qCalibrationRad;
 }
 
 int32_t Joint::qRad2Ticks(double qDeg) const {

@@ -17,7 +17,7 @@ void JointVirtual::GetFirmwareVersionViaMailbox(int& controllernum,
 void JointVirtual::_calledAtExchange() {
   _update();
   // Update latest values
-  ticksLatest.exchange(ticks());
+  ticksLatest.exchange(motorticks());
   mALatest.exchange(current_mA);
   RPMLatest.exchange(RPM);
   statusLatest.exchange({ _getStatus() });
@@ -91,12 +91,12 @@ JointStatus JointVirtual::_getStatus() {
   }
   if (abs(RPM) < 10) //TODO: 10?
     status |= int32_t(JointStatus::StatusErrorFlags::MOTOR_HALTED);
-  if (controlMode == POSITION && abs(target - ticks()) < 10) //TODO: 10?
+  if (controlMode == POSITION && abs(target - motorticks()) < 10) //TODO: 10?
     status |= int32_t(JointStatus::StatusErrorFlags::POSITION_REACHED);
   return status;
 }
 
-int64_t JointVirtual::ticks() const {
+int64_t JointVirtual::motorticks() const {
   return qRad2Ticks(qRad_true) + ticks_offset;
 }
 
@@ -260,9 +260,9 @@ void JointVirtual::ReqNoAction() {
   processCommand.type = ProcessCommand::NO_MORE_ACTION;
 }
 
-void JointVirtual::ReqMotorPositionTick(int ticks) {
+void JointVirtual::ReqMotorPositionTick(int motorticks) {
   processCommand.type = ProcessCommand::POSITION;
-  processCommand.value = ticks;
+  processCommand.value = motorticks;
 }
 
 void JointVirtual::ReqMotorSpeedRPM(int32_t value) {

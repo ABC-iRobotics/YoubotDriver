@@ -56,12 +56,12 @@ int32_t _toInt32(uint8_t* buff) {
 void JointPhysical::_loadExchangeDataFromBuffer() {
   static ProcessBuffer buffer;
   center->GetProcessMsg(buffer, GetSlaveIndex());
-  auto ticks = _toInt32(&buffer.buffer[0]);
+  auto motorticks = _toInt32(&buffer.buffer[0]);
   auto mA = _toInt32(&buffer.buffer[4]);
   auto RPM = _toInt32(&buffer.buffer[8]);
   auto status = (uint32_t)_toInt32(&buffer.buffer[12]);
   auto PWM = _toInt32(&buffer.buffer[16]);
-  ticksLatest.exchange(ticks);
+  ticksLatest.exchange(motorticks);
   mALatest.exchange(mA);
   RPMLatest.exchange(RPM);
   statusLatest.exchange({ status });
@@ -609,17 +609,17 @@ void JointPhysical::ReqNoAction() {
   center->SetProcessMsg(toSet, GetSlaveIndex());
 }
 
-void JointPhysical::ReqMotorPositionTick(int ticks) {
+void JointPhysical::ReqMotorPositionTick(int motorticks) {
   if (GetParameters().firmwareversion == 148) {
     log(Log::fatal, "Position control is forbidden for TMCM1610 with firmware 1.48 because of random encoder error!");
     SLEEP_MILLISEC(200);
     throw std::runtime_error("Position control is forbidden for TMCM1610 with firmware 1.48 because of random encoder error!");
   }
   static ProcessBuffer toSet(5);
-  toSet.buffer[3] = ticks >> 24;
-  toSet.buffer[2] = ticks >> 16;
-  toSet.buffer[1] = ticks >> 8;
-  toSet.buffer[0] = ticks & 0xff;
+  toSet.buffer[3] = motorticks >> 24;
+  toSet.buffer[2] = motorticks >> 16;
+  toSet.buffer[1] = motorticks >> 8;
+  toSet.buffer[0] = motorticks & 0xff;
   toSet.buffer[4] = TMCL::ControllerMode::POSITION_CONTROL;
   center->SetProcessMsg(toSet, GetSlaveIndex());
 }

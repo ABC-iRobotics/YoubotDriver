@@ -51,7 +51,7 @@ namespace youbot {
       int32_t current_mA = 0;
       double qRad_true = 0;
       int64_t ticks_offset = 7500;
-      int64_t ticks() const; // compute the current ticks - would have been said by the controller
+      int64_t motorticks() const; // compute the current ticks - would have been said by the controller
       void settickstozero(); // zero the encoder
 
       std::chrono::steady_clock::time_point updated_at = std::chrono::steady_clock::now();

@@ -120,8 +120,9 @@ std::string JointStatus::toString() const {
 }
 
 JointState::JointState() {};
-JointState::JointState(const Data<double>& q, const Data<double>& dq,
+JointState::JointState(const Data<double>& q, const Data<int32_t>& motorticks,
+  const Data<double>& dq, const Data<int32_t>& motorRPM,
   const Data<double>& tau, const Data<JointStatus>& status) :
-  q(q), dq(dq), tau(tau), status(status) {};
+  q(q), dq(dq), tau(tau), status(status), motorticks(motorticks), motorRPM(motorRPM) {};
 
 static std::chrono::steady_clock::time_point started_at = std::chrono::steady_clock::now() - std::chrono::minutes(1);

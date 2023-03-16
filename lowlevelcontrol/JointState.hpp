@@ -72,6 +72,7 @@ namespace youbot {
   /// </summary>
   struct JointState {
     Data<double> q, dq, tau;
+    Data<int32_t> motorticks, motorRPM;
     Data<JointStatus> status;
 
     /// <summary>
@@ -86,7 +87,8 @@ namespace youbot {
     /// <param name="dq"> joint speed [rad/s] </param>
     /// <param name="tau"> joint torque [Nm] </param>
     /// <param name="status"> joint status </param>
-    JointState(const Data<double>& q, const Data<double>& dq,
+    JointState(const Data<double>& q, const Data<int32_t>& motorticks,
+      const Data<double>& dq, const Data<int32_t>& motorRPM,
       const Data<double>& tau, const Data<JointStatus>& status);
   };
 
