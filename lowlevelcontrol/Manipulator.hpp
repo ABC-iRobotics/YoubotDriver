@@ -40,6 +40,7 @@ namespace youbot {
 	// Calibrate the manipulator
 	void Calibrate(bool forceCalibration = false); ///< Calibration subroutine
 	bool IsAllJointsCalibratedViaMailbox();  ///< Calls Joint::IsCalibratedViaMailbox
+	void SetAllJointsCalibratedViaMailbox();  ///< Calls Joint::SetCalibratedViaMailbox
 
 	// To handle timeout/I2t error flags
 	void CheckAndResetErrorFlagsViaMailbox(); ///< To check and reset i2t and timeout

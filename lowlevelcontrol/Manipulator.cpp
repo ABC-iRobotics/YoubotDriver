@@ -278,3 +278,8 @@ bool youbot::Manipulator::IsAllJointsCalibratedViaMailbox() {
 	  return false;
   return true;
 }
+
+void youbot::Manipulator::SetAllJointsCalibratedViaMailbox() {
+	for (int i = 0; i < 5; i++)
+		joints[i]->SetCalibratedViaMailbox();
+}
