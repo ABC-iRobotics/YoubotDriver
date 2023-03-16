@@ -29,10 +29,11 @@ int main(int argc, char *argv[])
     SLEEP_MILLISEC(10);
   } while (!modul.GetStatus().manipulatorStatus.IsConfigurated());
 
+  SLEEP_MILLISEC(100)
   // Wait until commutation and calibration ends
   do {
     SLEEP_MILLISEC(10);
-  } while (!modul.GetStatus().manipulatorStatus.IsCalibrated());
+  } while (modul.GetStatus().motion == MTask::CALIBRATION);
 
   // Create and start a task
   Eigen::VectorXd dq(5);
