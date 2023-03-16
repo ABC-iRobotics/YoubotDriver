@@ -17,6 +17,11 @@ std::string youbot::MTask::Type2String(TaskType type) {
   }
 }
 
+youbot::ManipulatorCommand::ManipulatorCommand() {
+    for (int i = 0; i < 5; i++)
+        commands[i] = { BLDCCommand::MOTOR_STOP, 0 };
+}
+
 youbot::ManipulatorCommand::ManipulatorCommand(BLDCCommand::Type type,
   const Eigen::VectorXd& value) {
   for (int i = 0; i < 5; i++)

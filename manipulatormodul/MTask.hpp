@@ -70,6 +70,8 @@ namespace youbot {
   struct ManipulatorCommand {
     BLDCCommand commands[5];
 
+    ManipulatorCommand(); //< Constructor with MotorStop commands
+
     ManipulatorCommand(BLDCCommand::Type type, const Eigen::VectorXd& value); ///< Constructor for same type and double values 
 
     ManipulatorCommand(BLDCCommand::Type type, const Eigen::VectorXi& value); ///< Constructor for same type and int values 
