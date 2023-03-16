@@ -72,7 +72,7 @@ namespace youbot {
     int GetSlaveIndex() const; ///< return the slave ID (0..(N-1))
 
     // Conversions
-    double Ticks2qRad(int32_t ticks) const; ///< Conversion for motor_ticks->joint_rad
+    double Ticks2qRad(int32_t motorticks) const; ///< Conversion for motor_ticks->joint_rad
     int32_t qRad2Ticks(double qDeg) const; ///< Conversion for joint_rad->motor_ticks
     double RPM2qRadPerSec(int32_t RPM) const; ///< Conversion for motor_RPM->joint_rad/s
     int32_t qRadPerSec2RPM(double degpersec) const; ///< Conversion for joint_rad/s->motor_RPM

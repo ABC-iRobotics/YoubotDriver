@@ -7,13 +7,17 @@
 /* MEX header */
 #include <mex.h> 
 #include "matrix.h"
-#include "Logger.hpp"
-
 #include "class_handle.hpp"
 
 /* youBot headers */
 #include "Manager.hpp"
-#include "RawConstantJointSpeedTask.hpp"
+#include "Logger.hpp"
+#include "Time.hpp"
+#include "MTaskRawConstantJointSpeed.hpp"
+#include "MTaskCommutation.hpp"
+#include "MTaskCalibration.hpp"
+#include "MTaskZeroCurrent.hpp"
+#include "MTaskStop.hpp"
 
 using namespace youbot;
 
@@ -92,18 +96,25 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
       Eigen::VectorXd param(N);
       for (int n = 0; n < N; n++)
         param[n] = p[n];
-      ManipulatorTask::Ptr task;
+      MTask::Ptr task;
       int type = (int)*mxGetPr(prhs[3]);
       double tlimit = *mxGetPr(prhs[4]);
       switch (type) {
-      case 0:
-        task = std::make_shared<IdleManipulatorTask>();
-        break;
       case 1:
-        task = std::make_shared<RawConstantJointSpeedTask>(param / 180. * M_PI, tlimit);
+        task = std::make_shared<MTaskCommutation>();
+        tlimit = 10; // Commutation cannot be stopped, ~ 1 sec is needed
         break;
       case 2:
-        task = std::make_shared<ZeroCurrentManipulatorTask>();
+        task = std::make_shared<MTaskCalibration>();
+        break;
+      case 3:
+        task = std::make_shared<MTaskStop>();
+        break;
+      case 4:
+        task = std::make_shared<MTaskZeroCurrent>();
+        break;
+      case 5:
+        task = std::make_shared<MTaskRawConstantJointSpeed>(param / 180. * M_PI, tlimit);
         break;
       }
       modul->NewManipulatorTask(task, tlimit);
@@ -138,20 +149,37 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
       }
       if (nlhs == 4) {
         plhs[3] = mxCreateDoubleMatrix(1, 1, mxREAL);
-        double* mode = mxGetPr(plhs[3]);
+        double* mode_ = mxGetPr(plhs[3]);
         switch (out.motion) {
-        case ManipulatorTask::INITIALIZATION:
-          *mode = 0;
+        case MTask::NOT_DEFINED:
+          *mode_ = 0;
           break;
-        case ManipulatorTask::STOPPED:
-          *mode = 1;
+        case MTask::COMMUTATION:
+          *mode_ = 1;
           break;
-        case ManipulatorTask::RAW_CONSTANT_JOINTSPEED:
-          *mode = 2;
+        case MTask::CALIBRATION:
+          *mode_ = 2;
+          break;
+        case MTask::STOPPED:
+          *mode_ = 3;
+          break;
+        case MTask::ZERO_CURRENT:
+          *mode_ = 4;
+          break;
+        case MTask::RAW_CONSTANT_JOINTSPEED:
+          *mode_ = 5;
           break;
         default:
-          *mode = 10;
+          *mode_ = 10;
         }
+        if (out.manipulatorStatus.IsConfigInProgress())
+          *mode_ += 100;
+        if (out.manipulatorStatus.IsConfigurated())
+          *mode_ += 200;
+        if (out.manipulatorStatus.IsCommutationInitialized())
+          *mode_ += 1000;
+        if (out.manipulatorStatus.IsCalibrated())
+          *mode_ += 10000;
       }
       if (nlhs > 4)
         mexErrMsgTxt("Get jointvariables: Four or less outputs expected.");

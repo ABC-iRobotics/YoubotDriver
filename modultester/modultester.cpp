@@ -1,8 +1,12 @@
 #include "adapters.hpp"
 #include "Manager.hpp"
-#include "RawConstantJointSpeedTask.hpp"
+#include "MTaskRawConstantJointSpeed.hpp"
 #include "Time.hpp"
 #include "Logger.hpp"
+#include "MTaskCommutation.hpp"
+#include "MTaskCalibration.hpp"
+#include "MTaskZeroCurrent.hpp"
+#include "MTaskStop.hpp"
 
 using namespace youbot;
 
@@ -15,22 +19,34 @@ int main(int argc, char *argv[])
   //youBotArmConfig_fromMoveIt.json");
   //youBotArmConfig_fromKeisler.json");
 
-  Manager modul(configpath, true);
-
+  Manager modul(configpath, false);
   modul.StartThreadAndInitialize();
-
-  // Wait until initialization ends
-  do {
-    SLEEP_SEC(1);
-  } while (modul.GetStatus().motion == ManipulatorTask::INITIALIZATION);
+  while (modul.GetStatus().motion != MTask::STOPPED) // while till config and auto tasks end
+    SLEEP_MILLISEC(10);
 
   // Create and start a task
-  Eigen::VectorXd dq(5);
-  dq << 0.1, 0.1, -0.1, 0.1, -0.1;
-  ManipulatorTask::Ptr task = std::make_shared<RawConstantJointSpeedTask>(dq, 10);
-  modul.NewManipulatorTask(task, 5);
+  {
+    Eigen::VectorXd dq(5);
+    dq << 0.1, 0.1, -0.1, 0.1, -0.1;
+    MTask::Ptr task = std::make_shared<MTaskRawConstantJointSpeed>(dq, 10);
+    modul.NewManipulatorTask(task, 5);
+    auto start = std::chrono::steady_clock::now();
+    do {
+      //modul.GetStatus().LogStatus();
+      SLEEP_MILLISEC(10);
+    } while (std::chrono::duration_cast<std::chrono::seconds>(
+      std::chrono::steady_clock::now() - start).count() < 5);
+  }
 
-  ManipulatorTask::Ptr task2 = std::make_shared<ZeroCurrentManipulatorTask>();
+
+  // Stop and go home
+  modul.StopThread();
+
+  return 0;
+
+ 
+
+  
   //modul.NewManipulatorTask(task2, 50);
   
   // Lets see what's happening

@@ -86,4 +86,8 @@ void Config::Init() {
   if (config.find("Logging") != config.end())
     for (auto& it : config.at("Logging").items())
       logConfig.insert({ it.key(),it.value() });
+
+  if (config.find("Manipulator") != config.end())
+    for (auto& it : config.at("Manipulator").items())
+      manipulatorConfig.insert({ it.key(),it.value() });
 }

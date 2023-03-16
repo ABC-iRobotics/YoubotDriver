@@ -107,8 +107,8 @@ void Manipulator::Calibrate(bool forceCalibration) {
 		  }
 		}
 		else { // if it has reached the holding state do nothing
-		  int ticks = joints[i]->GetTicksLatest().value;
-		  str = str + std::to_string(ticks) + "ticks ";
+		  int motorticks = joints[i]->GetTicksLatest().value;
+		  str = str + std::to_string(motorticks) + "motorticks ";
 		}
 	  log(Log::info, str);
 	  // if all joints just holding increase a counter - to let the hold current command start working
@@ -132,11 +132,11 @@ void Manipulator::Calibrate(bool forceCalibration) {
 	  allSet = true;
 	  std::string str;
 	  for (int i = 0; i < 5; i++) {
-		int ticks = joints[i]->GetTicksLatest().value;
-		if (abs(ticks) > 3)
+		int motorticks = joints[i]->GetTicksLatest().value;
+		if (abs(motorticks) > 3)
 		  allSet = false;
 		int mA = joints[i]->GetMALatest().value;
-		str = str + std::to_string(ticks) + "ticks (" + std::to_string(mA) + "mA) ";
+		str = str + std::to_string(motorticks) + "motorticks (" + std::to_string(mA) + "mA) ";
 	  }
 	  log(Log::info, str);
 	  int elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -277,4 +277,9 @@ bool youbot::Manipulator::IsAllJointsCalibratedViaMailbox() {
 	if (!joints[i]->IsCalibratedViaMailbox())
 	  return false;
   return true;
+}
+
+void youbot::Manipulator::SetAllJointsCalibratedViaMailbox() {
+	for (int i = 0; i < 5; i++)
+		joints[i]->SetCalibratedViaMailbox();
 }

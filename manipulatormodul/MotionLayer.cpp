@@ -8,7 +8,7 @@
 using namespace youbot;
 
 void youbot::MotionLayer::Status::LogStatus() const {
-  log(Log::info, "Manipulator status: " + ManipulatorTask::Type2String(motion));
+  log(Log::info, "Manipulator status: " + MTask::Type2String(motion));
   for (int i = 0; i < 5; i++) {
     log(Log::info, "Joint " + std::to_string(i) + ": q=" + std::to_string(joint[i].q.value) + "[rad] dq/dt="
       + std::to_string(joint[i].dq.value) + "[rad/s] tau="
@@ -27,37 +27,38 @@ void youbot::MotionLayer::_SoftLimit(
     auto p = man->GetJoint(i)->GetParameters();
     auto qmin_lim = p.qMinDeg / 180 * M_PI + limitZoneRad;
     auto qmax_lim = p.qMaxDeg / 180 * M_PI - limitZoneRad;
+    auto& cmd_ = cmd.commands[i];
     if (q < qmin_lim) {
-      switch (cmd.type) {
-      case cmd.JOINT_POSITION:
-        if (cmd.value(i) < qmin_lim)
-          cmd.value(i) = qmin_lim;
+      switch (cmd_.GetType()) {
+      case cmd_.JOINT_POSITION:
+        if (cmd_.Get<double>() < qmin_lim)
+          cmd_.Set(qmin_lim);
         break;
-      case cmd.JOINT_VELOCITY:
-        if (cmd.value(i) < corrjointspeed)
-          cmd.value(i) = corrjointspeed;
+      case cmd_.JOINT_VELOCITY:
+        if (cmd_.Get<double>() < corrjointspeed)
+          cmd_.Set(corrjointspeed);
         break;
-      case cmd.JOINT_TORQUE:
-        if (cmd.value(i) < 0)
-          cmd.value(i) = 0;
+      case cmd_.JOINT_TORQUE:
+        if (cmd_.Get<double>() < 0)
+          cmd_.Set(0);
         break;
       default:
         break;
       }
     }
     if (q > qmax_lim) {
-      switch (cmd.type) {
-      case cmd.JOINT_POSITION:
-        if (cmd.value(i) > qmax_lim)
-          cmd.value(i) = qmax_lim;
+      switch (cmd_.GetType()) {
+      case cmd_.JOINT_POSITION:
+        if (cmd_.Get<double>() > qmax_lim)
+          cmd_.Set(qmax_lim);
         break;
-      case cmd.JOINT_VELOCITY:
-        if (cmd.value(i) > -corrjointspeed)
-          cmd.value(i) = -corrjointspeed;
+      case cmd_.JOINT_VELOCITY:
+        if (cmd_.Get<double>() > -corrjointspeed)
+          cmd_.Set(-corrjointspeed);
         break;
-      case cmd.JOINT_TORQUE:
-        if (cmd.value(i) > 0)
-          cmd.value(i) = 0;
+      case cmd_.JOINT_TORQUE:
+        if (cmd_.Get<double>() > 0)
+          cmd_.Set(0);
         break;
       default:
         break;
@@ -75,6 +76,7 @@ youbot::MotionLayer::Status youbot::MotionLayer::GetStatus() {
         status.joint[i] = j->GetLatestState();
     }
   status.motion = motionStatus.load();
+  status.manipulatorStatus = manipulatorStatus.load();
   return status;
 }
 
@@ -97,12 +99,12 @@ Eigen::VectorXd youbot::MotionLayer::GetTrueStatus() const {
 }
 
 void youbot::MotionLayer::StopManipulatorTask() {
-  stoptask = true;
+  if (motionStatus.load() != MTask::COMMUTATION)
+    stoptask = true;
 }
 
 // Tasks
-
-void youbot::MotionLayer::DoManipulatorTask(ManipulatorTask::Ptr task, double time_limit) {
+void youbot::MotionLayer::DoManipulatorTask(MTask::Ptr task, double time_limit) {
   stoptask = false;
   motionStatus.store(task->GetType());
   taskrunning = true;
@@ -113,33 +115,81 @@ void youbot::MotionLayer::DoManipulatorTask(ManipulatorTask::Ptr task, double ti
   do {
     auto stateLatest = man->GetStateLatest();
     auto man_c = task->GetCommand(stateLatest);
-    _SoftLimit(man_c, stateLatest); // apply soft limit
-    switch (man_c.type) {
-    case ManipulatorCommand::JOINT_POSITION:
-      man->ReqJointPositionRad(man_c.value[0], man_c.value[1],
-        man_c.value[2], man_c.value[3], man_c.value[4]);
-      break;
-    case ManipulatorCommand::JOINT_VELOCITY:
-      man->ReqJointSpeedRadPerSec(man_c.value[0], man_c.value[1],
-        man_c.value[2], man_c.value[3], man_c.value[4]);
-      break;
-    case ManipulatorCommand::JOINT_TORQUE:
-      man->ReqJointTorqueNm(man_c.value[0], man_c.value[1],
-        man_c.value[2], man_c.value[3], man_c.value[4]);
-      break;
-      /*
-      case ManipulatorCommand::ENCODER_SET_REFERENCE:
-      man->Req(man_c.value[0], man_c.value[1],
-      man_c.value[2], man_c.value[3], man_c.value[4]);
-      break;*/
+    if (manipulatorStatus.load().IsCalibrated())
+      _SoftLimit(man_c, stateLatest); // apply soft limit - todo only if commutation initialized and calibrated
+    for (int i = 0; i < 5; i++) {
+      auto& cmd_ = man_c.commands[i];
+      auto& j = man->GetJoint(i);
+      switch (cmd_.GetType()) {
+      case BLDCCommand::JOINT_POSITION:
+        if (!manipulatorStatus.load().IsCalibrated())
+          throw std::runtime_error("Position command used on not calibrated arm");
+        j->ReqJointPositionRad(cmd_.Get<double>());
+        break;
+      case BLDCCommand::MOTOR_TICK:
+        if (!manipulatorStatus.load().IsCalibrated())
+          throw std::runtime_error("Position command used on not calibrated arm");
+        j->ReqMotorPositionTick(cmd_.Get<int>());
+        break;
+      case BLDCCommand::JOINT_VELOCITY:
+        if (!manipulatorStatus.load().IsCommutationInitialized())
+          throw std::runtime_error("Velocity command used on not commutated arm");
+        j->ReqJointSpeedRadPerSec(cmd_.Get<double>());
+        break;
+      case BLDCCommand::JOINT_TORQUE:
+        if (!manipulatorStatus.load().IsCommutationInitialized())
+          throw std::runtime_error("Torque command used on not commutated arm");
+        j->ReqJointTorqueNm(cmd_.Get<double>());
+        break;
+      case BLDCCommand::MOTOR_RPM:
+        if (!manipulatorStatus.load().IsCommutationInitialized())
+          throw std::runtime_error("Velocity command used on not commutated arm");
+        j->ReqMotorSpeedRPM(cmd_.Get<int>());
+        break;
+      case BLDCCommand::MOTOR_CURRENT_MA:
+        if (!manipulatorStatus.load().IsCommutationInitialized())
+          throw std::runtime_error("Current command used on not commutated arm");
+        j->ReqMotorCurrentmA(cmd_.Get<int>());
+        break;
+      case BLDCCommand::MOTOR_VOLTAGE:
+        if (!manipulatorStatus.load().IsCommutationInitialized())
+          throw std::runtime_error("Voltage command used on not commutated arm");
+        j->ReqVoltagePWM(cmd_.Get<int>());
+        break;
+      case BLDCCommand::INITIALIZE_COMMUTATION:
+        j->ReqInitializationViaProcess();
+        break;
+      case BLDCCommand::MOTOR_STOP:
+        j->ReqStop();
+        break;
+      case BLDCCommand::ENCODER_SET_REFERENCE:
+        j->ReqEncoderReference(cmd_.Get<int>());
+        break;
+      default:
+        break;
+      }
     }
     center->ExchangeProcessMsg();
     SLEEP_MILLISEC(10);// compute adaptively the remained time..
     elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
       std::chrono::steady_clock::now() - start).count();
-  } while (elapsed_ms < time_limit * 1000. && !stoptask && !task->Finished());
+    if (task->Finished()) {
+      if (task->GetType() == MTask::COMMUTATION) {
+        auto status = manipulatorStatus.load();
+        status.Set(ManipulatorStatus::COMMUTATION_INITIALIZED, true);
+        manipulatorStatus.store(status);
+      }
+      if (task->GetType() == MTask::CALIBRATION) {
+        auto status = manipulatorStatus.load();
+        man->SetAllJointsCalibratedViaMailbox();
+        status.Set(ManipulatorStatus::CALIBRATED, true);
+        manipulatorStatus.store(status);
+      }
+      break;
+    }
+  } while (elapsed_ms < time_limit * 1000. && !stoptask);
   taskrunning = false;
-  motionStatus.store(ManipulatorTask::STOPPED);
+  motionStatus.store(MTask::STOPPED);
 }
 
 bool youbot::MotionLayer::IsManipulatorTaskRunning() const {
@@ -151,7 +201,12 @@ MotionLayer::MotionLayer(
  : configfilepath(configfilepath), virtual_(virtual_) {};
 
 void MotionLayer::Initialize() {
-  motionStatus.store(ManipulatorTask::INITIALIZATION);
+  {
+    auto status = manipulatorStatus.load();
+    status.Set(ManipulatorStatus::START_UP, true);
+    motionStatus.store(MTask::NOT_DEFINED);
+    manipulatorStatus.store(status);
+  }
   // Get Configfile
   Config config(configfilepath);
   config.Init();
@@ -176,7 +231,79 @@ void MotionLayer::Initialize() {
   // Initialize manipulator
   if (!man)
     man = std::make_unique<Manipulator>(config, center);
+  man->CollectBasicJointParameters();
+  man->ConfigJointControlParameters();
+  man->CheckAndResetErrorFlagsViaMailbox();
+  bool isCommutated = true;
+  for (int i = 0; i < 5; i++)
+    if (!man->GetJoint(i)->GetJointStatusViaMailbox().Initialized()) {
+      isCommutated = false;
+      break;
+    }
+  bool isCalibrated = isCommutated && man->IsAllJointsCalibratedViaMailbox();
+  /*
+  // Commutation
   man->InitializeManipulator();
+  {
+    auto status = manipulatorStatus.load();
+    status.Set(ManipulatorStatus::COMMUTATION_INITIALIZED, true);
+    manipulatorStatus.store(status);
+  }
+  // Calibration
   man->Calibrate();
-  motionStatus.store(ManipulatorTask::STOPPED);
+  {
+    auto status = manipulatorStatus.load();
+    status.Set(ManipulatorStatus::CALIBRATED, true);
+    manipulatorStatus.store(status);
+  }*/
+  {
+    auto status = manipulatorStatus.load();
+    status.Set(ManipulatorStatus::START_UP, false);
+    status.Set(ManipulatorStatus::CONFIGURATED, true);
+    if (isCommutated)
+      status.Set(ManipulatorStatus::COMMUTATION_INITIALIZED, true);
+    if (isCalibrated)
+      status.Set(ManipulatorStatus::CALIBRATED, true);
+    manipulatorStatus.store(status);
+  }
+}
+
+bool youbot::MotionLayer::ManipulatorStatus::IsConfigInProgress() const {
+  return value & START_UP;
+}
+
+bool youbot::MotionLayer::ManipulatorStatus::IsConfigurated() const {
+  return value & CONFIGURATED;
+}
+
+bool youbot::MotionLayer::ManipulatorStatus::IsCommutationInitialized() const {
+  return value & COMMUTATION_INITIALIZED;
+}
+
+bool youbot::MotionLayer::ManipulatorStatus::IsCalibrated() const {
+  return value & CALIBRATED;
+}
+
+bool youbot::MotionLayer::ManipulatorStatus::Is(Flag flag) const {
+  return value & flag;
+}
+
+void youbot::MotionLayer::ManipulatorStatus::Set(Flag flag, bool in) {
+  if (in)
+    value |= flag;
+  else
+    value &= ~flag;
+}
+
+std::string youbot::MotionLayer::ManipulatorStatus::ToString() const {
+  std::stringstream ss;
+  if (Is(START_UP))
+    ss << " START_UP";
+  if (Is(CONFIGURATED))
+    ss << " CONFIGURATED";
+  if (Is(COMMUTATION_INITIALIZED))
+    ss << " COMMUTATION_INITIALIZED";
+  if (Is(CALIBRATED))
+    ss << " CALIBRATED";
+  return ss.str();
 }

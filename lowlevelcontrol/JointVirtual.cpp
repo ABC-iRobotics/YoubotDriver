@@ -17,7 +17,7 @@ void JointVirtual::GetFirmwareVersionViaMailbox(int& controllernum,
 void JointVirtual::_calledAtExchange() {
   _update();
   // Update latest values
-  ticksLatest.exchange(ticks());
+  ticksLatest.exchange(motorticks());
   mALatest.exchange(current_mA);
   RPMLatest.exchange(RPM);
   statusLatest.exchange({ _getStatus() });
@@ -32,6 +32,10 @@ void JointVirtual::_calledAtExchange() {
     controlMode = VELOCITY;
     target = processCommand.value;
     break;
+  case ProcessCommand::STOP:
+    controlMode = VELOCITY;
+    target = 0;
+    break;
   case ProcessCommand::CURRENT:
     controlMode = CURRENT;
     target = processCommand.value;
@@ -44,7 +48,10 @@ void JointVirtual::_calledAtExchange() {
     settickstozero();
     break;
   case ProcessCommand::INITIALIZE:
-    throw std::runtime_error("not implemented"); // not used
+    if (!commutationState.started) {
+      commutationState.started = true;
+      commutationState.started_at = std::chrono::steady_clock::now();
+    }
     break;
   case ProcessCommand::NO_MORE_ACTION:
     throw std::runtime_error("not implemented"); // not understood
@@ -84,12 +91,12 @@ JointStatus JointVirtual::_getStatus() {
   }
   if (abs(RPM) < 10) //TODO: 10?
     status |= int32_t(JointStatus::StatusErrorFlags::MOTOR_HALTED);
-  if (controlMode == POSITION && abs(target - ticks()) < 10) //TODO: 10?
+  if (controlMode == POSITION && abs(target - motorticks()) < 10) //TODO: 10?
     status |= int32_t(JointStatus::StatusErrorFlags::POSITION_REACHED);
   return status;
 }
 
-int64_t JointVirtual::ticks() const {
+int64_t JointVirtual::motorticks() const {
   return qRad2Ticks(qRad_true) + ticks_offset;
 }
 
@@ -253,9 +260,9 @@ void JointVirtual::ReqNoAction() {
   processCommand.type = ProcessCommand::NO_MORE_ACTION;
 }
 
-void JointVirtual::ReqMotorPositionTick(int ticks) {
+void JointVirtual::ReqMotorPositionTick(int motorticks) {
   processCommand.type = ProcessCommand::POSITION;
-  processCommand.value = ticks;
+  processCommand.value = motorticks;
 }
 
 void JointVirtual::ReqMotorSpeedRPM(int32_t value) {
