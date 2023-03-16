@@ -25,7 +25,7 @@ ManipulatorCommand youbot::MTaskCalibration::GetCommand(const JointsState& new_s
 	std::chrono::steady_clock::now() - started_at).count() < 200)
 	return cmd; // return the initialized command
   // Till it get to the all holding state
-  if (reached_since < 4) {
+  if (reached_since < 15) {
 	// if dt>200ms, check if the joint has already stopped
 	std::string str = "Calibration vel: ";
 	for (int i = 0; i < 5; i++)
@@ -58,15 +58,15 @@ ManipulatorCommand youbot::MTaskCalibration::GetCommand(const JointsState& new_s
   // If all joints are holding the endposition with 30mA
   // Start reference setting
   // (it does need a few milliseconds, we wait here still the returned positions become ~0)
-  if (reached_since == 4) {
+  if (reached_since < 1000) {
 	for (int i = 0; i < 5; i++)
 	  cmd.commands[i] = { BLDCCommand::ENCODER_SET_REFERENCE,0 };
 	ref_setting_started = std::chrono::steady_clock::now();
-	reached_since = 10;
+	reached_since = 1000;
 	return cmd;
   }
   // Check if the joint references are set
-  if (reached_since == 10) {
+  if (reached_since == 1000) {
 	bool allSet = true;
 	std::string str;
 	for (int i = 0; i < 5; i++) {

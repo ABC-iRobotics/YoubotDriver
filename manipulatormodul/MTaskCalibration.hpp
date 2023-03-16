@@ -32,7 +32,7 @@ namespace youbot {
 	bool initialized = false;
 	ManipulatorCommand cmd;
 
-	const double calJointRadPerSec = 0.35; ///< constant
+	const double calJointRadPerSec = 0.2; ///< constant
 	const int holding_current_mA = 30; ///< constant
   };
 }
