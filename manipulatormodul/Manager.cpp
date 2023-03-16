@@ -69,16 +69,20 @@ void Manager::_thread(const std::string& configfilepath, bool virtual_) {
     
     Config config(configfilepath);
     config.Init();
+
+    // Initialize the manipulator (parameters, config, ...)
+    man->Initialize();
+
     if (config.manipulatorConfig.find("AutoCommutation") != config.manipulatorConfig.end())
       if (config.manipulatorConfig.at("AutoCommutation").compare("true") == 0) {
         autocommutation = true;
         if (config.manipulatorConfig.find("AutoCalibration") != config.manipulatorConfig.end())
           if (config.manipulatorConfig.at("AutoCalibration").compare("true") == 0)
-            autocalibration = true;
+            if (!man->GetStatus().manipulatorStatus.IsCalibrated() ||
+              config.manipulatorConfig.at("ForceCalibration").compare("true") == 0)
+              autocalibration = true;
       }
     
-    // Initialize the manipulator (parameters, config, ...)
-    man->Initialize();
     // Command based operation, checking stop...
     while (!threadtostop) { // How can I stop commutation OR calibration? it will stop it again...
       NewTask new_man_task_;

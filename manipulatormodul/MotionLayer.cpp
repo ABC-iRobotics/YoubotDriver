@@ -233,6 +233,13 @@ void MotionLayer::Initialize() {
   man->CollectBasicJointParameters();
   man->ConfigJointControlParameters();
   man->CheckAndResetErrorFlagsViaMailbox();
+  bool isCommutated = true;
+  for (int i = 0; i < 5; i++)
+    if (!man->GetJoint(i)->GetJointStatusViaMailbox().Initialized()) {
+      isCommutated = false;
+      break;
+    }
+  bool isCalibrated = isCommutated && man->IsAllJointsCalibratedViaMailbox();
   /*
   // Commutation
   man->InitializeManipulator();
@@ -252,6 +259,10 @@ void MotionLayer::Initialize() {
     auto status = manipulatorStatus.load();
     status.Set(ManipulatorStatus::START_UP, false);
     status.Set(ManipulatorStatus::CONFIGURATED, true);
+    if (isCommutated)
+      status.Set(ManipulatorStatus::COMMUTATION_INITIALIZED, true);
+    if (isCalibrated)
+      status.Set(ManipulatorStatus::CALIBRATED, true);
     manipulatorStatus.store(status);
   }
   motionStatus.store(MTask::STOPPED);
