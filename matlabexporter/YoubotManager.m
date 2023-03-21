@@ -45,6 +45,10 @@ classdef YoubotManager < handle
             youbotarmmanager(6,obj.ptr,dqDegPsec,5,tlimit);
         end
         
+        function SetJointPosition(obj, qDeg)
+            youbotarmmanager(6,obj.ptr,qDeg,6,0);
+        end
+        
         function FreeDrive(obj,T)
             if nargin<2
                 T = 10000;
@@ -100,6 +104,8 @@ classdef YoubotManager < handle
                     mode.task = "zero current";
                 case 5
                     mode.task = "raw constant joint speed";
+                case 6
+                    mode.task = "raw constant joint position";
                 case 10
                     mode.task = "conversion is not defined in c++";
                 otherwise

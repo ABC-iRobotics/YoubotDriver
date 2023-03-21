@@ -95,7 +95,8 @@ namespace youbot {
       CALIBRATION = 2,
       STOPPED = 3,
       ZERO_CURRENT = 4,
-      RAW_CONSTANT_JOINTSPEED = 5 // currently these types are defined
+      RAW_CONSTANT_JOINTSPEED = 5,
+      RAW_CONSTANT_JOINTPOSITON = 6 // currently these types are defined
     };
 
     static std::string Type2String(TaskType type); ///< Generate string from task type
