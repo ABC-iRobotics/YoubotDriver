@@ -4,11 +4,12 @@
 
 using namespace youbot;
 
-youbot::MTaskRawConstantJointPosition::MTaskRawConstantJointPosition(const Eigen::VectorXd& q_required_rad, const Config* config) : q_required_rad(q_required_rad) {
+youbot::MTaskRawConstantJointPosition::MTaskRawConstantJointPosition(
+  const Eigen::VectorXd& q_required_rad) : q_required_rad(q_required_rad) {
   // PParameterFirstParametersPositionControl
   P_constants = Eigen::VectorXd(5);
   for (int i = 0; i < 5; i++)
-    P_constants[i] = config->jointConfigs[i].at("PParameterFirstParametersPositionControl") / 4000. * 60.;
+    P_constants[i] = 500. / 4000. * 60.;
   P_constants *= 0.2;
 }
 #include <iostream>

@@ -22,8 +22,6 @@
 
 using namespace youbot;
 
-Config* config;
-
 /* MEX entry function */
 void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
   try {
@@ -43,8 +41,6 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
       char input_buf[5000];
       mxGetString(prhs[1], input_buf, 5000);
       bool isvirtual = *mxGetPr(prhs[2]) > 0;
-      config = new Config(input_buf); // TODO: disgusting
-      config->Init();
       auto modul = new Manager(input_buf, isvirtual);
 
       // Return a handle to a new C++ instance
@@ -122,7 +118,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
         task = std::make_shared<MTaskRawConstantJointSpeed>(param / 180. * M_PI, tlimit);
         break;
       case 6:
-        task = std::make_shared<MTaskRawConstantJointPosition>(param / 180. * M_PI, config);
+        task = std::make_shared<MTaskRawConstantJointPosition>(param / 180. * M_PI);
         break;
       }
       modul->NewManipulatorTask(task, tlimit);

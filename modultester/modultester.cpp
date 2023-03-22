@@ -21,9 +21,6 @@ int main(int argc, char *argv[]) {
   //youBotArmConfig_fromMoveIt.json");
   //youBotArmConfig_fromKeisler.json");
 
-  Config config(configpath); // TODO: disgusting
-  config.Init();
-
   Manager modul(configpath, true);
   modul.StartThreadAndInitialize();
   while (modul.GetStatus().motion != MTask::STOPPED) // while till config and auto tasks end
@@ -36,7 +33,7 @@ int main(int argc, char *argv[]) {
   log(Log::error, "STARTED");
   // Create and start a task
   {
-    MTask::Ptr task = std::make_shared<MTaskRawConstantJointPosition>(Eigen::VectorXd::Zero(5), &config);
+    MTask::Ptr task = std::make_shared<MTaskRawConstantJointPosition>(Eigen::VectorXd::Zero(5));
     modul.NewManipulatorTask(task, 1e8);
     auto start = std::chrono::steady_clock::now();
     do {

@@ -15,8 +15,7 @@ namespace youbot {
     bool finished;
 
   public:
-    MTaskRawConstantJointPosition(const Eigen::VectorXd& q_required_rad,
-      const Config* config);
+    MTaskRawConstantJointPosition(const Eigen::VectorXd& q_required_rad);
 
     ManipulatorCommand GetCommand(const JointsState& new_state) override;
 
