@@ -10,7 +10,7 @@ youbot::MTaskRawConstantJointPosition::MTaskRawConstantJointPosition(
   P_constants = Eigen::VectorXd(5);
   for (int i = 0; i < 5; i++)
     P_constants[i] = 500. / 4000. * 60.;
-  P_constants *= 0.2;
+  P_constants *= 0.1;
 }
 #include <iostream>
 #include "Logger.hpp"
