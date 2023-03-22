@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
   // Create and start a task
   {
     MTask::Ptr task = std::make_shared<MTaskRawConstantJointPosition>(Eigen::VectorXd::Zero(5), &config);
-    modul.NewManipulatorTask(task, 10);
+    modul.NewManipulatorTask(task, 1e8);
     auto start = std::chrono::steady_clock::now();
     do {
       modul.GetStatus().LogStatus();

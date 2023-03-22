@@ -46,7 +46,7 @@ classdef YoubotManager < handle
         end
         
         function SetJointPosition(obj, qDeg)
-            youbotarmmanager(6,obj.ptr,qDeg,6,0);
+            youbotarmmanager(6,obj.ptr,qDeg,6,1e8);
         end
         
         function FreeDrive(obj,T)
