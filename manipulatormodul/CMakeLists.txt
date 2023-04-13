@@ -9,6 +9,7 @@ set(SOURCES
     MTaskCommutation.cpp
     MTaskStop.cpp
     MTaskZeroCurrent.cpp
+    MTaskGenericRawConstant.cpp
 )
 
 set(HEADERS
@@ -21,6 +22,7 @@ set(HEADERS
     MTaskCommutation.hpp
     MTaskStop.hpp
     MTaskZeroCurrent.hpp
+    MTaskGenericRawConstant.hpp
 )
 
 set(INTRINSIC_HEADERS
