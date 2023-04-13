@@ -120,6 +120,10 @@ Data<youbot::JointStatus> youbot::Joint::GetStatusLatest() const {
   return statusLatest.load();
 }
 
+void youbot::Joint::ReqMotorTorqueNm(double value) {
+  ReqJointTorqueNm(value / parameters.gearRatio );
+}
+
 void Joint::ReqJointPositionRad(double rad) {
   int32_t motorticks = qRad2Ticks(rad);
   ReqMotorPositionTick(motorticks);

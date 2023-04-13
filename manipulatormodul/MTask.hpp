@@ -27,6 +27,7 @@ namespace youbot {
       MOTOR_TICK,
       MOTOR_RPM,
       MOTOR_CURRENT_MA,
+      MOTOR_TORQUE_NM,
       MOTOR_VOLTAGE,
       MOTOR_STOP,
       ENCODER_SET_REFERENCE, // be careful
