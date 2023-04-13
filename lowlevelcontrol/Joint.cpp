@@ -202,9 +202,9 @@ int32_t youbot::Joint::qRadPerSec2RPM(double radpersec) const {
 }
 
 double youbot::Joint::mA2Nm(int32_t mA) const {
-  return double(mA) / 1000. * parameters.torqueconstantNmPerA;
+  return double(mA) / 1000. * parameters.torqueconstantNmPerA; // gearratio as well?
 }
 
 int32_t youbot::Joint::Nm2mA(double Nm) const {
-  return int32_t(Nm / parameters.torqueconstantNmPerA * 1000.);
+  return int32_t(Nm / parameters.torqueconstantNmPerA * 1000.); // gearratio as well?
 }
