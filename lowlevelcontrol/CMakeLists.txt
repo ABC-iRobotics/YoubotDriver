@@ -1,4 +1,3 @@
-
 set(SOURCES
 		adapters.cpp
 		Logger.cpp
@@ -41,10 +40,9 @@ set(INTRINSIC_HEADERS
 
 add_library(lowlevelcontrol STATIC ${SOURCES} ${HEADERS} ${INTRINSIC_HEADERS})
 
-source_group("Intrinsic headers" FILES ${INTRINSIC_HEADERS} )
+source_group("Intrinsic headers" FILES ${INTRINSIC_HEADERS})
 
-requires_soem(lowlevelcontrol)
-requires_spdlog(lowlevelcontrol)
+target_link_libraries(lowlevelcontrol spdlog soem)
 
 set_target_properties(lowlevelcontrol PROPERTIES LINKER_LANGUAGE CXX)
 

@@ -9,15 +9,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 ## Set folders
 #set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install CACHE PATH "" FORCE) #Nem convention instead of program files/SensorFusion...
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/Bin) #Or the program puts the application into different folders...
-SET(3RDPARTY_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/third_parties)
-
-## ---------------------------------------------------------------------------------
-## Generally used variables for third parties
-include(cmake/ThirdPartyHandling.cmake)
-set(THIRD_PARTY_CONFIG Debug;Release)
-set(ONLY_RELEASE Release)
-set(GIT_NAMES GIT Git)
-set(HG_NAMES HG Hg)
 
 if (WIN32)
   ## ---------------------------------------------------------------------------------
@@ -31,35 +22,63 @@ if (WIN32)
   set (CMAKE_CONFIGURATION_TYPES Debug;Release;MinSizeRel;RelWithDebInfo CACHE STRING "Configuration types" FORCE)
 endif()
 
-## Find or get SOEM
-set(SOEM_COMMAND "git clone https://github.com/kutij/SOEM.git")
-set(SOEM_CACHE_SETTINGS -DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded$<$<CONFIG:Debug>:Debug>")
-third_party_policy(soem ${SOEM_COMMAND} SOEM_CACHE_SETTINGS THIRD_PARTY_CONFIG true GIT_NAMES)
-macro(requires_soem NAME)
-	target_link_libraries (${NAME} soem)
-endmacro(requires_soem)
+## Fetch third parties
+include(FetchContent)
+set(FETCHCONTENT_QUIET TRUE)
 
-## Find or get SPDLOG
-set(SPDLOG_COMMAND "git clone https://github.com/gabime/spdlog.git -bv1.11.0")
-set(SPDLOG_CACHE_SETTINGS -DSPDLOG_BUILD_BENCH=FALSE;-DSPDLOG_BUILD_EXAMPLE=FALSE;
-	-DSPDLOG_BUILD_EXAMPLE_HO=FALSE;-DSPDLOG_BUILD_TESTS=FALSE;-DSPDLOG_BUILD_TESTS_HO=FALSE;
-	-DSPDLOG_INSTALL=TRUE;-DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded$<$<CONFIG:Debug>:Debug>")
-third_party_policy(spdlog ${SPDLOG_COMMAND} SPDLOG_CACHE_SETTINGS THIRD_PARTY_CONFIG TRUE GIT_NAMES)
-if (spdlog_FOUND)
-	set_target_properties(spdlog::spdlog PROPERTIES MAP_IMPORTED_CONFIG_RELWITHDEBINFO RELEASE) #By default the debug libs are tried to use...
-	set_target_properties(spdlog::spdlog PROPERTIES MAP_IMPORTED_CONFIG_MINSIZEREL RELEASE) #By default the debug libs are tried to use...
+## Fetch SOEM 
+FetchContent_Declare(SOEM
+                     GIT_REPOSITORY https://github.com/kutij/SOEM.git
+                     )
+FetchContent_MakeAvailable(SOEM)
+set_target_properties(soem PROPERTIES FOLDER "3rd parties")
+## Fetch SPDLOG
+FetchContent_Declare(SPDLOG
+                     GIT_REPOSITORY https://github.com/gabime/spdlog.git
+                     GIT_TAG        v1.11.0
+                     )
+set(SPDLOG_BUILD_BENCH FALSE)
+set(SPDLOG_BUILD_EXAMPLE FALSE)
+set(SPDLOG_BUILD_EXAMPLE_HO FALSE)
+set(SPDLOG_BUILD_TESTS FALSE)
+set(SPDLOG_BUILD_TESTS_HO FALSE)
+set(SPDLOG_INSTALL TRUE)
+set(SPDLOG_BUILD_BENCH FALSE)
+set(SPDLOG_BUILD_EXAMPLE FALSE)
+if(WIN32)
+    SET(ADD_INFO -${CMAKE_VS_PLATFORM_TOOLSET}-${CMAKE_GENERATOR_PLATFORM}-${RUNTIME_INFO})
 endif()
-macro(requires_spdlog NAME)
-	target_link_libraries (${NAME} spdlog::spdlog)
-endmacro(requires_spdlog)
+FetchContent_MakeAvailable(SPDLOG)
+set_target_properties(spdlog PROPERTIES
+			RELEASE_POSTFIX "${ADD_INFO}"
+			RELWITHDEBINFO_POSTFIX "${ADD_INFO}-relwithdebinfo"
+			MINSIZEREL_POSTFIX "${ADD_INFO}-minsizerel"
+			DEBUG_POSTFIX "${ADD_INFO}-debug")
+set_target_properties(spdlog PROPERTIES FOLDER "3rd parties")
+#set_target_properties(spdlog::spdlog PROPERTIES MAP_IMPORTED_CONFIG_RELWITHDEBINFO RELEASE) #By default the debug libs are tried to use...
+#set_target_properties(spdlog::spdlog PROPERTIES MAP_IMPORTED_CONFIG_MINSIZEREL RELEASE) #By default the debug libs are tried to use...
+  
+## Fetch Eigen3
+FetchContent_Declare(Eigen3
+                     GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
+                     GIT_TAG        3.3.7
+                     )
+set(BUILD_TESTING FALSE)
+set(CMAKE_INSTALL_INCLUDEDIR "include")
+FetchContent_MakeAvailable(Eigen3)
+set_target_properties(uninstall PROPERTIES FOLDER "3rd parties")
 
-## Find or get Eigen
-set(EIGEN3_COMMAND "git clone https://gitlab.com/libeigen/eigen.git -b3.3.7")
-set(EIGEN3_CACHE_SETTINGS -DBUILD_TESTING=FALSE;-DCMAKE_INSTALL_INCLUDEDIR="include";${EXTERNAL_FLAG_SETTER})
-third_party_policy(Eigen3 ${EIGEN3_COMMAND} EIGEN3_CACHE_SETTINGS ONLY_RELEASE false GIT_NAMES)
-macro(requires_eigen NAME)
-	target_link_libraries (${NAME} Eigen3::Eigen)
-endmacro(requires_eigen)
+## Fetch Googletest
+FetchContent_Declare(  googletest
+  # Specify the commit you depend on and update it regularly.
+  URL https://github.com/google/googletest/archive/5376968f6948923e2411081fd9372e71a59d8e77.zip
+  )
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+set(BUILD_GMOCK OFF)
+set(INSTALL_GTEST OFF)
+FetchContent_MakeAvailable(googletest)
+set_target_properties(gtest PROPERTIES FOLDER "3rd parties")
+set_target_properties(gtest_main PROPERTIES FOLDER "3rd parties")
 
 ## ---------------------------------------------------------------------------------
 ## Names used in the CMake package

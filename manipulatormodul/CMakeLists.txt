@@ -1,4 +1,3 @@
-
 set(SOURCES
     Manager.cpp
     MotionLayer.cpp
@@ -21,15 +20,14 @@ set(HEADERS
     MTaskZeroCurrent.hpp
 )
 
-set(INTRINSIC_HEADERS
-)
-
 add_library(manipulatormodul STATIC ${SOURCES} ${HEADERS} ${INTRINSIC_HEADERS})
 
 source_group("Intrinsic headers" FILES ${INTRINSIC_HEADERS} )
 
 target_link_libraries(manipulatormodul lowlevelcontrol)
-requires_eigen(manipulatormodul)
+target_include_directories(manipulatormodul PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/_deps/eigen3-src>
+  $<INSTALL_INTERFACE:include/eigen3>)
 
 set_target_properties(manipulatormodul PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(manipulatormodul PROPERTIES FOLDER "Lib")
