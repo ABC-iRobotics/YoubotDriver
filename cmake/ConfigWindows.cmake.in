@@ -36,22 +36,22 @@ endif()
 
 #Find dependencies
 include(CMakeFindDependencyMacro)
-macro(find_dependency_in_install name version)
-	find_dependency(${name} ${version} QUIET PATHS "${CMAKE_CURRENT_LIST_DIR}/ThirdParties" NO_DEFAULT_PATH)
+macro(find_dependency_in_install name version rel_path)
+	find_dependency(${name} ${version} QUIET PATHS "${CMAKE_CURRENT_LIST_DIR}${rel_path}" NO_DEFAULT_PATH)
 	if (NOT ${name}_FOUND)
 		find_dependency(${name} ${version} REQUIRED)
 	endif()
 endmacro()
 #Find Eigen3
-find_dependency_in_install(Eigen3 3.3)
+find_dependency_in_install(Eigen3 3.3 "")
 #Find SOEM
-find_dependency_in_install(soem "")
+find_dependency_in_install(soem "" "")
 if (soem_FOUND)
 	set_target_properties(soem PROPERTIES MAP_IMPORTED_CONFIG_RELWITHDEBINFO RELEASE) #By default the debug libs are tried to use...
 	set_target_properties(soem PROPERTIES MAP_IMPORTED_CONFIG_MINSIZEREL RELEASE) #By default the debug libs are tried to use...
 endif()
 #Find spdlog
-find_dependency_in_install(spdlog "")
+find_dependency_in_install(spdlog "" "/lib/cmake")
 if (spdlog_FOUND)
 	set_target_properties(spdlog::spdlog PROPERTIES MAP_IMPORTED_CONFIG_RELWITHDEBINFO RELEASE) #By default the debug libs are tried to use...
 	set_target_properties(spdlog::spdlog PROPERTIES MAP_IMPORTED_CONFIG_MINSIZEREL RELEASE) #By default the debug libs are tried to use...

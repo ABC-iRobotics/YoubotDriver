@@ -13,7 +13,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/Bin) #Or the program pu
 ## ---------------------------------------------------------------------------------
 ## Generally used variables for third parties
 set (3RDPARTY_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/ThirdParties/package")
-include(cmake/ThirdPartyHandling.cmake)
 set(THIRD_PARTY_CONFIG Debug;Release)
 set(ONLY_RELEASE Release)
 set(GIT_NAMES GIT Git)
