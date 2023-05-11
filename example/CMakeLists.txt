@@ -32,11 +32,15 @@ if (WIN32)
 endif()
 
 ## Find or get youBotDriver
-set(youBotDriver_COMMAND "git clone https://github.com/kutij/myYouBotDriver.git")
-set(youBotDriver_CACHE_SETTINGS -DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded$<$<CONFIG:Debug>:Debug>";-DPolicy_ALL_3RD_PARTIES="Download all";-DCMAKE_GENERATOR_PLATFORM=${CMAKE_GENERATOR_PLATFORM})
-third_party_policy(youBotDriver ${youBotDriver_COMMAND} youBotDriver_CACHE_SETTINGS THIRD_PARTY_CONFIG true GIT_NAMES)
+find_package(youBotDriver)
+if (0)
+# TODO fetchcontent
+  set(youBotDriver_COMMAND "git clone https://github.com/kutij/myYouBotDriver.git")
+  set(youBotDriver_CACHE_SETTINGS -DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded$<$<CONFIG:Debug>:Debug>";-DPolicy_ALL_3RD_PARTIES="Download all";-DCMAKE_GENERATOR_PLATFORM=${CMAKE_GENERATOR_PLATFORM})
+  third_party_policy(youBotDriver ${youBotDriver_COMMAND} youBotDriver_CACHE_SETTINGS THIRD_PARTY_CONFIG true GIT_NAMES)
+endif()
 macro(requires_youBotDriver NAME)
-	target_link_libraries (${NAME} youBotDriver::lowlevelcontrol)
+	target_link_libraries (${NAME} youBotDriver::manipulatormodul)
 endmacro(requires_youBotDriver)
 
 add_executable(tester tester.cpp)

@@ -1,47 +1,57 @@
 #include "adapters.hpp"
-#include "YoubotManipulator.hpp"
+#include "Manager.hpp"
+#include "MTaskRawConstantJointSpeed.hpp"
 #include "Time.hpp"
 #include "Logger.hpp"
-#include "Eigen/dense" // just to test it...
+#include "MTaskCommutation.hpp"
+#include "MTaskCalibration.hpp"
+#include "MTaskZeroCurrent.hpp"
+#include "MTaskStop.hpp"
+
+using namespace youbot;
 
 int main(int argc, char *argv[])
 {
-  // Get Configfile
-  YoubotConfig config("C:/Users/kutij/Desktop/myYouBotDriver/src/lowlevelcontrol/youBotArmConfig_fromKeisler.json");
-  //youBotArmConfig_fromfactory.json");
-  //youBotArmConfig_fromMoveIt.json");
-  //youBotArmConfig_fromKeisler.json");
+  std::string configpath("C:/Users/kutij/Desktop/myYouBotDriver/src/lowlevelcontrol/youBotArmConfig_fromKeisler.json");
 
-  // Initialize logger
-  Log::Setup(config.logConfig);
+  Manager modul(configpath, false);
+  modul.StartThreadAndInitialize();
+  while (modul.GetStatus().motion != MTask::STOPPED) // while till config and auto tasks end
+    SLEEP_MILLISEC(10);
 
-  // Find appropriate ethernet adapter and open connection
+  // Create and start a task
   {
-    char name[1000];
-    if (findYouBotEtherCatAdapter(name))
-      log(Log::info, "Adapter found:" + std::string(name));
-    else {
-      log(Log::fatal, "Adapter with turned on youBot arm NOT found!");
-      return -1;
-    }
-    if (!EtherCATMaster::GetSingleton()->OpenConnection(name))
-      return -1;
+    Eigen::VectorXd dq(5);
+    dq << 0.1, 0.1, -0.1, 0.1, -0.1;
+    MTask::Ptr task = std::make_shared<MTaskRawConstantJointSpeed>(dq, 10);
+    modul.NewManipulatorTask(task, 5);
+    auto start = std::chrono::steady_clock::now();
+    do {
+      //modul.GetStatus().LogStatus();
+      SLEEP_MILLISEC(10);
+    } while (std::chrono::duration_cast<std::chrono::seconds>(
+      std::chrono::steady_clock::now() - start).count() < 5);
   }
 
-  YoubotManipulator man(config, EtherCATMaster::GetSingleton());
-  man.ConfigJoints();
-  // if (man.CheckJointConfigs())  std::cout << "OK!!" << std::endl;
-  man.InitializeAllJoints();
-  man.Calibrate();
-  
-  SLEEP_SEC(1);
-  man.ResetErrorFlags();
-  EtherCATMaster::GetSingleton()->StartProcessThread(30);
 
-  man.ReqJointPosition(-10, 10, 10, 10, 0);
-  SLEEP_SEC(5);
+  // Stop and go home
+  modul.StopThread();
 
-  EtherCATMaster::GetSingleton()->StopProcessThread();
+  return 0;
+
+
+
+
+  //modul.NewManipulatorTask(task2, 50);
+
+  // Lets see what's happening
+  for (int i = 0; i < 700; i++) {
+    SLEEP_MILLISEC(10);
+    modul.GetStatus().LogStatus();
+  }
+
+  // Stop and go home
+  modul.StopThread();
 
   return 0;
 }

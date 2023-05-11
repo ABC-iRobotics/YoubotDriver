@@ -22,6 +22,40 @@ if (WIN32)
   set (CMAKE_CONFIGURATION_TYPES Debug;Release;MinSizeRel;RelWithDebInfo CACHE STRING "Configuration types" FORCE)
 endif()
 
+## ---------------------------------------------------------------------------------
+## Names used in the CMake package
+set(export_config_name "youBotDriver")
+set(export_targets ${export_config_name}Targets)
+if(WIN32)
+	set(export_targets_name ${export_config_name}Targets-${CMAKE_GENERATOR_PLATFORM}-${RUNTIME_INFO})
+else()
+	set(export_targets_name ${export_config_name}Targets)
+endif()
+
+## ---------------------------------------------------------------
+## Macro to setup archive targets
+macro(install_lib NAME HEADERS SOURCEDIR)
+	set(LIBS_TO_INSTALL ${LIBS_TO_INSTALL} "${NAME}" PARENT_SCOPE) #for configuring Config.cmake in installing.cmake
+	set_target_properties(${NAME} PROPERTIES FOLDER "Lib" IMPORTED_LOCATION lib)
+	if(WIN32)
+		set_target_properties(${NAME} PROPERTIES
+			RELEASE_POSTFIX "-${CMAKE_VS_PLATFORM_TOOLSET}-${CMAKE_GENERATOR_PLATFORM}-${RUNTIME_INFO}"
+			RELWITHDEBINFO_POSTFIX "-${CMAKE_VS_PLATFORM_TOOLSET}-${CMAKE_GENERATOR_PLATFORM}-${RUNTIME_INFO}-relwithdebinfo"
+			MINSIZEREL_POSTFIX "-${CMAKE_VS_PLATFORM_TOOLSET}-${CMAKE_GENERATOR_PLATFORM}-${RUNTIME_INFO}-minsizerel"
+			DEBUG_POSTFIX "-${CMAKE_VS_PLATFORM_TOOLSET}-${CMAKE_GENERATOR_PLATFORM}-${RUNTIME_INFO}-debug")
+	endif()
+	target_include_directories(${NAME} INTERFACE
+		$<BUILD_INTERFACE:${SOURCEDIR}/>
+		$<INSTALL_INTERFACE:include>)
+	install(TARGETS ${NAME} EXPORT ${export_targets}
+		LIBRARY DESTINATION lib
+		ARCHIVE DESTINATION lib
+		RUNTIME DESTINATION bin
+		INCLUDES DESTINATION include)
+	install(FILES ${HEADERS} DESTINATION include)
+endmacro(install_lib)
+
+## ---------------------------------------------------------------------------------
 ## Fetch third parties
 include(FetchContent)
 set(FETCHCONTENT_QUIET TRUE)
@@ -30,6 +64,7 @@ set(FETCHCONTENT_QUIET TRUE)
 FetchContent_Declare(SOEM GIT_REPOSITORY https://github.com/kutij/SOEM.git)
 FetchContent_MakeAvailable(SOEM)
 set_target_properties(soem PROPERTIES FOLDER "3rd parties")
+
 ## Fetch SPDLOG
 FetchContent_Declare(SPDLOG GIT_REPOSITORY https://github.com/gabime/spdlog.git GIT_TAG v1.11.0)
 set(SPDLOG_BUILD_BENCH FALSE)
@@ -69,39 +104,6 @@ set(INSTALL_GTEST OFF)
 FetchContent_MakeAvailable(googletest)
 set_target_properties(gtest PROPERTIES FOLDER "3rd parties")
 set_target_properties(gtest_main PROPERTIES FOLDER "3rd parties")
-
-## ---------------------------------------------------------------------------------
-## Names used in the CMake package
-set(export_config_name "youBotDriver")
-set(export_targets ${export_config_name}Targets)
-if(WIN32)
-	set(export_targets_name ${export_config_name}Targets-${CMAKE_GENERATOR_PLATFORM}-${RUNTIME_INFO})
-else()
-	set(export_targets_name ${export_config_name}Targets)
-endif()
-
-## ---------------------------------------------------------------
-## Macro to setup archive targets
-macro(install_lib NAME HEADERS SOURCEDIR)
-	set(LIBS_TO_INSTALL ${LIBS_TO_INSTALL} "${NAME}" PARENT_SCOPE) #for configuring Config.cmake in installing.cmake
-	set_target_properties(${NAME} PROPERTIES FOLDER "Lib" IMPORTED_LOCATION lib)
-	if(WIN32)
-		set_target_properties(${NAME} PROPERTIES
-			RELEASE_POSTFIX "-${CMAKE_VS_PLATFORM_TOOLSET}-${CMAKE_GENERATOR_PLATFORM}-${RUNTIME_INFO}"
-			RELWITHDEBINFO_POSTFIX "-${CMAKE_VS_PLATFORM_TOOLSET}-${CMAKE_GENERATOR_PLATFORM}-${RUNTIME_INFO}-relwithdebinfo"
-			MINSIZEREL_POSTFIX "-${CMAKE_VS_PLATFORM_TOOLSET}-${CMAKE_GENERATOR_PLATFORM}-${RUNTIME_INFO}-minsizerel"
-			DEBUG_POSTFIX "-${CMAKE_VS_PLATFORM_TOOLSET}-${CMAKE_GENERATOR_PLATFORM}-${RUNTIME_INFO}-debug")
-	endif()
-	target_include_directories(${NAME} INTERFACE
-		$<BUILD_INTERFACE:${SOURCEDIR}/>
-		$<INSTALL_INTERFACE:include>)
-	install(TARGETS ${NAME} EXPORT ${export_targets}
-		LIBRARY DESTINATION lib
-		ARCHIVE DESTINATION lib
-		RUNTIME DESTINATION bin
-		INCLUDES DESTINATION include)
-	install(FILES ${HEADERS} DESTINATION include)
-endmacro(install_lib)
 
 ## ---------------------------------------------------------------
 add_subdirectory(slaveinfo)
