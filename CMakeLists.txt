@@ -27,16 +27,11 @@ include(FetchContent)
 set(FETCHCONTENT_QUIET TRUE)
 
 ## Fetch SOEM 
-FetchContent_Declare(SOEM
-                     GIT_REPOSITORY https://github.com/kutij/SOEM.git
-                     )
+FetchContent_Declare(SOEM GIT_REPOSITORY https://github.com/kutij/SOEM.git)
 FetchContent_MakeAvailable(SOEM)
 set_target_properties(soem PROPERTIES FOLDER "3rd parties")
 ## Fetch SPDLOG
-FetchContent_Declare(SPDLOG
-                     GIT_REPOSITORY https://github.com/gabime/spdlog.git
-                     GIT_TAG        v1.11.0
-                     )
+FetchContent_Declare(SPDLOG GIT_REPOSITORY https://github.com/gabime/spdlog.git GIT_TAG v1.11.0)
 set(SPDLOG_BUILD_BENCH FALSE)
 set(SPDLOG_BUILD_EXAMPLE FALSE)
 set(SPDLOG_BUILD_EXAMPLE_HO FALSE)
@@ -59,10 +54,7 @@ set_target_properties(spdlog PROPERTIES FOLDER "3rd parties")
 #set_target_properties(spdlog::spdlog PROPERTIES MAP_IMPORTED_CONFIG_MINSIZEREL RELEASE) #By default the debug libs are tried to use...
   
 ## Fetch Eigen3
-FetchContent_Declare(Eigen3
-                     GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
-                     GIT_TAG        3.3.7
-                     )
+FetchContent_Declare(Eigen3 GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git GIT_TAG 3.3.7)
 set(BUILD_TESTING FALSE)
 set(CMAKE_INSTALL_INCLUDEDIR "include")
 FetchContent_MakeAvailable(Eigen3)
@@ -70,9 +62,7 @@ set_target_properties(uninstall PROPERTIES FOLDER "3rd parties")
 
 ## Fetch Googletest
 FetchContent_Declare(  googletest
-  # Specify the commit you depend on and update it regularly.
-  URL https://github.com/google/googletest/archive/5376968f6948923e2411081fd9372e71a59d8e77.zip
-  )
+  URL https://github.com/google/googletest/archive/5376968f6948923e2411081fd9372e71a59d8e77.zip)
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 set(BUILD_GMOCK OFF)
 set(INSTALL_GTEST OFF)
