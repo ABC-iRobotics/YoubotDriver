@@ -27,6 +27,7 @@ namespace youbot {
       MOTOR_TICK,
       MOTOR_RPM,
       MOTOR_CURRENT_MA,
+      MOTOR_TORQUE_NM,
       MOTOR_VOLTAGE,
       MOTOR_STOP,
       ENCODER_SET_REFERENCE, // be careful
@@ -96,7 +97,8 @@ namespace youbot {
       STOPPED = 3,
       ZERO_CURRENT = 4,
       RAW_CONSTANT_JOINTSPEED = 5,
-      RAW_CONSTANT_JOINTPOSITON = 6 // currently these types are defined
+      RAW_CONSTANT_JOINTPOSITON = 6, // currently these types are defined
+      GENERIC_RAW_CONSTANT = 10
     };
 
     static std::string Type2String(TaskType type); ///< Generate string from task type

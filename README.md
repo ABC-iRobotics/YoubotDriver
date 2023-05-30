@@ -4,12 +4,11 @@ Usage on Windows
 
 1. Install winpcap
 2. Clone this repository
-3. Using cmake-gui try to configure
+3. Using cmake-gui try to configure (it can take some time because of the build&install of the third parties)
 - set CMAKE\_INSTALL_PREFIX to a writeable folder (from Program Files), like "your binary folder"/install
-- choose policy for the 3rd parties (most simply Policy\_ALL\_3RD\_PARTIES to Download all)
 - give the path of your installed MATLAB (e.g. "C:\Program Files\MATLAB\R2022b")
 
-4. Configure again (it can take some time because of the build&install of the third parties)
+4. Configure again
 
 5. Generate, open project, build and have fun!
 

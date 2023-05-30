@@ -151,6 +151,11 @@ void youbot::MotionLayer::DoManipulatorTask(MTask::Ptr task, double time_limit) 
           throw std::runtime_error("Current command used on not commutated arm");
         j->ReqMotorCurrentmA(cmd_.Get<int>());
         break;
+      case BLDCCommand::MOTOR_TORQUE_NM:
+        if (!manipulatorStatus.load().IsCommutationInitialized())
+          throw std::runtime_error("Torque command used on not commutated arm");
+        j->ReqMotorTorqueNm(cmd_.Get<double>());
+        break;
       case BLDCCommand::MOTOR_VOLTAGE:
         if (!manipulatorStatus.load().IsCommutationInitialized())
           throw std::runtime_error("Voltage command used on not commutated arm");

@@ -19,6 +19,7 @@
 #include "MTaskCalibration.hpp"
 #include "MTaskZeroCurrent.hpp"
 #include "MTaskStop.hpp"
+#include "MTaskGenericRawConstant.hpp"
 
 using namespace youbot;
 
@@ -120,6 +121,42 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
       case 6:
         task = std::make_shared<MTaskRawConstantJointPosition>(param / 180. * M_PI);
         break;
+      case 10: {
+        std::vector<MTaskGenericRawConstant::Cmd> cmds;
+        for (int i = 0; i < 5; i++) {
+          switch ((int)param[i]) {
+          case 0:
+            cmds.push_back({ MTaskGenericRawConstant::CmdType::STOP, 0 });
+            break;
+          case 1:
+            cmds.push_back({ MTaskGenericRawConstant::CmdType::POSITION_MOTOR_TICK, param[i + 5] });
+            break;
+          case 2:
+            cmds.push_back({ MTaskGenericRawConstant::CmdType::POSITION_MOTOR_RAD, param[i + 5] / 180. * M_PI });
+            break;
+          case 3:
+            cmds.push_back({ MTaskGenericRawConstant::CmdType::VELOCITY_MOTOR_RPM, param[i + 5] });
+            break;
+          case 4:
+            cmds.push_back({ MTaskGenericRawConstant::CmdType::TORQUE_MOTOR_MA, param[i + 5] });
+            break;
+          case 5:
+            cmds.push_back({ MTaskGenericRawConstant::CmdType::TORQUE_MOTOR_NM, param[i + 5] });
+            break;
+          case 10:
+            cmds.push_back({ MTaskGenericRawConstant::CmdType::POSITION_JOINT_RAD, param[i + 5] / 180. * M_PI });
+            break;
+          case 11:
+            cmds.push_back({ MTaskGenericRawConstant::CmdType::VELOCITY_JOINT_RADPERSEC, param[i + 5] / 180. * M_PI });
+            break;
+          case 12:
+            cmds.push_back({ MTaskGenericRawConstant::CmdType::TORQUE_JOINT_NM, param[i + 5] });
+            break;
+          }
+        }
+        task = std::make_shared<MTaskGenericRawConstant>(cmds);
+        break;
+      }
       }
       modul->NewManipulatorTask(task, tlimit);
       return;

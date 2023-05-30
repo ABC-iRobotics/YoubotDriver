@@ -114,6 +114,7 @@ namespace youbot {
     virtual void ReqMotorPositionTick(int32_t value) = 0; ///< Process buffer: Set motor position command into (EtherCATMaster::ExchangeProcessMsg is needed to sent out)
     virtual void ReqVoltagePWM(int32_t value) = 0; ///< Process buffer: Set motor voltage command into (EtherCATMaster::ExchangeProcessMsg is needed to sent out)
     virtual void ReqMotorCurrentmA(int32_t value) = 0; ///< Process buffer: Set motor current command into (EtherCATMaster::ExchangeProcessMsg is needed to sent out)
+    void ReqMotorTorqueNm(double value); ///< Process buffer: Set motor current command into (EtherCATMaster::ExchangeProcessMsg is needed to sent out)
 
     // Req joint quantity
     void ReqJointPositionRad(double value); ///< Process buffer: Set joint position command into (EtherCATMaster::ExchangeProcessMsg is needed to sent out)
