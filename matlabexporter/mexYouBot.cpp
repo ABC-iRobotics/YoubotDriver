@@ -14,6 +14,7 @@
 #include "Logger.hpp"
 #include "Time.hpp"
 #include "MTaskRawConstantJointSpeed.hpp"
+#include "MTaskRawConstantJointPosition.hpp"
 #include "MTaskCommutation.hpp"
 #include "MTaskCalibration.hpp"
 #include "MTaskZeroCurrent.hpp"
@@ -116,6 +117,9 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
       case 5:
         task = std::make_shared<MTaskRawConstantJointSpeed>(param / 180. * M_PI, tlimit);
         break;
+      case 6:
+        task = std::make_shared<MTaskRawConstantJointPosition>(param / 180. * M_PI);
+        break;
       }
       modul->NewManipulatorTask(task, tlimit);
       return;
@@ -168,6 +172,9 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
           break;
         case MTask::RAW_CONSTANT_JOINTSPEED:
           *mode_ = 5;
+          break;
+        case MTask::RAW_CONSTANT_JOINTPOSITON:
+          *mode_ = 6;
           break;
         default:
           *mode_ = 10;

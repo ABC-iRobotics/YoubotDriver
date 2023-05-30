@@ -4,6 +4,7 @@ set(SOURCES
     MotionLayer.cpp
     MTask.cpp
     MTaskRawConstantJointSpeed.cpp
+    MTaskRawConstantJointPosition.cpp
     MTaskCalibration.cpp
     MTaskCommutation.cpp
     MTaskStop.cpp
@@ -15,6 +16,7 @@ set(HEADERS
     MotionLayer.hpp
     MTask.hpp
     MTaskRawConstantJointSpeed.hpp
+    MTaskRawConstantJointPosition.hpp
     MTaskCalibration.hpp
     MTaskCommutation.hpp
     MTaskStop.hpp
