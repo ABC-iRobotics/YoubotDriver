@@ -7,6 +7,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 option(ONLY_VIRTUAL_ROBOT "Only virtual robot (no SOEM)" OFF)
 option(BUILD_MATLAB_WRAPPER "Build MATLAB wrapper" OFF)
+option(BUILD_PYTHON_WRAPPER "Build Python 3.11 wrapper" OFF)
+
 ## ---------------------------------------------------------------------------------
 ## Set folders
 #set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install CACHE PATH "" FORCE) #Nem convention instead of program files/SensorFusion...
@@ -65,6 +67,17 @@ macro(requires_eigen NAME)
 	target_link_libraries (${NAME} Eigen3::Eigen)
 endmacro(requires_eigen)
 
+## Pybind11
+if (BUILD_PYTHON_WRAPPER)
+  set(PYBIND11_COMMAND "git clone https://github.com/pybind/pybind11.git")
+  set(PYBIND11_CACHE_SETTINGS -DPYBIND11_TEST=FALSE;-DUSE_PYTHON_INLCUDE_DIR=TRUE;
+	-DPYBIND11_CMAKECONFIG_INSTALL_DIR="share/pybind11/cmake";${EXTERNAL_FLAG_SETTER})
+  third_party_policy(Pybind11 ${PYBIND11_COMMAND} PYBIND11_CACHE_SETTINGS ONLY_RELEASE false GIT_NAMES)
+#  macro(requires_pybind11 NAME)
+#	  target_link_libraries (${NAME} Eigen3::Eigen)
+#  endmacro(requires_eigen)
+endif()
+
 ## ---------------------------------------------------------------------------------
 ## Names used in the CMake package
 set(export_config_name "youBotDriver")
@@ -109,6 +122,10 @@ if (NOT ONLY_VIRTUAL_ROBOT)
 endif()
 if (BUILD_MATLAB_WRAPPER)
   add_subdirectory(matlabexporter)
+endif()
+if (BUILD_PYTHON_WRAPPER)
+  #add_subdirectory(${pybind11_SOURCE_DIR} ${pybind11_BINARY_DIR})
+  add_subdirectory(pythonexporter)
 endif()
 
 ## ---------------------------------------------------------------------------------
