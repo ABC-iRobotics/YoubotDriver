@@ -1,15 +1,14 @@
 file (GLOB SOURCE_FILES "*.cpp")
 file (GLOB HEADER_FILES "*.hpp")
 
-pybind11_add_module(pythonexporter 
+pybind11_add_module(youbotpython 
 	${SOURCE_FILES}
 	${HEADER_FILES}
-	${PYTHON_FILES}
 )
 
-target_link_libraries(pythonexporter PUBLIC)
-set_target_properties(pythonexporter PROPERTIES FOLDER "Wrapper")
-install(TARGETS pythonexporter
+target_link_libraries(youbotpython PUBLIC manipulatormodul)
+set_target_properties(youbotpython PROPERTIES FOLDER "Wrapper")
+install(TARGETS youbotpython
   COMPONENT python
   LIBRARY DESTINATION "Python"
   )
