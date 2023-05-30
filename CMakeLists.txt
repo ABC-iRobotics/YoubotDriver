@@ -6,6 +6,7 @@ project(MyYouBotDriver
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 option(ONLY_VIRTUAL_ROBOT "Only virtual robot (no SOEM)" OFF)
+option(BUILD_MATLAB_WRAPPER "Build MATLAB wrapper" OFF)
 ## ---------------------------------------------------------------------------------
 ## Set folders
 #set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install CACHE PATH "" FORCE) #Nem convention instead of program files/SensorFusion...
@@ -106,8 +107,9 @@ add_subdirectory(modultester)
 if (NOT ONLY_VIRTUAL_ROBOT)
   add_subdirectory(slaveinfo)
 endif()
-add_subdirectory(matlabexporter)
-#add_subdirectory(old)
+if (BUILD_MATLAB_WRAPPER)
+  add_subdirectory(matlabexporter)
+endif()
 
 ## ---------------------------------------------------------------------------------
 ## Additional install methods

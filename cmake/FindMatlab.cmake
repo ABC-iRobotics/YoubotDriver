@@ -82,7 +82,7 @@ macro(add_matlabexporter NAME files)
     file(GLOB matlab_files "${CMAKE_CURRENT_SOURCE_DIR}/*.m" "${CMAKE_CURRENT_SOURCE_DIR}/*.mlapp")
     file(COPY ${matlab_files} DESTINATION "${CMAKE_BINARY_DIR}/bin/MATLAB")
     install(FILES ${matlab_files} DESTINATION MATLAB)
-    set_target_properties(${NAME} PROPERTIES FOLDER "App")
+    set_target_properties(${NAME} PROPERTIES FOLDER "Wrapper")
     set_target_properties(${NAME} PROPERTIES
       RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/MATLAB")
   ELSE(MATLAB_FOUND)
