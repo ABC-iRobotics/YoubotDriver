@@ -8,8 +8,8 @@
 
 namespace py = pybind11;
 
-class ManagerWrapper {
-  MTask::Ptr bridged_ptr = NULL;
+class ManagerWrapper : private youbot::Manager {
+  youbot::MTask::Ptr bridged_ptr;
 
 public:
   ManagerWrapper() = delete; ///< Not available constructors
@@ -30,9 +30,9 @@ public:
 
   void ZeroCurrent(double time_limit);
 
-  void JointVelocity(py::array dq_, double time_limit);
+  void JointVelocity(py::array_t<double> dq_, double time_limit);
 
-  void JointPosition(py::array q_, double time_limit);
+  void JointPosition(py::array_t<double> q_, double time_limit);
 
   void Commutate();
 
@@ -40,15 +40,9 @@ public:
 
   // pointer to the bridged task
 
-  void StartBridgedTask() {
-	//bridged_ptr
-	// init if NULL
-	// and set it
-  }
+  void StartBridgedTask();
 
-  void SetBridgeTarget(py::array mode, py::array target, double time_limit) {
-	//bridged_ptr todo test if not zero...
-  }
+  void SetBridgeTarget(py::array_t<int> mode, py::array_t<double> target, double time_limit);
 };
 
 #endif
