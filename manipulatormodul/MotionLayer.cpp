@@ -217,6 +217,7 @@ void MotionLayer::Initialize() {
     if (virtual_)
       center = EtherCATMaster::CreateVirtual();
     else {
+#ifndef _ONLY_VIRTUAL_ROBOT
       // Find appropriate ethernet adapter and open connection
       char name[1000];
       if (findYouBotEtherCatAdapter(name))
@@ -226,6 +227,10 @@ void MotionLayer::Initialize() {
         throw std::runtime_error("Adapter with turned on youBot arm NOT found!");
       }
       center = EtherCATMaster::CreatePhysical(name);
+#else
+      center = NULL;
+      throw std::runtime_error("Wrong arguments");
+#endif
     }
   }
   // Initialize manipulator

@@ -5,6 +5,7 @@ project(MyYouBotDriver
     LANGUAGES CXX)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+option(ONLY_VIRTUAL_ROBOT "Only virtual robot (no SOEM)" OFF)
 ## ---------------------------------------------------------------------------------
 ## Set folders
 #set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install CACHE PATH "" FORCE) #Nem convention instead of program files/SensorFusion...
@@ -32,12 +33,14 @@ if (WIN32)
 endif()
 
 ## Find or get SOEM
-set(SOEM_COMMAND "git clone https://github.com/kutij/SOEM.git")
-set(SOEM_CACHE_SETTINGS -DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded$<$<CONFIG:Debug>:Debug>")
-third_party_policy(soem ${SOEM_COMMAND} SOEM_CACHE_SETTINGS THIRD_PARTY_CONFIG true GIT_NAMES)
-macro(requires_soem NAME)
-	target_link_libraries (${NAME} soem)
-endmacro(requires_soem)
+if (NOT ONLY_VIRTUAL_ROBOT)
+  set(SOEM_COMMAND "git clone https://github.com/kutij/SOEM.git")
+  set(SOEM_CACHE_SETTINGS -DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded$<$<CONFIG:Debug>:Debug>")
+  third_party_policy(soem ${SOEM_COMMAND} SOEM_CACHE_SETTINGS THIRD_PARTY_CONFIG true GIT_NAMES)
+  macro(requires_soem NAME)
+	  target_link_libraries (${NAME} soem)
+  endmacro(requires_soem)
+endif()
 
 ## Find or get SPDLOG
 set(SPDLOG_COMMAND "git clone https://github.com/gabime/spdlog.git -bv1.11.0")
@@ -95,11 +98,14 @@ macro(install_lib NAME HEADERS SOURCEDIR)
 endmacro(install_lib)
 
 ## ---------------------------------------------------------------
-add_subdirectory(slaveinfo)
+
 add_subdirectory(lowlevelcontrol)
 add_subdirectory(manipulatormodul)
 add_subdirectory(tester)
 add_subdirectory(modultester)
+if (NOT ONLY_VIRTUAL_ROBOT)
+  add_subdirectory(slaveinfo)
+endif()
 add_subdirectory(matlabexporter)
 #add_subdirectory(old)
 

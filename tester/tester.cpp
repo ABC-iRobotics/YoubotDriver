@@ -2,6 +2,7 @@
 #include "Manipulator.hpp"
 #include "Time.hpp"
 #include "Logger.hpp"
+#include <stdexcept>
 
 using namespace youbot;
 
@@ -105,6 +106,7 @@ int main(int argc, char *argv[])
   // Init physical ethercat class
   bool physical = true;
   if (physical) {
+#ifndef _ONLY_VIRTUAL_ROBOT
     // Find appropriate ethernet adapter and open connection
     char name[1000];
     if (findYouBotEtherCatAdapter(name))
@@ -114,6 +116,10 @@ int main(int argc, char *argv[])
       return -1;
     }
     center = EtherCATMaster::CreatePhysical(name);
+#else
+    center = NULL;
+    throw std::runtime_error("Wrong arguments");
+#endif
   }
   else
     center = EtherCATMaster::CreateVirtual();

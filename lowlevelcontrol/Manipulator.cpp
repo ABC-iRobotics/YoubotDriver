@@ -12,9 +12,14 @@ Manipulator::Manipulator(const Config& config, EtherCATMaster::Ptr center)
   // Construct joints
   for (int i = 0; i < 5; i++)
 	if (center->GetType() == EtherCATMaster::PHYSICAL) {
+#ifndef _ONLY_VIRTUAL_ROBOT
 	  auto ptr = std::make_shared<intrinsic::JointPhysical>(config.jointIndices[i], config.jointConfigs[i], center);
 	  ptr->Init();
 	  joints[i] = ptr;
+#else
+	  joints[i] = NULL;
+	  throw std::runtime_error("Wrong arguments");
+#endif
 	}
 	else
 	  joints[i] = std::make_shared<intrinsic::JointVirtual>(config.jointIndices[i], config.jointConfigs[i], center);
