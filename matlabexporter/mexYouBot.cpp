@@ -121,6 +121,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
       case 6:
         task = std::make_shared<MTaskRawConstantJointPosition>(param / 180. * M_PI);
         break;
+      /*
       case 10: {
         std::vector<MTaskGenericRawConstant::Cmd> cmds;
         for (int i = 0; i < 5; i++) {
@@ -156,7 +157,7 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) {
         }
         task = std::make_shared<MTaskGenericRawConstant>(cmds);
         break;
-      }
+      }*/
       }
       modul->NewManipulatorTask(task, tlimit);
       return;
