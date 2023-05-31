@@ -1,6 +1,7 @@
 #include "adapters.hpp"
 #include "Manager.hpp"
 #include "MTaskRawConstantJointSpeed.hpp"
+#include "MTaskRawConstantJointPosition.hpp"
 #include "Time.hpp"
 #include "Logger.hpp"
 #include "MTaskCommutation.hpp"
@@ -12,17 +13,67 @@ using namespace youbot;
 
 EtherCATMaster::Ptr center;
 
-int main(int argc, char *argv[])
-{
+#include <iostream>
+
+int main(int argc, char *argv[]) {
   std::string configpath = std::string(CONFIG_FOLDER) + "youBotArmConfig_fromKeisler.json";
   //youBotArmConfig_fromfactory.json");
   //youBotArmConfig_fromMoveIt.json");
   //youBotArmConfig_fromKeisler.json");
 
-  Manager modul(configpath, false);
+  bool virtual_robot = true;
+  Manager modul(configpath, virtual_robot);
   modul.StartThreadAndInitialize();
-  while (modul.GetStatus().motion != MTask::STOPPED) // while till config and auto tasks end
-    SLEEP_MILLISEC(10);
+  // wait till config and auto tasks finish
+  {
+    auto start = std::chrono::steady_clock::now();
+    bool finished;
+    do {
+      SLEEP_MILLISEC(10);
+      if (std::chrono::duration_cast<std::chrono::seconds>(
+        std::chrono::steady_clock::now() - start).count() > 100)
+        throw std::runtime_error("Overtime during initialization.");
+      auto status = modul.GetStatus();
+      finished = (status.motion == MTask::STOPPED) // there is no task in progress
+        && (status.manipulatorStatus.IsCalibrated()) // it is calibrated
+        && (status.manipulatorStatus.IsCommutationInitialized()); // it is commutated
+    } while (!finished);
+  }
+  
+  log(Log::info, "STARTED");
+  // Create and start a task
+  if (1) {
+    MTask::Ptr task = std::make_shared<MTaskRawConstantJointPosition>(Eigen::VectorXd::Zero(5));
+    modul.NewManipulatorTask(task, 1e8);
+    auto start = std::chrono::steady_clock::now();
+    do {
+      auto status = modul.GetStatus();
+      log(Log::info, "q1: " + std::to_string(status.joint[0].q.value));
+      status.LogStatus();
+      //modul.GetStatus().LogStatus();
+      SLEEP_MILLISEC(10);
+    } while (!task->Finished());
+    // Stop and go home
+    modul.StopThread();
+    return 0;
+  }
+ 
+  
+  // Create and start a task
+  if (0) {
+    MTask::Ptr task = std::make_shared<MTaskZeroCurrent>();
+    modul.NewManipulatorTask(task, 1e8);
+    auto start = std::chrono::steady_clock::now();
+    do {
+      auto status = modul.GetStatus();
+      log(Log::info, "tau1: " + std::to_string(status.joint[0].tau.value));
+      //modul.GetStatus().LogStatus();
+      SLEEP_MILLISEC(10);
+    } while (!task->Finished());
+    // Stop and go home
+    modul.StopThread();
+    return 0;
+  }
 
   // Create and start a task
   {

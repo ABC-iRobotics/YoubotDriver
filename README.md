@@ -4,23 +4,28 @@ Usage on Windows
 
 1. Install winpcap
 2. Clone this repository
-3. Using cmake-gui try to configure
+3. Using cmake-gui try to configure (it can take some time because of the build&install of the third parties)
 - set CMAKE\_INSTALL_PREFIX to a writeable folder (from Program Files), like "your binary folder"/install
-- choose policy for the 3rd parties (most simply Policy\_ALL\_3RD\_PARTIES to Download all)
+- set "ONLY\_VIRTUAL\_ROBOT", "BUILD\_MATLAB\_WRAPPER", "BUILD\_PYTHON\_WRAPPER" to "ON"/"OFF" according to your aims
 - give the path of your installed MATLAB (e.g. "C:\Program Files\MATLAB\R2022b")
+- Set "Policy\_x" for x Third party to download then the cmake will try to clone/config/build and install it
+("Policy\_ALL\_3RD\_PARTIES" can simplify the process)
 
-4. Configure again (it can take some time because of the build&install of the third parties)
+4. Configure again
 
-5. Generate, open project, build and have fun!
+5. Generate, open project, build and have fun with the tester projects!
 
 - The tester project is an executable to show the pure functionality of the manipulator
 - The modul tester shows the functionality of the modul handling the robot on a detached thread, and task can be defined and launched on the robot
 (later similarly for the gripper and the platform)
 
-- The youbotarmmanager produces a matlab function. By building and installing the project, it will produce a matlab app in the install/MATLAB folder
-that is able to perform joint angle control. 
+6. The install of the solution will provide a CMake package from the library and matlab/python wrappers if you have chosen them (you will find MATLAB and Python folders in the install folder)
 
-- A few cases are not handled yet e.g. turning off the manipulator during a matlab session
+- The matlabwrapper project produces a matlab function. By building and installing the project, it will produce a matlab app in the install/MATLAB folder
+that is able to perform joint angle control. 
+(A few cases are not handled yet e.g. turning off the manipulator during a matlab session)
+
+- The youbotpython project produces the python interface.
 
 The project is now in proof of concept state!
 

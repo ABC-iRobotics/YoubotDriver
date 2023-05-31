@@ -45,6 +45,10 @@ classdef YoubotManager < handle
             youbotarmmanager(6,obj.ptr,dqDegPsec,5,tlimit);
         end
         
+        function SetJointPosition(obj, qDeg)
+            youbotarmmanager(6,obj.ptr,qDeg,6,1e8);
+        end
+        
         function FreeDrive(obj,T)
             if nargin<2
                 T = 10000;
@@ -64,6 +68,23 @@ classdef YoubotManager < handle
                 T = 10000;
             end
             youbotarmmanager(6,obj.ptr,0,2,T);
+        end
+
+        function GenericTask(obj,types,values, T)
+            % types:
+            % STOP = 0,
+            % POSITION_MOTOR_TICK = 1,
+            % POSITION_MOTOR_DEG = 2,
+            % VELOCITY_MOTOR_RPM = 3,
+            % TORQUE_MOTOR_MA = 4,
+            % TORQUE_MOTOR_NM = 5,
+            % POSITION_JOINT_DEG = 10,
+            % VELOCITY_JOINT_DEGPERSEC = 11,
+            % TORQUE_JOINT_NM = 12,
+            if nargin<4
+                T = 10000;
+            end
+            youbotarmmanager(6,obj.ptr,[types(:); values(:)],10,T);
         end
         
         function q = GetTrueJointAngles(obj)
@@ -100,6 +121,8 @@ classdef YoubotManager < handle
                     mode.task = "zero current";
                 case 5
                     mode.task = "raw constant joint speed";
+                case 6
+                    mode.task = "raw constant joint position";
                 case 10
                     mode.task = "conversion is not defined in c++";
                 otherwise

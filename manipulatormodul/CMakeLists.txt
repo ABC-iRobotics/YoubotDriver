@@ -4,10 +4,12 @@ set(SOURCES
     MotionLayer.cpp
     MTask.cpp
     MTaskRawConstantJointSpeed.cpp
+    MTaskRawConstantJointPosition.cpp
     MTaskCalibration.cpp
     MTaskCommutation.cpp
     MTaskStop.cpp
     MTaskZeroCurrent.cpp
+    MTaskGenericRawConstant.cpp
 )
 
 set(HEADERS
@@ -15,10 +17,12 @@ set(HEADERS
     MotionLayer.hpp
     MTask.hpp
     MTaskRawConstantJointSpeed.hpp
+    MTaskRawConstantJointPosition.hpp
     MTaskCalibration.hpp
     MTaskCommutation.hpp
     MTaskStop.hpp
     MTaskZeroCurrent.hpp
+    MTaskGenericRawConstant.hpp
 )
 
 set(INTRINSIC_HEADERS

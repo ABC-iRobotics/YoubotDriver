@@ -96,7 +96,7 @@ void Manager::_thread(const std::string& configfilepath, bool virtual_) {
         if (man->GetStatus().manipulatorStatus.IsCommutationInitialized()) {
           auto ptr = std::make_shared<MTaskCalibration>();
           ptr->Initialize(&config);
-          new_man_task_ = { ptr , 15 };
+          new_man_task_ = { ptr , 35 };
         }
         autocalibration = false;
       }

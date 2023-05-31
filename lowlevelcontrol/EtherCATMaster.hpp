@@ -85,12 +85,14 @@ namespace youbot {
 
     typedef std::shared_ptr<EtherCATMaster> Ptr;
 
+#ifndef _ONLY_VIRTUAL_ROBOT
     /// <summary>
     /// Function to construct a SOEM EtherCAT Master instance
     /// </summary>
     /// <param name="adapterName"> the etherNET adress name </param>
     /// <returns> shared_ptr of the EtherCAT Master instance </returns>
     static Ptr CreatePhysical(const std::string& adapterName);
+#endif
 
     /// <summary>
     /// Function to construct a SOEM EtherCAT Master instance

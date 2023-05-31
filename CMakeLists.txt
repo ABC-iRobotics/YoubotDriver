@@ -5,6 +5,10 @@ project(MyYouBotDriver
     LANGUAGES CXX)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+option(ONLY_VIRTUAL_ROBOT "Only virtual robot (no SOEM)" OFF)
+option(BUILD_MATLAB_WRAPPER "Build MATLAB wrapper" OFF)
+option(BUILD_PYTHON_WRAPPER "Build Python 3.11 wrapper" OFF)
+
 ## ---------------------------------------------------------------------------------
 ## Set folders
 #set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install CACHE PATH "" FORCE) #Nem convention instead of program files/SensorFusion...
@@ -32,12 +36,14 @@ if (WIN32)
 endif()
 
 ## Find or get SOEM
-set(SOEM_COMMAND "git clone https://github.com/kutij/SOEM.git")
-set(SOEM_CACHE_SETTINGS -DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded$<$<CONFIG:Debug>:Debug>")
-third_party_policy(soem ${SOEM_COMMAND} SOEM_CACHE_SETTINGS THIRD_PARTY_CONFIG true GIT_NAMES)
-macro(requires_soem NAME)
-	target_link_libraries (${NAME} soem)
-endmacro(requires_soem)
+if (NOT ONLY_VIRTUAL_ROBOT)
+  set(SOEM_COMMAND "git clone https://github.com/kutij/SOEM.git")
+  set(SOEM_CACHE_SETTINGS -DCMAKE_MSVC_RUNTIME_LIBRARY="MultiThreaded$<$<CONFIG:Debug>:Debug>")
+  third_party_policy(soem ${SOEM_COMMAND} SOEM_CACHE_SETTINGS THIRD_PARTY_CONFIG true GIT_NAMES)
+  macro(requires_soem NAME)
+	  target_link_libraries (${NAME} soem)
+  endmacro(requires_soem)
+endif()
 
 ## Find or get SPDLOG
 set(SPDLOG_COMMAND "git clone https://github.com/gabime/spdlog.git -bv1.11.0")
@@ -60,6 +66,17 @@ third_party_policy(Eigen3 ${EIGEN3_COMMAND} EIGEN3_CACHE_SETTINGS ONLY_RELEASE f
 macro(requires_eigen NAME)
 	target_link_libraries (${NAME} Eigen3::Eigen)
 endmacro(requires_eigen)
+
+## Pybind11
+if (BUILD_PYTHON_WRAPPER)
+  set(PYBIND11_COMMAND "git clone https://github.com/pybind/pybind11.git")
+  set(PYBIND11_CACHE_SETTINGS -DPYBIND11_TEST=FALSE;-DUSE_PYTHON_INLCUDE_DIR=TRUE;
+	-DPYBIND11_CMAKECONFIG_INSTALL_DIR="share/pybind11/cmake";${EXTERNAL_FLAG_SETTER})
+  third_party_policy(Pybind11 ${PYBIND11_COMMAND} PYBIND11_CACHE_SETTINGS ONLY_RELEASE false GIT_NAMES)
+#  macro(requires_pybind11 NAME)
+#	  target_link_libraries (${NAME} Eigen3::Eigen)
+#  endmacro(requires_eigen)
+endif()
 
 ## ---------------------------------------------------------------------------------
 ## Names used in the CMake package
@@ -95,13 +112,21 @@ macro(install_lib NAME HEADERS SOURCEDIR)
 endmacro(install_lib)
 
 ## ---------------------------------------------------------------
-add_subdirectory(slaveinfo)
+
 add_subdirectory(lowlevelcontrol)
 add_subdirectory(manipulatormodul)
 add_subdirectory(tester)
 add_subdirectory(modultester)
-add_subdirectory(matlabexporter)
-#add_subdirectory(old)
+if (NOT ONLY_VIRTUAL_ROBOT)
+  add_subdirectory(slaveinfo)
+endif()
+if (BUILD_MATLAB_WRAPPER)
+  add_subdirectory(matlabexporter)
+endif()
+if (BUILD_PYTHON_WRAPPER)
+  #add_subdirectory(${pybind11_SOURCE_DIR} ${pybind11_BINARY_DIR})
+  add_subdirectory(pythonexporter)
+endif()
 
 ## ---------------------------------------------------------------------------------
 ## Additional install methods
