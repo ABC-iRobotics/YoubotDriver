@@ -33,8 +33,8 @@ py::dict ManagerWrapper::GetStatus() const {
   double* ticks = new double[5];
   double* RPM = new double[5];
   for (int i = 0; i < 5; i++) {
-    q[i] = status.joint[i].q.value;
-    dq[i] = status.joint[i].dq.value;
+    q[i] = status.joint[i].q.value / M_PI * 180.;
+    dq[i] = status.joint[i].dq.value / M_PI * 180.;
     tau[i] = status.joint[i].tau.value;
     ticks[i] = status.joint[i].motorticks.value;
     RPM[i] = status.joint[i].motorRPM.value;
@@ -68,7 +68,7 @@ py::array ManagerWrapper::GetTrueStatus() const {
   auto q_ = Manager::GetTrueStatus();
   double* q = new double[5];
   for (int i = 0; i < 5; i++)
-    q[i] = q_[i];
+    q[i] = q_[i] / M_PI * 180.;
   return py::array(5, q);
 }
 
@@ -93,7 +93,7 @@ void ManagerWrapper::ZeroCurrent(double time_limit) {
 void ManagerWrapper::JointVelocity(py::array_t<double> dq_, double time_limit) {
   Eigen::VectorXd dq(5);
   for (int i = 0; i < 5; i++)
-    dq[i] = *dq_.data(i);
+    dq[i] = *dq_.data(i) * M_PI / 180.;
 
   MTask::Ptr ptr = std::make_shared<MTaskRawConstantJointSpeed>(dq, time_limit);
   Manager::NewManipulatorTask(ptr, time_limit);
@@ -102,7 +102,7 @@ void ManagerWrapper::JointVelocity(py::array_t<double> dq_, double time_limit) {
 void ManagerWrapper::JointPosition(py::array_t<double> q_, double time_limit) {
   Eigen::VectorXd q(5);
   for (int i = 0; i < 5; i++)
-    q[i] = *q_.data(i);
+    q[i] = *q_.data(i) * M_PI / 180.;
 
   MTask::Ptr ptr = std::make_shared<MTaskRawConstantJointPosition>(q);
   Manager::NewManipulatorTask(ptr, time_limit);
@@ -124,7 +124,12 @@ void ManagerWrapper::StartBridgedTask() {
 
 void ManagerWrapper::SetBridgeTarget(py::array_t<int> mode, py::array_t<double> target, double time_limit) {
   std::vector<MTaskGenericRawConstant::Cmd> cmds;
-  for (int i = 0; i < 5; i++)
-    cmds.push_back({ MTaskGenericRawConstant::CmdType(*mode.data(i)), *target.data(i) });
+  for (int i = 0; i < 5; i++) {
+    int mode_ = *mode.data(i);
+    double target_ = *target.data(i);
+    if (mode_ == 10 || mode_ == 11)
+      target_ *= M_PI / 180.;
+    cmds.push_back({ MTaskGenericRawConstant::CmdType(mode_), target_ });
+  }
   std::static_pointer_cast<MTaskGenericRawConstant>(bridged_ptr)->SetCommand(cmds, time_limit);
 }
