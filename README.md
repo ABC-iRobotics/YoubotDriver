@@ -36,3 +36,6 @@ Later directions:
 - Jacobian-based Cartesian space methods to move the arm (as ManipulatorTask-s)
 - profileing and optimising the project
 - getting the firmware 2.00 for TMCM-1610 (now position mode is forbidden because of random errors of the driver), unfortunatels KUKA inc. cannot find its archive. If anyone has it, let me know...
+
+## Acknowledgement
+The software has been implemented with the support provided from the National Research, Development and Innovation Fund of Hungary, financed under the 2019-1.3.1-KK funding scheme (contract id: 2019-1.3.1-KK-2019-00007).
